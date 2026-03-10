@@ -1,0 +1,30 @@
+.ads-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ads-pagination-btn {
+  padding: 0.5rem 0.75rem;
+  font: var(--wel-typography-label-default-02);
+  color: var(--wel-sem-color-on-surface-hi);
+  background: var(--wel-sem-color-overlay-low);
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ads-pagination-btn:hover:not(:disabled) {
+  background: var(--wel-sem-color-overlay-mid);
+}
+
+.ads-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ads-pagination-info {
+  font: var(--wel-typography-caption-default);
+  color: var(--wel-sem-color-on-surface-hi);
+}

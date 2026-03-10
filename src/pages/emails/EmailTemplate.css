@@ -1,0 +1,346 @@
+/**
+ * Email Template — Figma-faithful styles for ALL Accor transactional emails.
+ * Follows the design system: Inter (body), Montserrat (display), Roboto (title/label).
+ */
+
+.email-page {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+.email {
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.email__header {
+  background: var(--wel-sem-color-primary, #050033);
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.email__logo {
+  height: 56px;
+  width: 66px;
+  filter: brightness(0) invert(1);
+}
+
+/* ── Body ────────────────────────────────────────────────────────────── */
+.email__body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 48px 40px 64px;
+}
+
+/* ── Text block (greeting + title + body) ────────────────────────────── */
+.email__text-block {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  color: #000;
+}
+
+.email__text-block p {
+  margin: 0;
+}
+
+.email__text-block .email__spacer {
+  height: 28px;
+}
+
+.email__heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 56px;
+  color: #000;
+  margin: 0;
+}
+
+.email__bold {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+/* ── Event card (horizontal: image + details) ────────────────────────── */
+.email__event-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.email__event-image {
+  width: 192px;
+  height: 192px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.email__event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.email__event-date {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+  margin: 0;
+}
+
+.email__event-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 32px;
+  letter-spacing: 0.5px;
+  color: #171523;
+  margin: 0;
+}
+
+.email__event-location {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.email__event-location svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+}
+
+.email__event-location span {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+}
+
+.email__event-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #0d8754;
+  background: #fff;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #0d8754;
+  width: fit-content;
+}
+
+/* ── Message bar ─────────────────────────────────────────────────────── */
+.email__message {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.email__message--success {
+  background: var(--wel-sem-color-success-container-low, #caffea);
+  color: var(--wel-sem-color-on-success-container-low, #006a53);
+}
+
+.email__message--danger {
+  background: var(--wel-sem-color-danger-container-low, #ffecec);
+  color: var(--wel-sem-color-on-danger-container-low, #be003c);
+}
+
+.email__message--info {
+  background: #f7f9fb;
+  color: #232136;
+}
+
+.email__message svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.email__message-text {
+  flex: 1;
+  margin: 0;
+}
+
+.email__message-text strong {
+  font-weight: 600;
+}
+
+/* ── Details card ────────────────────────────────────────────────────── */
+.email__details-card {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(7, 5, 24, 0.2);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.email__details-heading {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 28px;
+  color: #232136;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email__details-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.email__details-line {
+  height: 1px;
+  background: var(--wel-sem-color-outline-mid, #afb1b3);
+  border: none;
+  margin: 0;
+}
+
+.email__details-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  color: #232136;
+}
+
+.email__details-label {
+  font-weight: 400;
+}
+
+.email__details-value {
+  font-weight: 600;
+  text-align: right;
+}
+
+.email__details-value--success {
+  color: var(--wel-sem-color-success, #006a53);
+}
+
+.email__details-value--danger {
+  color: var(--wel-sem-color-danger, #be003c);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.email__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.email__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  border-radius: 100px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-decoration: none;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.email__btn--primary {
+  background: linear-gradient(206deg, rgb(82, 79, 129) 5.7%, rgb(5, 0, 51) 92.5%);
+  border: 1px solid #b7b3ec;
+  color: #f9f9ff;
+}
+
+.email__btn--tertiary {
+  background: transparent;
+  border: 1px solid #050033;
+  color: #050033;
+}
+
+/* ── Footer text ─────────────────────────────────────────────────────── */
+.email__footer-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+  color: #000;
+  margin: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .email__body {
+    padding: 32px 20px 48px;
+    gap: 24px;
+  }
+
+  .email__heading {
+    font-size: 28px;
+    line-height: 40px;
+  }
+
+  .email__event-card {
+    flex-direction: column;
+  }
+
+  .email__event-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .email__event-title {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .email__details-row {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .email__text-block {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .email__message {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .email__footer-text {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}

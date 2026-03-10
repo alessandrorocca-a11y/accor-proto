@@ -1,0 +1,66 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "description": "Semantic and brand color tokens — Web Appearances (Figma)",
+  "wel": {
+    "sem": {
+      "color": {
+        "surface": { "value": "#070518" },
+        "on-surface-hi": { "value": "#f7f9fb" },
+        "outline-primary-low": { "value": "#8e8bc1" },
+        "hover": {
+          "eco": { "value": "#175a00" },
+          "link": { "value": "#2a71db" }
+        },
+        "pressed": {
+          "eco": { "value": "#124d00" },
+          "link": { "value": "#003779" }
+        },
+        "on-eco": { "value": "#ffffff" },
+        "eco-container-low": { "value": "#072d00" },
+        "eco-container-hi": { "value": "#124d00" },
+        "on-eco-container-low": { "value": "#ccffb3" },
+        "on-eco-container-hi": { "value": "#ccffb3" },
+        "outline-eco": { "value": "#237b00" },
+        "family": { "value": "#f6f2ff" },
+        "on-family": { "value": "#050033" },
+        "on-family-container-low": { "value": "#e8edff" },
+        "on-family-container-hi": { "value": "#e8edff" },
+        "link": { "value": "#92b6ff" },
+        "focus": { "value": "#2a71db" },
+        "watermark": { "value": "#0705180d" },
+        "overlay-low": { "value": "#0705184d" },
+        "overlay-mid": { "value": "#0705188a" },
+        "overlay-hi": { "value": "#070518b2" },
+        "overlay-max": { "value": "#070518e5" },
+        "shadow-default": { "value": "#0705180d" },
+        "shadow-strong": { "value": "#07051833" },
+        "gradient-primary-hi-start": { "value": "#ffffff" },
+        "gradient-primary-hi-end": { "value": "#e3dfff" },
+        "gradient-primary-low-start": { "value": "#ffd4ea" },
+        "gradient-primary-low-end": { "value": "#d6d3ff" },
+        "gradient-secondary-start": { "value": "#fff0f4" },
+        "gradient-secondary-end": { "value": "#e9e5ff" },
+        "gradient-white-min": { "value": "#ffffff00" },
+        "gradient-white-max": { "value": "#ffffff" },
+        "gradient-black-min": { "value": "#07051800" },
+        "gradient-black-mid": { "value": "#0705188a" },
+        "gradient-black-max": { "value": "#070518" }
+      }
+    },
+    "web": {
+      "bSem": {
+        "color": {
+          "light": {
+            "family-container-low": { "value": "#f9f9ff" },
+            "family-container-hi": { "value": "#e8edff" },
+            "outline-family": { "value": "#050033" }
+          },
+          "dark": {
+            "outline-family": { "value": "#f6f2ff" },
+            "gradient-black-hi": { "value": "#070518e5" }
+          }
+        }
+      }
+    }
+  }
+}

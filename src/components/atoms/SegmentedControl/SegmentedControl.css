@@ -1,0 +1,29 @@
+.ads-segmented-control {
+  display: inline-flex;
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ads-segment-btn {
+  padding: 0.375rem 0.75rem;
+  font: var(--wel-typography-caption-default);
+  color: var(--wel-sem-color-on-surface-hi);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ads-segment-btn:hover {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.ads-segment-btn-active {
+  background: var(--wel-sem-color-family);
+  color: var(--wel-sem-color-on-family);
+}
+
+.ads-segment-btn + .ads-segment-btn {
+  border-left: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+}

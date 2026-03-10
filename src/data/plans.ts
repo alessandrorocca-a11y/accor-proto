@@ -1,0 +1,1827 @@
+export type PaymentType = 'standard' | 'auction' | 'prize-draw' | 'redeem' | 'linkout' | 'waitlist';
+
+export interface PlanData {
+  slug: string;
+  title: string;
+  date: string;
+  city: string;
+  venue: string;
+  address: string;
+  mapQuery: string;
+  category: string;
+  paymentType: PaymentType;
+  tags: string[];
+  eventTag?: string;
+  price?: number;
+  ticketPrice?: number;
+  currentBid?: number;
+  msLeft?: number;
+  externalUrl?: string;
+  providerName?: string;
+  maxTickets?: number;
+}
+
+const UNSPLASH = 'https://images.unsplash.com/';
+const CROP = '?w=800&h=600&fit=crop';
+
+export const CATEGORY_IMAGES: Record<string, string[]> = {
+  'Sport and leisure': [
+    `${UNSPLASH}photo-1522778119026-d647f0596c20${CROP}`,
+    `${UNSPLASH}photo-1595435934249-5df7ed86e1c0${CROP}`,
+    `${UNSPLASH}photo-1541625602330-2277a4c46182${CROP}`,
+    `${UNSPLASH}photo-1513593771513-7b58b6c4af38${CROP}`,
+    `${UNSPLASH}photo-1531415074968-036ba1b575da${CROP}`,
+    `${UNSPLASH}photo-1535131749006-b7f58c99034b${CROP}`,
+    `${UNSPLASH}photo-1552053831-71594a27632d${CROP}`,
+    `${UNSPLASH}photo-1546519638-68e109498ffc${CROP}`,
+    `${UNSPLASH}photo-1488998427799-e3362cec87c3${CROP}`,
+    `${UNSPLASH}photo-1522163182402-834f871fd851${CROP}`,
+  ],
+  'Shows and culture': [
+    `${UNSPLASH}photo-1503095396549-807759245b35${CROP}`,
+    `${UNSPLASH}photo-1507838153414-b4b713384a76${CROP}`,
+    `${UNSPLASH}photo-1513364776144-60967b0f800f${CROP}`,
+    `${UNSPLASH}photo-1518834107591-f89c0e5e6fdf${CROP}`,
+    `${UNSPLASH}photo-1499781350541-7783f6c6a0c8${CROP}`,
+    `${UNSPLASH}photo-1520869562399-e772f042f422${CROP}`,
+    `${UNSPLASH}photo-1489599849927-2ee91cede3ba${CROP}`,
+    `${UNSPLASH}photo-1561214115-f2f134cc4912${CROP}`,
+    `${UNSPLASH}photo-1460881680858-30d872d5b530${CROP}`,
+    `${UNSPLASH}photo-1514306191717-452ec28c7814${CROP}`,
+  ],
+  'Concerts and festivals': [
+    `${UNSPLASH}photo-1514320291840-2e0a9bf2a9ae${CROP}`,
+    `${UNSPLASH}photo-1511192336575-5a79af67a629${CROP}`,
+    `${UNSPLASH}photo-1415201364774-f6f0bb35f28f${CROP}`,
+    `${UNSPLASH}photo-1516450360452-9312f5e86fc7${CROP}`,
+    `${UNSPLASH}photo-1514119412350-e174d90d585e${CROP}`,
+    `${UNSPLASH}photo-1520523839897-bd49ed3a0e30${CROP}`,
+    `${UNSPLASH}photo-1429962714451-bb934ecdc4ec${CROP}`,
+    `${UNSPLASH}photo-1493225457124-a3eb161ffa5f${CROP}`,
+    `${UNSPLASH}photo-1478147427282-58a87a120781${CROP}`,
+    `${UNSPLASH}photo-1501386761578-eac5c94b800a${CROP}`,
+  ],
+  'Food and drinks': [
+    `${UNSPLASH}photo-1506377247377-2a5b3b417ebb${CROP}`,
+    `${UNSPLASH}photo-1556910103-1c02745aae4d${CROP}`,
+    `${UNSPLASH}photo-1414235077428-338989a2e8c0${CROP}`,
+    `${UNSPLASH}photo-1558618666-fcd25c85f7e7${CROP}`,
+    `${UNSPLASH}photo-1481391319762-47dff72954d9${CROP}`,
+    `${UNSPLASH}photo-1509440159596-0249088772ff${CROP}`,
+    `${UNSPLASH}photo-1452195100486-9cc805987862${CROP}`,
+    `${UNSPLASH}photo-1555396273-367ea4eb4db5${CROP}`,
+    `${UNSPLASH}photo-1488459716781-31db52582fe9${CROP}`,
+    `${UNSPLASH}photo-1504674900247-0877df9cc836${CROP}`,
+  ],
+  'Wellness': [
+    `${UNSPLASH}photo-1544161515-4ab6ce6db874${CROP}`,
+    `${UNSPLASH}photo-1544367567-0f2fcb009e0b${CROP}`,
+    `${UNSPLASH}photo-1540555700478-4be289fbec6d${CROP}`,
+    `${UNSPLASH}photo-1600334089648-b0d9d3028eb2${CROP}`,
+    `${UNSPLASH}photo-1506126613408-eca07ce68773${CROP}`,
+    `${UNSPLASH}photo-1507003211169-0a1dd7228f2d${CROP}`,
+    `${UNSPLASH}photo-1518611012118-696072aa579a${CROP}`,
+    `${UNSPLASH}photo-1540539234-c14a20fb7c7b${CROP}`,
+    `${UNSPLASH}photo-1571019613454-1cb2f99b2d8b${CROP}`,
+    `${UNSPLASH}photo-1545205597-3d9d02c29597${CROP}`,
+  ],
+  'Visits': [
+    `${UNSPLASH}photo-1499856871958-5b9627545d1a${CROP}`,
+    `${UNSPLASH}photo-1502602898657-3e91760cbb34${CROP}`,
+    `${UNSPLASH}photo-1478391679764-b2d8b3cd1e94${CROP}`,
+    `${UNSPLASH}photo-1551279880-03041531948f${CROP}`,
+    `${UNSPLASH}photo-1566127444979-b3d2b654e3d7${CROP}`,
+    `${UNSPLASH}photo-1549144511-f099e773c147${CROP}`,
+    `${UNSPLASH}photo-1431274172761-fca41d930114${CROP}`,
+    `${UNSPLASH}photo-1499856871958-5b9627545d1a${CROP}`,
+    `${UNSPLASH}photo-1550340499-a6c60fc8287c${CROP}`,
+    `${UNSPLASH}photo-1508739773434-c26b3d09e071${CROP}`,
+  ],
+  'Hotel experiences': [
+    `${UNSPLASH}photo-1551882547-ff40c63fe5fa${CROP}`,
+    `${UNSPLASH}photo-1566073771259-6a8506099945${CROP}`,
+    `${UNSPLASH}photo-1520250497591-112f2f40a3f4${CROP}`,
+    `${UNSPLASH}photo-1530103862676-de8c9debad1d${CROP}`,
+    `${UNSPLASH}photo-1551632436-cbf8dd35adfa${CROP}`,
+    `${UNSPLASH}photo-1556679343-c7306c1976bc${CROP}`,
+    `${UNSPLASH}photo-1564501049412-61c2a3083791${CROP}`,
+    `${UNSPLASH}photo-1571896349842-33c89424de2d${CROP}`,
+    `${UNSPLASH}photo-1542314831-068cd1dbfeeb${CROP}`,
+    `${UNSPLASH}photo-1445019980597-93fa8acb246c${CROP}`,
+  ],
+};
+
+export function getHeroImages(plan: PlanData, index: number): { src: string; alt: string }[] {
+  const pool = CATEGORY_IMAGES[plan.category] || CATEGORY_IMAGES['Visits'];
+  const offset = index % pool.length;
+  const images: { src: string; alt: string }[] = [];
+  for (let i = 0; i < 6; i++) {
+    const src = pool[(offset + i) % pool.length];
+    images.push({ src, alt: `${plan.title} image ${i + 1}` });
+  }
+  return images;
+}
+
+export function getIncludedItems(category: string): string[] {
+  switch (category) {
+    case 'Sport and leisure':
+      return [
+        'VIP access pass with dedicated entrance',
+        'Welcome drink and premium canapés',
+        'Exclusive seating with optimal viewing angle',
+        'Official event programme and gift bag',
+        'Access to VIP lounge area',
+      ];
+    case 'Shows and culture':
+      return [
+        'Premium reserved seating',
+        'Welcome champagne glass',
+        'Backstage tour after the show',
+        'Signed programme booklet',
+        'Priority cloakroom access',
+      ];
+    case 'Concerts and festivals':
+      return [
+        'Standing or seated ticket in premium zone',
+        'Complimentary drink at the bar',
+        'Exclusive merchandise item',
+        'Early venue access',
+        'Dedicated VIP entrance',
+      ];
+    case 'Food and drinks':
+      return [
+        'All ingredients and equipment provided',
+        'Recipe booklet to take home',
+        'Tasting of all prepared dishes',
+        'Glass of paired wine or champagne',
+        'Certificate of completion',
+      ];
+    case 'Wellness':
+      return [
+        'Full access to spa facilities',
+        'Personalised treatment session',
+        'Herbal tea and refreshments',
+        'Bathrobe and slippers provided',
+        'Relaxation area access',
+      ];
+    case 'Visits':
+      return [
+        'Skip-the-line priority access',
+        'Expert English-speaking guide',
+        'Interactive audio guide included',
+        'Exclusive access to restricted areas',
+        'Souvenir photo opportunity',
+      ];
+    case 'Hotel experiences':
+      return [
+        'Welcome drink upon arrival',
+        'Access to exclusive hotel facilities',
+        'Personalised concierge service',
+        'Complimentary breakfast or brunch',
+        'Late checkout option',
+      ];
+    default:
+      return [
+        'Priority access',
+        'Welcome refreshment',
+        'Guided experience',
+        'Souvenir included',
+        'Dedicated support',
+      ];
+  }
+}
+
+const CATEGORY_INTRO: Record<string, string> = {
+  'Sport and leisure': 'Experience the thrill of world-class sport with premium hospitality and unrivalled views.',
+  'Shows and culture': 'Immerse yourself in the finest performing arts and cultural experiences that France has to offer.',
+  'Concerts and festivals': 'Feel the energy of live music in one of the most iconic venues in France.',
+  'Food and drinks': 'Embark on a culinary journey that celebrates the art of French gastronomy.',
+  'Wellness': 'Treat yourself to a rejuvenating escape designed to restore body and mind.',
+  'Visits': 'Uncover the stories and beauty of one of the most remarkable landmarks in France.',
+  'Hotel experiences': 'Indulge in the elegance and impeccable service of a world-renowned luxury hotel.',
+};
+
+const CATEGORY_BODY: Record<string, string> = {
+  'Sport and leisure':
+    'From the roar of the crowd to the precision of elite athletes, this event delivers an unforgettable sporting spectacle. Enjoy VIP hospitality, premium refreshments, and behind-the-scenes access that brings you closer to the action than ever before.',
+  'Shows and culture':
+    'Step into a world of artistic brilliance where centuries of tradition meet contemporary creativity. This performance promises an evening of elegance, emotion, and extraordinary talent on one of the most celebrated stages in Europe.',
+  'Concerts and festivals':
+    'Let the music transport you as world-renowned artists take the stage for a night of pure entertainment. With premium positioning, exclusive perks, and an electrifying atmosphere, this is a concert experience like no other.',
+  'Food and drinks':
+    'Guided by expert chefs and sommeliers, this gastronomic experience takes you on a journey through the finest flavours of French cuisine. Every dish tells a story, every sip reveals a new dimension of taste.',
+  'Wellness':
+    'Leave the stresses of everyday life behind and surrender to a sanctuary of calm. Expert therapists, luxurious facilities, and carefully curated treatments combine to create a deeply restorative experience.',
+  'Visits':
+    'Go beyond the ordinary with a guided exploration that reveals hidden details and fascinating histories. Whether you are a first-time visitor or a seasoned traveller, this tour offers a fresh perspective on an iconic destination.',
+  'Hotel experiences':
+    'Experience the pinnacle of hospitality in a setting where every detail has been thoughtfully designed for your comfort. From exquisite interiors to world-class service, this hotel experience redefines luxury.',
+};
+
+const PAYMENT_SENTENCE: Record<PaymentType, string> = {
+  standard: 'Tickets are available for direct purchase at a fixed price.',
+  auction: 'This is an exclusive auction experience — place your bid and compete for this one-of-a-kind opportunity.',
+  'prize-draw': 'Enter the prize draw for a chance to win this extraordinary experience at a fraction of the cost.',
+  redeem: 'Redeem your loyalty points to secure your spot at this exceptional event.',
+  linkout: 'Visit our partner website to book your place and complete your reservation.',
+  waitlist: 'This experience is currently fully booked. Join the waitlist to be notified when a spot becomes available.',
+};
+
+export function getDescription(plan: PlanData): string[] {
+  const intro = CATEGORY_INTRO[plan.category] || CATEGORY_INTRO['Visits'];
+  const body = CATEGORY_BODY[plan.category] || CATEGORY_BODY['Visits'];
+  const payment = PAYMENT_SENTENCE[plan.paymentType];
+
+  return [
+    `Discover ${plan.title} at ${plan.venue} in ${plan.city}. ${intro}`,
+    body,
+    `This event takes place on ${plan.date} at ${plan.venue}, ${plan.city}. ${payment}`,
+  ];
+}
+
+const VENUE_TYPE: Record<string, string> = {
+  'Sport and leisure': 'sporting venue',
+  'Shows and culture': 'cultural institution',
+  'Concerts and festivals': 'music venue',
+  'Food and drinks': 'culinary destination',
+  'Wellness': 'wellness retreat',
+  'Visits': 'landmark',
+  'Hotel experiences': 'luxury hotel',
+};
+
+const VENUE_DETAIL: Record<string, string> = {
+  'Sport and leisure':
+    'It has hosted countless memorable sporting events and offers state-of-the-art facilities for both athletes and spectators.',
+  'Shows and culture':
+    'With a rich artistic heritage and stunning architecture, it continues to be a beacon for culture lovers from around the world.',
+  'Concerts and festivals':
+    'Known for its exceptional acoustics and intimate atmosphere, it has welcomed legendary artists across every genre.',
+  'Food and drinks':
+    'Celebrated for its commitment to culinary excellence, it provides an unforgettable setting for food and wine enthusiasts.',
+  'Wellness':
+    'Designed with tranquillity in mind, it offers a serene environment where guests can unwind and rejuvenate.',
+  'Visits':
+    'Steeped in history and architectural beauty, it attracts visitors from every corner of the globe.',
+  'Hotel experiences':
+    'Renowned for its impeccable service and timeless elegance, it offers guests an experience that transcends the ordinary.',
+};
+
+export function getVenueDescription(plan: PlanData): string {
+  const type = VENUE_TYPE[plan.category] || 'venue';
+  const detail = VENUE_DETAIL[plan.category] || VENUE_DETAIL['Visits'];
+  return `${plan.venue} is a renowned ${type} located in ${plan.city}, France. ${detail}`;
+}
+
+export function getBidChips(currentBid: number): number[] {
+  return [currentBid + 500, currentBid + 1000, currentBid + 1500, currentBid + 2000];
+}
+
+export function getPlanBySlug(slug: string): PlanData | undefined {
+  return PLANS.find((p) => p.slug === slug);
+}
+
+// ---------------------------------------------------------------------------
+// PLANS
+// ---------------------------------------------------------------------------
+
+export const PLANS: PlanData[] = [
+  // =========================================================================
+  // SPORT AND LEISURE (1–18)
+  // =========================================================================
+
+  // 1
+  {
+    slug: 'psg-vs-om-vip',
+    title: 'PSG vs Olympique de Marseille VIP Experience',
+    date: 'Saturday, 15 March 2026',
+    city: 'Paris',
+    venue: 'Parc des Princes',
+    address: '24 Rue du Commandant Guilbaud, 75016 Paris',
+    mapQuery: 'Parc+des+Princes+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'auction',
+    tags: ['Football', 'VIP Experience'],
+    eventTag: 'Limitless Experiences',
+    currentBid: 45000,
+    msLeft: 14 * 24 * 60 * 60 * 1000,
+  },
+  // 2
+  {
+    slug: 'roland-garros-quarterfinals',
+    title: 'Roland Garros Quarter-Finals Hospitality',
+    date: 'Tuesday, 2 June 2026',
+    city: 'Paris',
+    venue: 'Stade Roland Garros',
+    address: '2 Av. Gordon Bennett, 75016 Paris',
+    mapQuery: 'Roland+Garros+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'prize-draw',
+    tags: ['Tennis', 'Grand Slam'],
+    eventTag: 'Limitless Experiences',
+    ticketPrice: 500,
+    msLeft: 21 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 3
+  {
+    slug: 'tour-de-france-champs-elysees',
+    title: 'Tour de France Champs-Élysées Finish Line VIP',
+    date: 'Sunday, 26 July 2026',
+    city: 'Paris',
+    venue: 'Champs-Élysées',
+    address: 'Avenue des Champs-Élysées, 75008 Paris',
+    mapQuery: 'Champs+Elysees+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'standard',
+    tags: ['Cycling', 'VIP Experience'],
+    eventTag: 'Fever Original',
+    price: 280,
+  },
+  // 4
+  {
+    slug: 'paris-marathon-vip',
+    title: 'Paris Marathon VIP Cheer Zone',
+    date: 'Sunday, 12 April 2026',
+    city: 'Paris',
+    venue: 'Avenue Foch',
+    address: 'Avenue Foch, 75016 Paris',
+    mapQuery: 'Avenue+Foch+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'redeem',
+    tags: ['Running', 'Marathon'],
+    eventTag: 'Sustainable Experience',
+    ticketPrice: 35000,
+    maxTickets: 10,
+  },
+  // 5
+  {
+    slug: 'six-nations-stade-de-france',
+    title: 'Six Nations Rugby at Stade de France',
+    date: 'Saturday, 14 March 2026',
+    city: 'Paris',
+    venue: 'Stade de France',
+    address: 'Stade de France, 93200 Saint-Denis',
+    mapQuery: 'Stade+de+France+Saint-Denis',
+    category: 'Sport and leisure',
+    paymentType: 'auction',
+    tags: ['Rugby', 'International'],
+    currentBid: 30000,
+    msLeft: 10 * 24 * 60 * 60 * 1000,
+  },
+  // 6
+  {
+    slug: 'longchamp-arc-de-triomphe',
+    title: "Prix de l'Arc de Triomphe at Longchamp",
+    date: 'Sunday, 4 October 2026',
+    city: 'Paris',
+    venue: 'Hippodrome de Longchamp',
+    address: 'Route des Tribunes, 75016 Paris',
+    mapQuery: 'Hippodrome+Longchamp+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'auction',
+    tags: ['Horse Racing', 'Prestige'],
+    eventTag: 'Hotel Experience',
+    currentBid: 30000,
+    msLeft: 25 * 24 * 60 * 60 * 1000,
+  },
+  // 7
+  {
+    slug: 'basketball-bercy-arena',
+    title: 'Basketball Game at Accor Arena',
+    date: 'Friday, 20 March 2026',
+    city: 'Paris',
+    venue: 'Accor Arena',
+    address: '8 Bd de Bercy, 75012 Paris',
+    mapQuery: 'Accor+Arena+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'linkout',
+    tags: ['Basketball', 'Indoor'],
+    externalUrl: 'https://www.accor-arena.com',
+    providerName: 'Accor Arena',
+  },
+  // 8
+  {
+    slug: 'olympic-track-day',
+    title: 'Olympic Legacy Track Day at Stade de France',
+    date: 'Saturday, 6 June 2026',
+    city: 'Paris',
+    venue: 'Stade de France',
+    address: 'Stade de France, 93200 Saint-Denis',
+    mapQuery: 'Stade+de+France+Saint-Denis',
+    category: 'Sport and leisure',
+    paymentType: 'redeem',
+    tags: ['Athletics', 'Olympic'],
+    eventTag: 'Sustainable Experience',
+    ticketPrice: 18000,
+    maxTickets: 10,
+  },
+  // 9
+  {
+    slug: 'padel-tournament-paris',
+    title: 'Padel Tournament Experience',
+    date: 'Sunday, 17 May 2026',
+    city: 'Paris',
+    venue: 'All In Padel Paris',
+    address: '14 Rue Sextius Michel, 75015 Paris',
+    mapQuery: 'All+In+Padel+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'standard',
+    tags: ['Padel', 'Sport'],
+    price: 85,
+  },
+  // 10
+  {
+    slug: 'french-open-wheelchair',
+    title: 'French Open Wheelchair Tennis Finals',
+    date: 'Saturday, 6 June 2026',
+    city: 'Paris',
+    venue: 'Stade Roland Garros',
+    address: '2 Av. Gordon Bennett, 75016 Paris',
+    mapQuery: 'Roland+Garros+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'prize-draw',
+    tags: ['Tennis', 'Inclusive'],
+    eventTag: 'Sustainable Experience',
+    ticketPrice: 300,
+    msLeft: 18 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 11
+  {
+    slug: 'seine-kayak-adventure',
+    title: 'Seine River Kayak Adventure',
+    date: 'Saturday, 9 May 2026',
+    city: 'Paris',
+    venue: 'Base Nautique de la Villette',
+    address: '41 bis Quai de la Loire, 75019 Paris',
+    mapQuery: 'Base+Nautique+Villette+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'waitlist',
+    tags: ['Water Sports', 'Adventure'],
+  },
+  // 12
+  {
+    slug: 'paris-ebike-tour',
+    title: 'Paris e-Bike City Tour',
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'Fat Tire Tours Paris',
+    address: '24 Rue Edgar Faure, 75015 Paris',
+    mapQuery: 'Fat+Tire+Tours+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'linkout',
+    tags: ['Cycling', 'Sightseeing'],
+    externalUrl: 'https://www.fattiretours.com/paris',
+    providerName: 'Fat Tire Tours',
+  },
+  // 13
+  {
+    slug: 'climbing-arkose-nation',
+    title: 'Indoor Climbing Experience at Arkose',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Arkose Nation',
+    address: '67 Rue de la Glacière, 75013 Paris',
+    mapQuery: 'Arkose+Nation+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'standard',
+    tags: ['Climbing', 'Indoor'],
+    price: 45,
+  },
+  // 14
+  {
+    slug: 'ice-skating-grand-palais',
+    title: 'Ice Skating at Grand Palais Éphémère',
+    date: 'Saturday, 20 December 2026',
+    city: 'Paris',
+    venue: 'Grand Palais Éphémère',
+    address: '2 Place Joffre, 75007 Paris',
+    mapQuery: 'Grand+Palais+Ephemere+Paris',
+    category: 'Sport and leisure',
+    paymentType: 'waitlist',
+    tags: ['Ice Skating', 'Winter'],
+  },
+  // 15
+  {
+    slug: 'monaco-grand-prix-fairmont',
+    title: 'Monaco Grand Prix Fairmont Terrace Experience',
+    date: 'Sunday, 24 May 2026',
+    city: 'Nice',
+    venue: 'Fairmont Monte Carlo',
+    address: '12 Av. des Spélugues, 98000 Monaco',
+    mapQuery: 'Fairmont+Monte+Carlo',
+    category: 'Sport and leisure',
+    paymentType: 'auction',
+    tags: ['Formula 1', 'Luxury'],
+    eventTag: 'Hotel Experience',
+    currentBid: 55000,
+    msLeft: 30 * 24 * 60 * 60 * 1000,
+  },
+  // 16
+  {
+    slug: 'ol-match-day-lyon',
+    title: 'Olympique Lyonnais Match Day VIP',
+    date: 'Saturday, 21 March 2026',
+    city: 'Lyon',
+    venue: 'Groupama Stadium',
+    address: '10 Av. Simone Veil, 69150 Décines-Charpieu',
+    mapQuery: 'Groupama+Stadium+Lyon',
+    category: 'Sport and leisure',
+    paymentType: 'linkout',
+    tags: ['Football', 'VIP'],
+    externalUrl: 'https://www.ol.fr',
+    providerName: 'Olympique Lyonnais',
+  },
+  // 17
+  {
+    slug: 'marseille-sailing-regatta',
+    title: 'Marseille Mediterranean Sailing Regatta',
+    date: 'Saturday, 13 June 2026',
+    city: 'Marseille',
+    venue: 'Vieux-Port de Marseille',
+    address: 'Quai du Port, 13002 Marseille',
+    mapQuery: 'Vieux+Port+Marseille',
+    category: 'Sport and leisure',
+    paymentType: 'waitlist',
+    tags: ['Sailing', 'Mediterranean'],
+  },
+  // 18
+  {
+    slug: 'bordeaux-marathon-vip',
+    title: 'Marathon de Bordeaux VIP Experience',
+    date: 'Sunday, 19 April 2026',
+    city: 'Bordeaux',
+    venue: 'Place des Quinconces',
+    address: 'Place des Quinconces, 33000 Bordeaux',
+    mapQuery: 'Place+Quinconces+Bordeaux',
+    category: 'Sport and leisure',
+    paymentType: 'standard',
+    tags: ['Running', 'Marathon'],
+    price: 120,
+  },
+
+  // =========================================================================
+  // SHOWS AND CULTURE (19–33)
+  // =========================================================================
+
+  // 19
+  {
+    slug: 'moulin-rouge-dinner-show',
+    title: 'Moulin Rouge Dinner & Show',
+    date: 'Saturday, 28 March 2026',
+    city: 'Paris',
+    venue: 'Moulin Rouge',
+    address: '82 Bd de Clichy, 75018 Paris',
+    mapQuery: 'Moulin+Rouge+Paris',
+    category: 'Shows and culture',
+    paymentType: 'auction',
+    tags: ['Cabaret', 'Dinner Show'],
+    eventTag: 'Limitless Experiences',
+    currentBid: 40000,
+    msLeft: 12 * 24 * 60 * 60 * 1000,
+  },
+  // 20
+  {
+    slug: 'palais-garnier-opera',
+    title: 'Palais Garnier Opera Night',
+    date: 'Friday, 10 April 2026',
+    city: 'Paris',
+    venue: 'Palais Garnier',
+    address: "Place de l'Opéra, 75009 Paris",
+    mapQuery: 'Palais+Garnier+Paris',
+    category: 'Shows and culture',
+    paymentType: 'redeem',
+    tags: ['Opera', 'Classical'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 42000,
+    maxTickets: 10,
+  },
+  // 21
+  {
+    slug: 'comedie-francaise-evening',
+    title: 'Comédie-Française Theatre Evening',
+    date: 'Thursday, 16 April 2026',
+    city: 'Paris',
+    venue: 'Comédie-Française',
+    address: '1 Place Colette, 75001 Paris',
+    mapQuery: 'Comedie+Francaise+Paris',
+    category: 'Shows and culture',
+    paymentType: 'standard',
+    tags: ['Theatre', 'French Classical'],
+    price: 150,
+  },
+  // 22
+  {
+    slug: 'musee-dorsay-after-hours',
+    title: "Musée d'Orsay After Hours Private Visit",
+    date: 'Wednesday, 22 April 2026',
+    city: 'Paris',
+    venue: "Musée d'Orsay",
+    address: "1 Rue de la Légion d'Honneur, 75007 Paris",
+    mapQuery: 'Musee+d+Orsay+Paris',
+    category: 'Shows and culture',
+    paymentType: 'redeem',
+    tags: ['Museum', 'Art'],
+    eventTag: 'Fever Original',
+    ticketPrice: 28000,
+    maxTickets: 10,
+  },
+  // 23
+  {
+    slug: 'crazy-horse-cabaret',
+    title: 'Crazy Horse Paris Cabaret',
+    date: 'Saturday, 4 April 2026',
+    city: 'Paris',
+    venue: 'Le Crazy Horse',
+    address: '12 Av. George V, 75008 Paris',
+    mapQuery: 'Crazy+Horse+Paris',
+    category: 'Shows and culture',
+    paymentType: 'linkout',
+    tags: ['Cabaret', 'Nightlife'],
+    externalUrl: 'https://www.lecrazyhorseparis.com',
+    providerName: 'Le Crazy Horse',
+  },
+  // 24
+  {
+    slug: 'lido-paris-show',
+    title: 'Lido de Paris Final Season Show',
+    date: 'Friday, 20 March 2026',
+    city: 'Paris',
+    venue: 'Lido de Paris',
+    address: '116 bis Av. des Champs-Élysées, 75008 Paris',
+    mapQuery: 'Lido+de+Paris',
+    category: 'Shows and culture',
+    paymentType: 'waitlist',
+    tags: ['Cabaret', 'Historic'],
+  },
+  // 25
+  {
+    slug: 'chatelet-musical-gala',
+    title: 'Théâtre du Châtelet Musical Gala',
+    date: 'Saturday, 25 April 2026',
+    city: 'Paris',
+    venue: 'Théâtre du Châtelet',
+    address: '2 Rue Édouard Colonne, 75001 Paris',
+    mapQuery: 'Theatre+du+Chatelet+Paris',
+    category: 'Shows and culture',
+    paymentType: 'standard',
+    tags: ['Musical', 'Theatre'],
+    price: 180,
+  },
+  // 26
+  {
+    slug: 'opera-bastille-ballet',
+    title: 'Opéra Bastille Ballet Performance',
+    date: 'Sunday, 3 May 2026',
+    city: 'Paris',
+    venue: 'Opéra Bastille',
+    address: 'Place de la Bastille, 75012 Paris',
+    mapQuery: 'Opera+Bastille+Paris',
+    category: 'Shows and culture',
+    paymentType: 'prize-draw',
+    tags: ['Ballet', 'Classical'],
+    eventTag: 'Limitless Experiences',
+    ticketPrice: 800,
+    msLeft: 15 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 27
+  {
+    slug: 'grand-rex-cinema-premiere',
+    title: 'Le Grand Rex Cinema Gala Premiere',
+    date: 'Tuesday, 14 April 2026',
+    city: 'Paris',
+    venue: 'Le Grand Rex',
+    address: '1 Bd Poissonnière, 75002 Paris',
+    mapQuery: 'Grand+Rex+Paris',
+    category: 'Shows and culture',
+    paymentType: 'auction',
+    tags: ['Cinema', 'Premiere'],
+    currentBid: 22000,
+    msLeft: 8 * 24 * 60 * 60 * 1000,
+  },
+  // 28
+  {
+    slug: 'cirque-dhiver-show',
+    title: "Cirque d'Hiver Bouglione Show",
+    date: 'Sunday, 29 March 2026',
+    city: 'Paris',
+    venue: "Cirque d'Hiver Bouglione",
+    address: '110 Rue Amelot, 75011 Paris',
+    mapQuery: 'Cirque+d+Hiver+Paris',
+    category: 'Shows and culture',
+    paymentType: 'linkout',
+    tags: ['Circus', 'Family'],
+    externalUrl: 'https://www.cirquedhiver.com',
+    providerName: "Cirque d'Hiver",
+  },
+  // 29
+  {
+    slug: 'philharmonie-classical',
+    title: 'Philharmonie de Paris Classical Concert',
+    date: 'Saturday, 11 April 2026',
+    city: 'Paris',
+    venue: 'Philharmonie de Paris',
+    address: '221 Av. Jean Jaurès, 75019 Paris',
+    mapQuery: 'Philharmonie+de+Paris',
+    category: 'Shows and culture',
+    paymentType: 'standard',
+    tags: ['Classical Music', 'Orchestra'],
+    price: 95,
+  },
+  // 30
+  {
+    slug: 'petit-palais-art-view',
+    title: 'Petit Palais Art Exhibition Private View',
+    date: 'Thursday, 9 April 2026',
+    city: 'Paris',
+    venue: 'Petit Palais',
+    address: 'Av. Winston Churchill, 75008 Paris',
+    mapQuery: 'Petit+Palais+Paris',
+    category: 'Shows and culture',
+    paymentType: 'waitlist',
+    tags: ['Art', 'Exhibition'],
+  },
+  // 31
+  {
+    slug: 'festival-avignon',
+    title: "Festival d'Avignon Theatre Performance",
+    date: 'Friday, 10 July 2026',
+    city: 'Avignon',
+    venue: "Cour d'Honneur du Palais des Papes",
+    address: 'Place du Palais des Papes, 84000 Avignon',
+    mapQuery: 'Palais+des+Papes+Avignon',
+    category: 'Shows and culture',
+    paymentType: 'linkout',
+    tags: ['Theatre', 'Festival'],
+    externalUrl: 'https://www.festival-avignon.com',
+    providerName: "Festival d'Avignon",
+  },
+  // 32
+  {
+    slug: 'versailles-night-spectacle',
+    title: 'Château de Versailles Night Spectacle',
+    date: 'Saturday, 20 June 2026',
+    city: 'Versailles',
+    venue: 'Château de Versailles',
+    address: "Place d'Armes, 78000 Versailles",
+    mapQuery: 'Chateau+de+Versailles',
+    category: 'Shows and culture',
+    paymentType: 'prize-draw',
+    tags: ['Spectacle', 'Historical'],
+    eventTag: 'Limitless Experiences',
+    ticketPrice: 600,
+    msLeft: 20 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 33
+  {
+    slug: 'lyon-festival-of-lights',
+    title: 'Lyon Festival of Lights VIP Tour',
+    date: 'Saturday, 8 December 2026',
+    city: 'Lyon',
+    venue: 'Place des Terreaux',
+    address: 'Place des Terreaux, 69001 Lyon',
+    mapQuery: 'Place+des+Terreaux+Lyon',
+    category: 'Shows and culture',
+    paymentType: 'waitlist',
+    tags: ['Light Festival', 'Outdoor'],
+  },
+
+  // =========================================================================
+  // CONCERTS AND FESTIVALS (34–48)
+  // =========================================================================
+
+  // 34
+  {
+    slug: 'accor-arena-coldplay',
+    title: 'Coldplay Live at Accor Arena',
+    date: 'Friday, 12 June 2026',
+    city: 'Paris',
+    venue: 'Accor Arena',
+    address: '8 Bd de Bercy, 75012 Paris',
+    mapQuery: 'Accor+Arena+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'auction',
+    tags: ['Pop Rock', 'Stadium Tour'],
+    eventTag: 'Fever Original',
+    currentBid: 35000,
+    msLeft: 16 * 24 * 60 * 60 * 1000,
+  },
+  // 35
+  {
+    slug: 'la-defense-arena-beyonce',
+    title: 'Beyoncé World Tour at La Défense Arena',
+    date: 'Saturday, 27 June 2026',
+    city: 'Paris',
+    venue: 'Paris La Défense Arena',
+    address: "99 Jardin de l'Arche, 92000 Nanterre",
+    mapQuery: 'Paris+La+Defense+Arena',
+    category: 'Concerts and festivals',
+    paymentType: 'auction',
+    tags: ['Pop', 'World Tour'],
+    eventTag: 'Limitless Experiences',
+    currentBid: 50000,
+    msLeft: 22 * 24 * 60 * 60 * 1000,
+  },
+  // 36
+  {
+    slug: 'olympia-jazz-night',
+    title: "Jazz Night with Gregory Porter at L'Olympia",
+    date: 'Thursday, 19 March 2026',
+    city: 'Paris',
+    venue: "L'Olympia",
+    address: '28 Bd des Capucines, 75009 Paris',
+    mapQuery: 'Olympia+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'redeem',
+    tags: ['Jazz', 'Live Music'],
+    ticketPrice: 25000,
+    maxTickets: 10,
+  },
+  // 37
+  {
+    slug: 'stade-de-france-ed-sheeran',
+    title: 'Ed Sheeran Concert at Stade de France',
+    date: 'Saturday, 4 July 2026',
+    city: 'Paris',
+    venue: 'Stade de France',
+    address: 'Stade de France, 93200 Saint-Denis',
+    mapQuery: 'Stade+de+France',
+    category: 'Concerts and festivals',
+    paymentType: 'standard',
+    tags: ['Pop', 'Stadium'],
+    price: 210,
+  },
+  // 38
+  {
+    slug: 'bataclan-indie-rock',
+    title: 'Indie Rock Night at Le Bataclan',
+    date: 'Saturday, 21 March 2026',
+    city: 'Paris',
+    venue: 'Le Bataclan',
+    address: '50 Bd Voltaire, 75011 Paris',
+    mapQuery: 'Bataclan+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'prize-draw',
+    tags: ['Indie Rock', 'Live Music'],
+    ticketPrice: 250,
+    msLeft: 7 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 39
+  {
+    slug: 'zenith-french-pop',
+    title: 'French Pop Gala at Le Zénith',
+    date: 'Friday, 27 March 2026',
+    city: 'Paris',
+    venue: 'Le Zénith Paris',
+    address: '211 Av. Jean Jaurès, 75019 Paris',
+    mapQuery: 'Zenith+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'linkout',
+    tags: ['French Pop', 'Gala'],
+    externalUrl: 'https://www.le-zenith.com',
+    providerName: 'Le Zénith',
+  },
+  // 40
+  {
+    slug: 'philharmonie-film-scores',
+    title: 'Film Score Symphony at Philharmonie',
+    date: 'Saturday, 18 April 2026',
+    city: 'Paris',
+    venue: 'Philharmonie de Paris',
+    address: '221 Av. Jean Jaurès, 75019 Paris',
+    mapQuery: 'Philharmonie+de+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'redeem',
+    tags: ['Film Scores', 'Orchestra'],
+    ticketPrice: 30000,
+    maxTickets: 10,
+  },
+  // 41
+  {
+    slug: 'elysee-montmartre-electronic',
+    title: 'Electronic Music Night at Élysée Montmartre',
+    date: 'Saturday, 28 March 2026',
+    city: 'Paris',
+    venue: 'Élysée Montmartre',
+    address: '72 Bd de Rochechouart, 75018 Paris',
+    mapQuery: 'Elysee+Montmartre+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'waitlist',
+    tags: ['Electronic', 'DJ Set'],
+  },
+  // 42
+  {
+    slug: 'fete-musique-rooftop',
+    title: 'Fête de la Musique VIP Rooftop Party',
+    date: 'Sunday, 21 June 2026',
+    city: 'Paris',
+    venue: 'Terrass" Hotel Montmartre',
+    address: '12 Rue Joseph de Maistre, 75018 Paris',
+    mapQuery: 'Terrass+Hotel+Montmartre+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'prize-draw',
+    tags: ['Rooftop', 'Festival'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 200,
+    msLeft: 28 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 43
+  {
+    slug: 'parc-princes-weeknd',
+    title: 'The Weeknd Concert at Parc des Princes',
+    date: 'Saturday, 11 July 2026',
+    city: 'Paris',
+    venue: 'Parc des Princes',
+    address: '24 Rue du Commandant Guilbaud, 75016 Paris',
+    mapQuery: 'Parc+des+Princes+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'auction',
+    tags: ['R&B', 'Stadium Tour'],
+    currentBid: 38000,
+    msLeft: 20 * 24 * 60 * 60 * 1000,
+  },
+  // 44
+  {
+    slug: 'new-morning-jazz',
+    title: 'New Morning Jazz Club Session',
+    date: 'Thursday, 26 March 2026',
+    city: 'Paris',
+    venue: 'New Morning',
+    address: '7-9 Rue des Petites Écuries, 75010 Paris',
+    mapQuery: 'New+Morning+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'redeem',
+    tags: ['Jazz', 'Club'],
+    ticketPrice: 10000,
+    maxTickets: 10,
+  },
+  // 45
+  {
+    slug: 'salle-pleyel-piano',
+    title: 'Piano Recital at Salle Pleyel',
+    date: 'Sunday, 19 April 2026',
+    city: 'Paris',
+    venue: 'Salle Pleyel',
+    address: '252 Rue du Faubourg Saint-Honoré, 75008 Paris',
+    mapQuery: 'Salle+Pleyel+Paris',
+    category: 'Concerts and festivals',
+    paymentType: 'standard',
+    tags: ['Piano', 'Classical'],
+    price: 120,
+  },
+  // 46
+  {
+    slug: 'nice-jazz-festival',
+    title: 'Nice Jazz Festival VIP Experience',
+    date: 'Saturday, 18 July 2026',
+    city: 'Nice',
+    venue: 'Place Masséna',
+    address: 'Place Masséna, 06000 Nice',
+    mapQuery: 'Place+Massena+Nice',
+    category: 'Concerts and festivals',
+    paymentType: 'prize-draw',
+    tags: ['Jazz', 'Festival'],
+    eventTag: 'Limitless Experiences',
+    ticketPrice: 400,
+    msLeft: 25 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 47
+  {
+    slug: 'vieilles-charrues-festival',
+    title: 'Les Vieilles Charrues Festival Pass',
+    date: 'Thursday, 16 July 2026',
+    city: 'Carhaix',
+    venue: 'Site de Kerampuilh',
+    address: 'Site de Kerampuilh, 29270 Carhaix-Plouguer',
+    mapQuery: 'Vieilles+Charrues+Carhaix',
+    category: 'Concerts and festivals',
+    paymentType: 'linkout',
+    tags: ['Rock', 'Festival'],
+    externalUrl: 'https://www.vieillescharrues.asso.fr',
+    providerName: 'Vieilles Charrues',
+  },
+  // 48
+  {
+    slug: 'marseille-fiesta-des-suds',
+    title: 'Fiesta des Suds Festival Marseille',
+    date: 'Saturday, 17 October 2026',
+    city: 'Marseille',
+    venue: 'Dock des Suds',
+    address: '12 Rue Urbain V, 13002 Marseille',
+    mapQuery: 'Dock+des+Suds+Marseille',
+    category: 'Concerts and festivals',
+    paymentType: 'waitlist',
+    tags: ['World Music', 'Festival'],
+  },
+
+  // =========================================================================
+  // FOOD AND DRINKS (49–62)
+  // =========================================================================
+
+  // 49
+  {
+    slug: 'pastry-masterclass-meurice',
+    title: 'French Pastry Masterclass at Le Meurice',
+    date: 'Saturday, 14 March 2026',
+    city: 'Paris',
+    venue: 'Le Meurice',
+    address: '228 Rue de Rivoli, 75001 Paris',
+    mapQuery: 'Le+Meurice+Paris',
+    category: 'Food and drinks',
+    paymentType: 'redeem',
+    tags: ['Pastry', 'Workshop'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 12000,
+    maxTickets: 10,
+  },
+  // 50
+  {
+    slug: 'wine-cheese-sofitel',
+    title: 'Wine & Cheese Pairing at Sofitel Paris',
+    date: 'Friday, 20 March 2026',
+    city: 'Paris',
+    venue: 'Sofitel Paris Le Faubourg',
+    address: "15 Rue Boissy d'Anglas, 75008 Paris",
+    mapQuery: 'Sofitel+Paris+Le+Faubourg',
+    category: 'Food and drinks',
+    paymentType: 'standard',
+    tags: ['Wine', 'Cheese'],
+    eventTag: 'Hotel Experience',
+    price: 135,
+  },
+  // 51
+  {
+    slug: 'cordon-bleu-cooking',
+    title: 'Cooking Class at Le Cordon Bleu',
+    date: 'Saturday, 28 March 2026',
+    city: 'Paris',
+    venue: 'Le Cordon Bleu',
+    address: '13-15 Quai André Citroën, 75015 Paris',
+    mapQuery: 'Le+Cordon+Bleu+Paris',
+    category: 'Food and drinks',
+    paymentType: 'auction',
+    tags: ['Cooking', 'French Cuisine'],
+    currentBid: 38000,
+    msLeft: 9 * 24 * 60 * 60 * 1000,
+  },
+  // 52
+  {
+    slug: 'champagne-tasting-krug',
+    title: 'Champagne Tasting at Maison Krug',
+    date: 'Sunday, 5 April 2026',
+    city: 'Paris',
+    venue: 'Maison Krug Paris',
+    address: '7 Rue Coq Héron, 75001 Paris',
+    mapQuery: 'Maison+Krug+Paris',
+    category: 'Food and drinks',
+    paymentType: 'redeem',
+    tags: ['Champagne', 'Luxury'],
+    ticketPrice: 28000,
+    maxTickets: 10,
+  },
+  // 53
+  {
+    slug: 'jules-verne-dinner',
+    title: 'Gourmet Dinner at Le Jules Verne',
+    date: 'Saturday, 18 April 2026',
+    city: 'Paris',
+    venue: 'Le Jules Verne',
+    address: 'Tour Eiffel, Av. Gustave Eiffel, 75007 Paris',
+    mapQuery: 'Le+Jules+Verne+Tour+Eiffel+Paris',
+    category: 'Food and drinks',
+    paymentType: 'auction',
+    tags: ['Fine Dining', 'Eiffel Tower'],
+    eventTag: 'Limitless Experiences',
+    currentBid: 48000,
+    msLeft: 14 * 24 * 60 * 60 * 1000,
+  },
+  // 54
+  {
+    slug: 'market-cooking-marais',
+    title: 'Market Tour & Cooking Class in Le Marais',
+    date: 'Sunday, 22 March 2026',
+    city: 'Paris',
+    venue: 'La Cuisine Paris',
+    address: "80 Quai de l'Hôtel de Ville, 75004 Paris",
+    mapQuery: 'La+Cuisine+Paris+Marais',
+    category: 'Food and drinks',
+    paymentType: 'prize-draw',
+    tags: ['Market', 'Cooking'],
+    eventTag: 'Fever Original',
+    ticketPrice: 400,
+    msLeft: 12 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 55
+  {
+    slug: 'chocolate-workshop-paris',
+    title: 'Chocolate Workshop at La Maison du Chocolat',
+    date: 'Saturday, 4 April 2026',
+    city: 'Paris',
+    venue: 'La Maison du Chocolat',
+    address: '225 Rue du Faubourg Saint-Honoré, 75008 Paris',
+    mapQuery: 'Maison+du+Chocolat+Paris',
+    category: 'Food and drinks',
+    paymentType: 'redeem',
+    tags: ['Chocolate', 'Workshop'],
+    ticketPrice: 8000,
+    maxTickets: 10,
+  },
+  // 56
+  {
+    slug: 'cocktail-masterclass-lutetia',
+    title: 'Rooftop Cocktail Masterclass at Hôtel Lutetia',
+    date: 'Friday, 10 April 2026',
+    city: 'Paris',
+    venue: 'Hôtel Lutetia',
+    address: '45 Bd Raspail, 75006 Paris',
+    mapQuery: 'Hotel+Lutetia+Paris',
+    category: 'Food and drinks',
+    paymentType: 'waitlist',
+    tags: ['Cocktails', 'Rooftop'],
+    eventTag: 'Hotel Experience',
+  },
+  // 57
+  {
+    slug: 'michelin-lunch-ambroisie',
+    title: "Michelin-Star Lunch at L'Ambroisie",
+    date: 'Saturday, 25 April 2026',
+    city: 'Paris',
+    venue: "L'Ambroisie",
+    address: '9 Place des Vosges, 75004 Paris',
+    mapQuery: 'L+Ambroisie+Paris',
+    category: 'Food and drinks',
+    paymentType: 'prize-draw',
+    tags: ['Michelin Star', 'Fine Dining'],
+    eventTag: 'Limitless Experiences',
+    ticketPrice: 1500,
+    msLeft: 18 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 58
+  {
+    slug: 'breadmaking-poilane',
+    title: 'Artisan Breadmaking at Poilâne',
+    date: 'Sunday, 29 March 2026',
+    city: 'Paris',
+    venue: 'Poilâne',
+    address: '8 Rue du Cherche-Midi, 75006 Paris',
+    mapQuery: 'Poilane+Paris',
+    category: 'Food and drinks',
+    paymentType: 'waitlist',
+    tags: ['Bread', 'Workshop'],
+  },
+  // 59
+  {
+    slug: 'food-tour-saint-germain',
+    title: 'Parisian Food Tour: Saint-Germain-des-Prés',
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'Saint-Germain-des-Prés',
+    address: 'Place Saint-Germain-des-Prés, 75006 Paris',
+    mapQuery: 'Saint+Germain+des+Pres+Paris',
+    category: 'Food and drinks',
+    paymentType: 'linkout',
+    tags: ['Food Tour', 'Walking'],
+    externalUrl: 'https://www.parisbymouth.com',
+    providerName: 'Paris by Mouth',
+  },
+  // 60
+  {
+    slug: 'wine-cruise-seine',
+    title: 'Wine Tasting Cruise on the Seine',
+    date: 'Saturday, 16 May 2026',
+    city: 'Paris',
+    venue: 'Bateaux Mouches',
+    address: 'Port de la Conférence, 75008 Paris',
+    mapQuery: 'Bateaux+Mouches+Paris',
+    category: 'Food and drinks',
+    paymentType: 'auction',
+    tags: ['Wine', 'River Cruise'],
+    currentBid: 25000,
+    msLeft: 11 * 24 * 60 * 60 * 1000,
+  },
+  // 61
+  {
+    slug: 'bordeaux-grand-cru-tour',
+    title: 'Bordeaux Grand Cru Wine Tour',
+    date: 'Saturday, 9 May 2026',
+    city: 'Bordeaux',
+    venue: 'Château Margaux',
+    address: 'Château Margaux, 33460 Margaux',
+    mapQuery: 'Chateau+Margaux+Bordeaux',
+    category: 'Food and drinks',
+    paymentType: 'linkout',
+    tags: ['Wine', 'Château'],
+    externalUrl: 'https://www.chateau-margaux.com',
+    providerName: 'Château Margaux',
+  },
+  // 62
+  {
+    slug: 'lyon-bouchon-experience',
+    title: 'Lyon Bouchon Gastronomic Experience',
+    date: 'Saturday, 11 April 2026',
+    city: 'Lyon',
+    venue: 'Le Bouchon des Filles',
+    address: '20 Rue Sergent Blandan, 69001 Lyon',
+    mapQuery: 'Bouchon+des+Filles+Lyon',
+    category: 'Food and drinks',
+    paymentType: 'redeem',
+    tags: ['Bouchon', 'Gastronomy'],
+    ticketPrice: 18000,
+    maxTickets: 10,
+  },
+
+  // =========================================================================
+  // WELLNESS (63–74)
+  // =========================================================================
+
+  // 63
+  {
+    slug: 'spa-sofitel-faubourg',
+    title: 'Spa Day at Sofitel Paris Le Faubourg',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Sofitel Paris Le Faubourg',
+    address: "15 Rue Boissy d'Anglas, 75008 Paris",
+    mapQuery: 'Sofitel+Paris+Le+Faubourg',
+    category: 'Wellness',
+    paymentType: 'redeem',
+    tags: ['Spa', 'Luxury'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 22000,
+    maxTickets: 10,
+  },
+  // 64
+  {
+    slug: 'hammam-mosquee-paris',
+    title: 'Hammam & Massage at Mosquée de Paris',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Grande Mosquée de Paris',
+    address: "2 bis Place du Puits de l'Ermite, 75005 Paris",
+    mapQuery: 'Grande+Mosquee+de+Paris',
+    category: 'Wellness',
+    paymentType: 'standard',
+    tags: ['Hammam', 'Massage'],
+    price: 95,
+  },
+  // 65
+  {
+    slug: 'yoga-trocadero',
+    title: 'Yoga Sunrise at Trocadéro Gardens',
+    date: 'Every Sunday',
+    city: 'Paris',
+    venue: 'Jardins du Trocadéro',
+    address: 'Place du Trocadéro, 75016 Paris',
+    mapQuery: 'Jardins+du+Trocadero+Paris',
+    category: 'Wellness',
+    paymentType: 'standard',
+    tags: ['Yoga', 'Outdoor'],
+    price: 35,
+  },
+  // 66
+  {
+    slug: 'float-therapy-meiso',
+    title: 'Float Therapy at Meiso Paris',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Meiso Paris',
+    address: '29 Rue Beaurepaire, 75010 Paris',
+    mapQuery: 'Meiso+Paris',
+    category: 'Wellness',
+    paymentType: 'standard',
+    tags: ['Float Therapy', 'Relaxation'],
+    price: 75,
+  },
+  // 67
+  {
+    slug: 'thermal-spa-molitor',
+    title: 'Thermal Spa Experience at Piscine Molitor',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Piscine Molitor',
+    address: "13 Rue de l'Ingénieur Keller, 75016 Paris",
+    mapQuery: 'Piscine+Molitor+Paris',
+    category: 'Wellness',
+    paymentType: 'prize-draw',
+    tags: ['Thermal Spa', 'Art Deco'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 350,
+    msLeft: 14 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 68
+  {
+    slug: 'mindfulness-pullman-bercy',
+    title: 'Mindfulness Retreat at Pullman Paris Bercy',
+    date: 'Saturday, 18 April 2026',
+    city: 'Paris',
+    venue: 'Pullman Paris Centre - Bercy',
+    address: '1 Rue de Libourne, 75012 Paris',
+    mapQuery: 'Pullman+Paris+Bercy',
+    category: 'Wellness',
+    paymentType: 'linkout',
+    tags: ['Mindfulness', 'Retreat'],
+    eventTag: 'Hotel Experience',
+    externalUrl: 'https://www.pullmanhotels.com',
+    providerName: 'Pullman Hotels',
+  },
+  // 69
+  {
+    slug: 'pilates-brunch-mama',
+    title: 'Pilates & Brunch at Mama Shelter East',
+    date: 'Every Sunday',
+    city: 'Paris',
+    venue: 'Mama Shelter Paris East',
+    address: '109 Rue de Bagnolet, 75020 Paris',
+    mapQuery: 'Mama+Shelter+Paris+East',
+    category: 'Wellness',
+    paymentType: 'prize-draw',
+    tags: ['Pilates', 'Brunch'],
+    ticketPrice: 200,
+    msLeft: 10 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 70
+  {
+    slug: 'rooftop-hottub-rochechouart',
+    title: 'Rooftop Hot Tub at Hôtel Rochechouart',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Hôtel Rochechouart',
+    address: '55 Bd de Rochechouart, 75009 Paris',
+    mapQuery: 'Hotel+Rochechouart+Paris',
+    category: 'Wellness',
+    paymentType: 'waitlist',
+    tags: ['Rooftop', 'Hot Tub'],
+    eventTag: 'Hotel Experience',
+  },
+  // 71
+  {
+    slug: 'sound-bath-grand-rex',
+    title: 'Sound Bath Meditation at Le Grand Rex',
+    date: 'Saturday, 28 March 2026',
+    city: 'Paris',
+    venue: 'Le Grand Rex',
+    address: '1 Bd Poissonnière, 75002 Paris',
+    mapQuery: 'Grand+Rex+Paris',
+    category: 'Wellness',
+    paymentType: 'redeem',
+    tags: ['Sound Bath', 'Meditation'],
+    ticketPrice: 8000,
+    maxTickets: 10,
+  },
+  // 72
+  {
+    slug: 'cryotherapy-sofitel-arc',
+    title: 'Cryotherapy Session at Sofitel Arc de Triomphe',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Sofitel Paris Arc de Triomphe',
+    address: '14 Rue Beaujon, 75008 Paris',
+    mapQuery: 'Sofitel+Arc+de+Triomphe+Paris',
+    category: 'Wellness',
+    paymentType: 'linkout',
+    tags: ['Cryotherapy', 'Recovery'],
+    eventTag: 'Hotel Experience',
+    externalUrl: 'https://www.sofitel-paris-arc-de-triomphe.com',
+    providerName: 'Sofitel Hotels',
+  },
+  // 73
+  {
+    slug: 'thalasso-sofitel-nice',
+    title: 'Thalassotherapy Day at Sofitel Nice',
+    date: 'Every Day',
+    city: 'Nice',
+    venue: 'Sofitel Nice',
+    address: "2-4 Parvis de l'Europe, 06300 Nice",
+    mapQuery: 'Sofitel+Nice',
+    category: 'Wellness',
+    paymentType: 'linkout',
+    tags: ['Thalassotherapy', 'Seaside'],
+    externalUrl: 'https://www.sofitel.com',
+    providerName: 'Sofitel Hotels',
+  },
+  // 74
+  {
+    slug: 'thermal-baths-aix',
+    title: 'Thermal Baths Experience in Aix-les-Bains',
+    date: 'Every Day',
+    city: 'Aix-les-Bains',
+    venue: 'Thermes Chevalley',
+    address: 'Rue des Bains, 73100 Aix-les-Bains',
+    mapQuery: 'Thermes+Chevalley+Aix-les-Bains',
+    category: 'Wellness',
+    paymentType: 'waitlist',
+    tags: ['Thermal Baths', 'Natural'],
+  },
+
+  // =========================================================================
+  // VISITS (75–88)
+  // =========================================================================
+
+  // 75
+  {
+    slug: 'louvre-night-tour',
+    title: 'Louvre Private Night Tour',
+    date: 'Friday, 3 April 2026',
+    city: 'Paris',
+    venue: 'Musée du Louvre',
+    address: 'Rue de Rivoli, 75001 Paris',
+    mapQuery: 'Musee+du+Louvre+Paris',
+    category: 'Visits',
+    paymentType: 'redeem',
+    tags: ['Museum', 'Art'],
+    eventTag: 'Fever Original',
+    ticketPrice: 35000,
+    maxTickets: 10,
+  },
+  // 76
+  {
+    slug: 'eiffel-tower-sunset',
+    title: 'Eiffel Tower Summit Sunset Visit',
+    date: 'Every Evening',
+    city: 'Paris',
+    venue: 'Tour Eiffel',
+    address: 'Champ de Mars, 5 Av. Anatole France, 75007 Paris',
+    mapQuery: 'Tour+Eiffel+Paris',
+    category: 'Visits',
+    paymentType: 'auction',
+    tags: ['Iconic', 'Sunset'],
+    currentBid: 15000,
+    msLeft: 7 * 24 * 60 * 60 * 1000,
+  },
+  // 77
+  {
+    slug: 'catacombs-skip-the-line',
+    title: 'Paris Catacombs Skip-the-Line Tour',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Catacombes de Paris',
+    address: '1 Av. du Colonel Henri Rol-Tanguy, 75014 Paris',
+    mapQuery: 'Catacombes+de+Paris',
+    category: 'Visits',
+    paymentType: 'standard',
+    tags: ['Underground', 'Historical'],
+    price: 45,
+  },
+  // 78
+  {
+    slug: 'montmartre-street-art',
+    title: 'Montmartre Street Art Walking Tour',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Place du Tertre',
+    address: 'Place du Tertre, 75018 Paris',
+    mapQuery: 'Place+du+Tertre+Montmartre+Paris',
+    category: 'Visits',
+    paymentType: 'linkout',
+    tags: ['Street Art', 'Walking Tour'],
+    externalUrl: 'https://www.getyourguide.com',
+    providerName: 'GetYourGuide',
+  },
+  // 79
+  {
+    slug: 'versailles-day-trip',
+    title: 'Palace of Versailles Day Trip from Paris',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Château de Versailles',
+    address: "Place d'Armes, 78000 Versailles",
+    mapQuery: 'Chateau+de+Versailles',
+    category: 'Visits',
+    paymentType: 'standard',
+    tags: ['Palace', 'Day Trip'],
+    price: 120,
+  },
+  // 80
+  {
+    slug: 'sainte-chapelle-tour',
+    title: 'Sainte-Chapelle & Conciergerie Guided Visit',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Sainte-Chapelle',
+    address: '10 Bd du Palais, 75001 Paris',
+    mapQuery: 'Sainte+Chapelle+Paris',
+    category: 'Visits',
+    paymentType: 'redeem',
+    tags: ['Gothic', 'Historical'],
+    ticketPrice: 14000,
+    maxTickets: 10,
+  },
+  // 81
+  {
+    slug: 'arc-de-triomphe-rooftop',
+    title: 'Arc de Triomphe Rooftop Experience',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Arc de Triomphe',
+    address: 'Place Charles de Gaulle, 75008 Paris',
+    mapQuery: 'Arc+de+Triomphe+Paris',
+    category: 'Visits',
+    paymentType: 'standard',
+    tags: ['Monument', 'Panorama'],
+    price: 35,
+  },
+  // 82
+  {
+    slug: 'orangerie-monet-tour',
+    title: "Musée de l'Orangerie Monet Guided Tour",
+    date: 'Wednesday, 15 April 2026',
+    city: 'Paris',
+    venue: "Musée de l'Orangerie",
+    address: 'Jardin des Tuileries, 75001 Paris',
+    mapQuery: 'Musee+de+l+Orangerie+Paris',
+    category: 'Visits',
+    paymentType: 'standard',
+    tags: ['Impressionism', 'Art'],
+    price: 55,
+  },
+  // 83
+  {
+    slug: 'pere-lachaise-tour',
+    title: 'Père Lachaise Cemetery Historical Tour',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Cimetière du Père-Lachaise',
+    address: '16 Rue du Repos, 75020 Paris',
+    mapQuery: 'Pere+Lachaise+Paris',
+    category: 'Visits',
+    paymentType: 'linkout',
+    tags: ['History', 'Walking Tour'],
+    externalUrl: 'https://www.getyourguide.com',
+    providerName: 'GetYourGuide',
+  },
+  // 84
+  {
+    slug: 'secret-passages-marais',
+    title: 'Secret Passages of Le Marais Tour',
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'Le Marais',
+    address: 'Place des Vosges, 75004 Paris',
+    mapQuery: 'Place+des+Vosges+Paris',
+    category: 'Visits',
+    paymentType: 'prize-draw',
+    tags: ['Hidden Gems', 'Walking Tour'],
+    ticketPrice: 150,
+    msLeft: 8 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 85
+  {
+    slug: 'pantheon-dome-climb',
+    title: 'Panthéon Dome Climb Experience',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Panthéon',
+    address: 'Place du Panthéon, 75005 Paris',
+    mapQuery: 'Pantheon+Paris',
+    category: 'Visits',
+    paymentType: 'waitlist',
+    tags: ['Monument', 'Panorama'],
+  },
+  // 86
+  {
+    slug: 'covered-passages-tour',
+    title: 'Paris Covered Passages Walking Tour',
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'Passage des Panoramas',
+    address: '10 Rue Saint-Marc, 75002 Paris',
+    mapQuery: 'Passage+des+Panoramas+Paris',
+    category: 'Visits',
+    paymentType: 'redeem',
+    tags: ['Architecture', 'Shopping'],
+    ticketPrice: 8000,
+    maxTickets: 10,
+  },
+  // 87
+  {
+    slug: 'mont-saint-michel-trip',
+    title: 'Mont Saint-Michel Day Trip',
+    date: 'Every Weekend',
+    city: 'Mont Saint-Michel',
+    venue: 'Abbaye du Mont Saint-Michel',
+    address: '50170 Le Mont-Saint-Michel',
+    mapQuery: 'Mont+Saint+Michel',
+    category: 'Visits',
+    paymentType: 'linkout',
+    tags: ['UNESCO', 'Day Trip'],
+    externalUrl: 'https://www.ot-montsaintmichel.com',
+    providerName: 'Mont Saint-Michel Tourism',
+  },
+  // 88
+  {
+    slug: 'chateau-chambord-visit',
+    title: 'Château de Chambord Royal Visit',
+    date: 'Every Day',
+    city: 'Chambord',
+    venue: 'Château de Chambord',
+    address: '41250 Chambord',
+    mapQuery: 'Chateau+de+Chambord',
+    category: 'Visits',
+    paymentType: 'prize-draw',
+    tags: ['Renaissance', 'Castle'],
+    ticketPrice: 500,
+    msLeft: 16 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+
+  // =========================================================================
+  // HOTEL EXPERIENCES (89–100)
+  // =========================================================================
+
+  // 89
+  {
+    slug: 'overnight-raffles-monceau',
+    title: 'Overnight Stay at Raffles Royal Monceau',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Raffles Paris',
+    address: '37 Av. Hoche, 75008 Paris',
+    mapQuery: 'Raffles+Royal+Monceau+Paris',
+    category: 'Hotel experiences',
+    paymentType: 'auction',
+    tags: ['Luxury', 'Overnight'],
+    eventTag: 'Hotel Experience',
+    currentBid: 55000,
+    msLeft: 18 * 24 * 60 * 60 * 1000,
+  },
+  // 90
+  {
+    slug: 'afternoon-tea-shangrila',
+    title: 'Afternoon Tea at Shangri-La Paris',
+    date: 'Every Day',
+    city: 'Paris',
+    venue: 'Shangri-La Paris',
+    address: "10 Av. d'Iéna, 75116 Paris",
+    mapQuery: 'Shangri+La+Paris',
+    category: 'Hotel experiences',
+    paymentType: 'redeem',
+    tags: ['Tea', 'Luxury'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 16000,
+    maxTickets: 10,
+  },
+  // 91
+  {
+    slug: 'rooftop-dinner-pullman-eiffel',
+    title: 'Rooftop Dinner at Pullman Paris Tour Eiffel',
+    date: 'Every Friday',
+    city: 'Paris',
+    venue: 'Pullman Paris Tour Eiffel',
+    address: '18 Av. de Suffren, 75015 Paris',
+    mapQuery: 'Pullman+Paris+Tour+Eiffel',
+    category: 'Hotel experiences',
+    paymentType: 'auction',
+    tags: ['Dining', 'Eiffel View'],
+    eventTag: 'Hotel Experience',
+    currentBid: 32000,
+    msLeft: 13 * 24 * 60 * 60 * 1000,
+  },
+  // 92
+  {
+    slug: 'suite-sofitel-faubourg',
+    title: 'Suite Experience at Sofitel Le Faubourg',
+    date: 'Every Weekend',
+    city: 'Paris',
+    venue: 'Sofitel Paris Le Faubourg',
+    address: "15 Rue Boissy d'Anglas, 75008 Paris",
+    mapQuery: 'Sofitel+Paris+Le+Faubourg',
+    category: 'Hotel experiences',
+    paymentType: 'prize-draw',
+    tags: ['Suite', 'Luxury'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 1000,
+    msLeft: 20 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 93
+  {
+    slug: 'brunch-mama-shelter',
+    title: 'Weekend Brunch at Mama Shelter East',
+    date: 'Every Sunday',
+    city: 'Paris',
+    venue: 'Mama Shelter Paris East',
+    address: '109 Rue de Bagnolet, 75020 Paris',
+    mapQuery: 'Mama+Shelter+Paris+East',
+    category: 'Hotel experiences',
+    paymentType: 'redeem',
+    tags: ['Brunch', 'Hip'],
+    ticketPrice: 6000,
+    maxTickets: 10,
+  },
+  // 94
+  {
+    slug: 'cocktail-plaza-athenee',
+    title: 'Cocktail Evening at Hôtel Plaza Athénée',
+    date: 'Every Friday',
+    city: 'Paris',
+    venue: 'Hôtel Plaza Athénée',
+    address: '25 Av. Montaigne, 75008 Paris',
+    mapQuery: 'Hotel+Plaza+Athenee+Paris',
+    category: 'Hotel experiences',
+    paymentType: 'prize-draw',
+    tags: ['Cocktails', 'Luxury'],
+    eventTag: 'Limitless Experiences',
+    ticketPrice: 600,
+    msLeft: 12 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 95
+  {
+    slug: 'art-tour-mob-hotel',
+    title: 'Art & Design Tour at MOB Hôtel',
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'MOB Hôtel Paris',
+    address: '4-6 Rue Gambetta, 93100 Saint-Ouen',
+    mapQuery: 'MOB+Hotel+Saint+Ouen',
+    category: 'Hotel experiences',
+    paymentType: 'linkout',
+    tags: ['Art', 'Design'],
+    externalUrl: 'https://www.mobhotel.com',
+    providerName: 'MOB Hôtel',
+  },
+  // 96
+  {
+    slug: 'jazz-brunch-novotel',
+    title: 'Jazz Brunch at Novotel Les Halles',
+    date: 'Every Sunday',
+    city: 'Paris',
+    venue: 'Novotel Paris Les Halles',
+    address: '8 Place Marguerite de Navarre, 75001 Paris',
+    mapQuery: 'Novotel+Les+Halles+Paris',
+    category: 'Hotel experiences',
+    paymentType: 'standard',
+    tags: ['Jazz', 'Brunch'],
+    price: 75,
+  },
+  // 97
+  {
+    slug: 'wine-cellar-mercure',
+    title: 'Wine Cellar Tasting at Mercure Montmartre',
+    date: 'Every Friday',
+    city: 'Paris',
+    venue: 'Mercure Paris Montmartre',
+    address: '3 Rue Caulaincourt, 75018 Paris',
+    mapQuery: 'Mercure+Montmartre+Paris',
+    category: 'Hotel experiences',
+    paymentType: 'standard',
+    tags: ['Wine', 'Cellar'],
+    price: 85,
+  },
+  // 98
+  {
+    slug: 'penthouse-sofitel-baltimore',
+    title: 'Penthouse Evening at Sofitel Paris Baltimore',
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'Sofitel Paris Baltimore Tour Eiffel',
+    address: '88 bis Av. Kléber, 75116 Paris',
+    mapQuery: 'Sofitel+Baltimore+Paris',
+    category: 'Hotel experiences',
+    paymentType: 'prize-draw',
+    tags: ['Penthouse', 'Eiffel View'],
+    eventTag: 'Hotel Experience',
+    ticketPrice: 750,
+    msLeft: 14 * 24 * 60 * 60 * 1000,
+    maxTickets: 10,
+  },
+  // 99
+  {
+    slug: 'kids-workshop-novotel',
+    title: "Kids' Creative Workshop at Novotel Bercy",
+    date: 'Every Saturday',
+    city: 'Paris',
+    venue: 'Novotel Paris Centre Bercy',
+    address: '85 Rue de Bercy, 75012 Paris',
+    mapQuery: 'Novotel+Paris+Bercy',
+    category: 'Hotel experiences',
+    paymentType: 'waitlist',
+    tags: ['Kids', 'Family'],
+  },
+  // 100
+  {
+    slug: 'chateau-hotel-mgallery-bordeaux',
+    title: 'Château Hotel Stay at MGallery Bordeaux',
+    date: 'Every Weekend',
+    city: 'Bordeaux',
+    venue: 'La Grande Maison de Bernard Magrez',
+    address: '10 Rue de Labottière, 33000 Bordeaux',
+    mapQuery: 'La+Grande+Maison+Bordeaux',
+    category: 'Hotel experiences',
+    paymentType: 'auction',
+    tags: ['Château', 'Luxury'],
+    eventTag: 'Hotel Experience',
+    currentBid: 42000,
+    msLeft: 15 * 24 * 60 * 60 * 1000,
+  },
+];

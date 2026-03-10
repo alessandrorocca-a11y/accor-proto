@@ -1,0 +1,77 @@
+.ads-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--wel-sem-color-overlay-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.ads-modal {
+  background: var(--wel-sem-color-surface);
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  border-radius: 8px;
+  max-width: 32rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 var(--wel-sem-number-shadow-down-wide-y) var(--wel-sem-number-shadow-wide-blur) var(--wel-sem-color-shadow-default);
+}
+
+.ads-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-modal-title {
+  margin: 0;
+  font: var(--wel-typography-title-02);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-modal-close {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.ads-modal-close:hover {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.ads-modal-body {
+  padding: 1.25rem;
+  font: var(--wel-typography-body-default-01);
+}
+
+.ads-modal-footer {
+  padding: 1rem 1.25rem;
+  border-top: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .ads-modal-backdrop {
+    background: rgba(6, 35, 44, 0.88);
+  }
+
+  .ads-modal {
+    max-width: 480px;
+    border-radius: 16px;
+    box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
+  }
+}

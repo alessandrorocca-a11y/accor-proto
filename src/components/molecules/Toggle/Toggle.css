@@ -1,0 +1,50 @@
+.ads-toggle-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ads-toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ads-toggle-track {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: var(--wel-sem-color-overlay-mid);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ads-toggle-input:checked + .ads-toggle-track {
+  background: var(--wel-sem-color-focus);
+}
+
+.ads-toggle-input:focus-visible + .ads-toggle-track {
+  box-shadow: 0 0 0 2px var(--wel-sem-color-focus);
+}
+
+.ads-toggle-thumb {
+  width: 1rem;
+  height: 1rem;
+  margin: 0.125rem;
+  border-radius: 50%;
+  background: var(--wel-sem-color-on-surface-hi);
+  transition: transform 0.15s;
+}
+
+.ads-toggle-input:checked + .ads-toggle-track .ads-toggle-thumb {
+  transform: translateX(1.25rem);
+}
+
+.ads-toggle-label {
+  font: var(--wel-typography-body-default-02);
+  color: var(--wel-sem-color-on-surface-hi);
+  cursor: pointer;
+}

@@ -1,0 +1,674 @@
+.near-you {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--wel-sem-color-surface, #fff);
+  overflow: hidden;
+}
+
+/* ── Top bar (breadcrumbs + filters) ─────────────────────────────── */
+
+.near-you__top-bar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 16px;
+  background: var(--wel-sem-color-surface, #fff);
+  z-index: 10;
+}
+
+.near-you__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 0;
+}
+
+.near-you__breadcrumb-link {
+  font: var(--wel-typography-link-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-link, #0051ae);
+  text-decoration: underline;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.near-you__breadcrumb-link:hover {
+  opacity: 0.7;
+}
+
+.near-you__breadcrumbs svg {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.near-you__breadcrumb-current {
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+/* ── Filter chips ────────────────────────────────────────────────── */
+
+.near-you__filters {
+  overflow: hidden;
+}
+
+.near-you__filters-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.near-you__filters-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.near-you__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  border-radius: 100px;
+  background: var(--wel-sem-color-surface, #fff);
+  color: var(--wel-sem-color-primary, #050033);
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.near-you__chip:hover {
+  background: var(--wel-sem-color-surface-container-low, #f5f5f5);
+  border-color: var(--wel-sem-color-on-surface-hi, #050033);
+}
+
+.near-you__chip--active {
+  border-color: var(--wel-sem-color-outline-accent, #2d4cd5);
+  color: var(--wel-sem-color-accent, #2d4cd5);
+}
+
+.near-you__chip--active:hover {
+  background: #f0f2ff;
+}
+
+.near-you__chip--active svg {
+  color: var(--wel-sem-color-accent, #2d4cd5);
+}
+
+.near-you__chip svg {
+  flex-shrink: 0;
+}
+
+.near-you__chip-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--wel-sem-color-accent, #2d4cd5);
+  flex-shrink: 0;
+}
+
+/* ── Map container (fills remaining space) ───────────────────────── */
+
+.near-you__map-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.near-you__map-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  cursor: grab;
+  touch-action: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.near-you__map-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.near-you__map-viewport:active {
+  cursor: grabbing;
+}
+
+.near-you__map-content {
+  position: relative;
+}
+
+.near-you__map-tiles {
+  display: grid;
+  user-select: none;
+  pointer-events: none;
+}
+
+.near-you__map-tiles img {
+  width: 256px;
+  height: 256px;
+  display: block;
+  filter: saturate(0.3) brightness(1.05);
+}
+
+/* ── Pins layer ──────────────────────────────────────────────────── */
+
+.near-you__pins-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* pin base — round head + pointed tail */
+.near-you__pin {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, calc(-100% - 16px));
+  background: var(--wel-sem-color-primary, #050033);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+  transition: background 0.2s, transform 0.2s;
+}
+
+/* inner circle with centered dot */
+.near-you__pin::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, var(--wel-sem-color-primary, #050033) 2.5px, #fff 2.5px);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* tail pointing down */
+.near-you__pin::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 13px;
+  height: 16px;
+  background: var(--wel-sem-color-primary, #050033);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  margin-top: -2px;
+}
+
+/* selected event pin — solid blue */
+.near-you__pin--active {
+  background: #2d4cd5;
+  z-index: 3;
+  transform: translate(-50%, calc(-100% - 16px)) scale(1.15);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.near-you__pin--active::before {
+  background: radial-gradient(circle, #fff 3px, #2d4cd5 3px);
+}
+
+.near-you__pin--active::after {
+  background: #2d4cd5;
+}
+
+/* "you are here" pulse */
+.near-you__pin--you {
+  width: 16px;
+  height: 16px;
+  background: #508ffa;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(80, 143, 250, 0.25);
+  animation: near-you-pulse 2s ease-in-out infinite;
+  z-index: 2;
+  cursor: default;
+  filter: none;
+  transform: translate(-50%, -50%);
+}
+
+.near-you__pin--you::before,
+.near-you__pin--you::after {
+  display: none;
+}
+
+@keyframes near-you-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(80, 143, 250, 0.25); }
+  50% { box-shadow: 0 0 0 12px rgba(80, 143, 250, 0.10); }
+}
+
+/* cluster pin — number inside */
+.near-you__pin--cluster::before {
+  display: none;
+}
+
+.near-you__pin--cluster span {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 500 12px/1 'Roboto', sans-serif;
+  color: var(--wel-sem-color-primary, #050033);
+}
+
+/* ── "Search in this area" button ────────────────────────────────── */
+
+.near-you__search-area-btn {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
+  border-radius: 100px;
+  background: linear-gradient(247deg, var(--wel-comp-btn-primary-bg-gradient-end, #524f81) 6%, var(--wel-comp-btn-primary-bg-gradient-start, #050033) 92%);
+  color: var(--wel-comp-btn-primary-fg-color, #f9f9ff);
+  font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
+  cursor: pointer;
+  white-space: nowrap;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.near-you__search-area-btn:hover {
+  background: linear-gradient(90deg, rgba(232,198,232,0.6), rgba(198,198,240,0.6));
+  color: #050033;
+}
+
+/* ── "List view" button ──────────────────────────────────────────── */
+
+.near-you__list-view-btn {
+  position: absolute;
+  bottom: 212px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--wel-comp-btn-secondary-bg-color, #e8edff);
+  border: 1px solid var(--wel-comp-btn-secondary-border-color, #508ffa);
+  border-radius: 100px;
+  color: var(--wel-comp-btn-secondary-fg-color, #1f1b4b);
+  font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.near-you__list-view-btn:hover {
+  background: #dce3ff;
+}
+
+.near-you__list-view-btn svg {
+  flex-shrink: 0;
+}
+
+/* ── Compass / re-center button ──────────────────────────────────── */
+
+.near-you__compass-btn {
+  position: absolute;
+  bottom: 212px;
+  right: 12px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--wel-comp-btn-secondary-bg-color, #e8edff);
+  border: 1px solid var(--wel-comp-btn-secondary-border-color, #508ffa);
+  border-radius: 50%;
+  color: var(--wel-comp-btn-secondary-fg-color, #1f1b4b);
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.near-you__compass-btn:hover {
+  background: #dce3ff;
+}
+
+/* ── Bottom event carousel ───────────────────────────────────────── */
+
+.near-you__event-carousel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 8px;
+  padding: 12px 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  z-index: 5;
+}
+
+.near-you__event-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Horizontal event card ───────────────────────────────────────── */
+
+.near-you__event-card {
+  flex: 0 0 auto;
+  width: calc(100vw - 24px);
+  max-width: 377px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--wel-sem-color-surface, #fff);
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
+  box-shadow: 0 2px 6px rgba(7, 5, 24, 0.2);
+  scroll-snap-align: start;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+}
+
+.near-you__event-card--active {
+  border-color: #2d4cd5;
+}
+
+.near-you__event-card--inactive {
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  opacity: 0.75;
+}
+
+.near-you__event-card--inactive .near-you__event-card-img img {
+  opacity: 0.6;
+}
+
+.near-you__event-card-img {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  flex-shrink: 0;
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
+  overflow: hidden;
+}
+
+.near-you__event-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.near-you__event-card-fav {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.near-you__event-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.near-you__event-card-date {
+  font: var(--wel-typography-caption-default, 400 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.near-you__event-card-title {
+  font: var(--wel-typography-title-03, 500 18px/24px 'Roboto', sans-serif);
+  font-weight: 500;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.near-you__event-card-tag {
+  font: var(--wel-typography-label-strong-03, 500 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.near-you__event-card-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+}
+
+.near-you__event-card-payment-label {
+  font: var(--wel-typography-label-default-03, 400 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-neutral-container, #6d7072);
+}
+
+.near-you__event-card-points {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--ads-colors-loyalty-container-low, #f3efff);
+  padding: 2px 4px;
+  border-radius: var(--wel-sem-borderradius-element-static-sm, 2px);
+  overflow: hidden;
+}
+
+.near-you__event-card-points svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.near-you__event-card-points span {
+  font: var(--wel-typography-label-strong-03, 500 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
+  white-space: nowrap;
+}
+
+.near-you__card-timer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  padding: 2px 4px;
+  border-radius: var(--wel-sem-borderradius-element-static-md, 4px);
+  font: var(--wel-typography-caption-strong, 500 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  white-space: nowrap;
+}
+
+.near-you__card-timer-label {
+  font: var(--wel-typography-caption-default, 400 12px/16px 'Roboto', sans-serif);
+}
+
+/* ── Loyalty sheet (reused pattern) ──────────────────────────────── */
+
+.near-you__loyalty-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(7, 5, 24, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.near-you__loyalty-sheet {
+  background: var(--wel-sem-color-surface, #fff);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -6px 6px rgba(0, 70, 121, 0.2);
+  width: 100%;
+  max-width: 420px;
+  animation: near-you-slide-up 0.25s ease-out;
+}
+
+@keyframes near-you-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.near-you__loyalty-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 16px 16px 12px;
+}
+
+.near-you__loyalty-title {
+  font: var(--wel-typography-body-strong-01, 500 16px/24px 'Roboto', sans-serif);
+  font-weight: 500;
+  color: var(--wel-sem-color-on-surface-hi, #031419);
+}
+
+.near-you__loyalty-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi, #050033);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.near-you__loyalty-body {
+  padding: 0 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.near-you__loyalty-info {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.near-you__loyalty-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.near-you__loyalty-label {
+  font: var(--wel-typography-caption-default, 400 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.near-you__loyalty-value {
+  font: 700 20px/24px 'Montserrat', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.near-you__loyalty-value--gold {
+  color: #a67c00;
+}
+
+.near-you__loyalty-expire {
+  font: var(--wel-typography-caption-default, 400 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.near-you__loyalty-divider {
+  width: 1px;
+  background: var(--wel-sem-color-outline-low, #d9dadc);
+}
+
+.near-you__loyalty-card {
+  height: 100px;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 12px;
+}
+
+.near-you__loyalty-card--gold {
+  background: linear-gradient(135deg, #c9a84c, #f5e6a3, #c9a84c);
+}
+
+.near-you__loyalty-card-tier {
+  font: 700 16px/1 'Montserrat', sans-serif;
+  color: #6b5200;
+  letter-spacing: 2px;
+}
+
+/* ── Desktop ─────────────────────────────────────────────────────── */
+
+@media (min-width: 601px) {
+  .near-you__loyalty-backdrop {
+    align-items: center;
+  }
+
+  .near-you__loyalty-sheet {
+    border-radius: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .near-you__top-bar {
+    padding: 0 32px;
+  }
+
+  .near-you__event-card {
+    max-width: 400px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .near-you__top-bar {
+    padding: 0 64px;
+  }
+
+  .near-you__event-card-img {
+    width: 164px;
+    height: 164px;
+  }
+
+  .near-you__list-view-btn {
+    left: 24px;
+  }
+
+  .near-you__compass-btn {
+    right: 24px;
+  }
+}

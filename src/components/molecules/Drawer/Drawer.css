@@ -1,0 +1,64 @@
+.ads-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--wel-sem-color-overlay-mid);
+  z-index: 1000;
+}
+
+.ads-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 24rem;
+  background: var(--wel-sem-color-surface);
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  box-shadow: 0 0 2rem var(--wel-sem-color-shadow-default);
+  display: flex;
+  flex-direction: column;
+}
+
+.ads-drawer-left {
+  left: 0;
+}
+
+.ads-drawer-right {
+  right: 0;
+}
+
+.ads-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-drawer-title {
+  margin: 0;
+  font: var(--wel-typography-title-02);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-drawer-close {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.ads-drawer-close:hover {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.ads-drawer-body {
+  padding: 1.25rem;
+  overflow: auto;
+  font: var(--wel-typography-body-default-01);
+}

@@ -1,0 +1,50 @@
+.ads-textarea-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ads-textarea-wrap-full {
+  width: 100%;
+}
+
+.ads-textarea-label {
+  font: var(--wel-typography-label-default-02);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-textarea {
+  font: var(--wel-typography-body-default-01);
+  color: var(--wel-sem-color-on-surface-hi);
+  background: var(--wel-sem-color-surface);
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  min-height: 6rem;
+  resize: vertical;
+  width: 100%;
+  min-width: 0;
+}
+
+.ads-textarea:focus {
+  outline: none;
+  border-color: var(--wel-sem-color-focus);
+  box-shadow: 0 0 0 2px var(--wel-sem-color-focus);
+}
+
+.ads-textarea-error {
+  border-color: var(--wel-sem-color-shadow-strong);
+}
+
+.ads-textarea-hint,
+.ads-textarea-error-msg {
+  font: var(--wel-typography-caption-default);
+}
+
+.ads-textarea-hint {
+  color: var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-textarea-error-msg {
+  color: var(--wel-sem-color-on-eco-container-hi);
+}

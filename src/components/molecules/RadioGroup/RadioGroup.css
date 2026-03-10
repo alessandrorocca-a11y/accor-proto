@@ -1,0 +1,11 @@
+.ads-radio-group-label {
+  font: var(--wel-typography-label-default-02);
+  color: var(--wel-sem-color-on-surface-hi);
+  margin-bottom: 0.5rem;
+}
+
+.ads-radio-group-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

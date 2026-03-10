@@ -1,0 +1,31 @@
+.ads-tabs-list {
+  display: flex;
+  gap: 0;
+  border-bottom: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-tab-btn {
+  padding: 0.75rem 1rem;
+  font: var(--wel-typography-label-default-02);
+  color: var(--wel-sem-color-outline-primary-low);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ads-tab-btn:hover {
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-tab-btn-active {
+  color: var(--wel-sem-color-link);
+  border-bottom-color: var(--wel-sem-color-link);
+}
+
+.ads-tabs-panel {
+  padding: 1rem 0;
+  font: var(--wel-typography-body-default-01);
+}

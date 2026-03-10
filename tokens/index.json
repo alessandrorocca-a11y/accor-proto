@@ -1,0 +1,12 @@
+{
+  "name": "web-appearances-tokens",
+  "description": "Design tokens — Web Appearances (Figma). No components.",
+  "source": "https://www.figma.com/design/HXpmNTzVqJhYs57bt2UJ11/",
+  "files": {
+    "colors": "colors.json",
+    "typography": "typography.json",
+    "border": "border.json",
+    "effect": "effect.json",
+    "css": "theme.css"
+  }
+}

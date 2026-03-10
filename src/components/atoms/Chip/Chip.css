@@ -1,0 +1,51 @@
+.ads-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font: var(--wel-typography-caption-default);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: var(--wel-sem-border-width-default) solid transparent;
+}
+
+.ads-chip-text {
+  line-height: 1;
+}
+
+.ads-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+.ads-chip-remove:hover {
+  opacity: 1;
+}
+
+.ads-chip-default {
+  background: var(--wel-sem-color-overlay-low);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-chip-eco {
+  background: var(--wel-sem-color-eco-container-low);
+  color: var(--wel-sem-color-on-eco-container-low);
+  border-color: var(--wel-sem-color-outline-eco);
+}
+
+.ads-chip-family {
+  background: var(--wel-web-bsem-color-light-family-container-low);
+  color: var(--wel-sem-color-on-family);
+  border-color: var(--wel-web-bsem-color-light-outline-family);
+}

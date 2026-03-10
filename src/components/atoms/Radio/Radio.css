@@ -1,0 +1,19 @@
+.ads-radio-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ads-radio {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--wel-sem-color-focus);
+  cursor: pointer;
+}
+
+.ads-radio-label {
+  font: var(--wel-typography-body-default-02);
+  color: var(--wel-sem-color-on-surface-hi);
+  cursor: pointer;
+  user-select: none;
+}

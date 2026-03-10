@@ -1,0 +1,1198 @@
+/**
+ * Prize Draw page — extends auction-page base styles
+ * Only prize-draw-specific elements are defined here.
+ * Shared layout (hero, info, sections, dialogs, notifications) comes from AuctionPage.css.
+ */
+@import './AuctionPage.css';
+
+/* ── Prize Draw badge — teal/green instead of blue ───────────────────── */
+.prize-draw__badge {
+  background: #2A71DB !important;
+}
+
+/* ── Ticket section ──────────────────────────────────────────────────── */
+.prize-draw__ticket-section {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.prize-draw__clock-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prize-draw__time-box {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  border-radius: 4px;
+  padding: 8px;
+  font: var(--wel-typography-label-default-03, 400 12px/16px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.prize-draw__time-label {
+  flex: 1;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.prize-draw__time-date {
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+/* Warning urgency message — amber/yellow (Figma: web.message) */
+.prize-draw__urgency-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  background: #fff6e4;
+  border-radius: 6px;
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: #564500;
+  text-align: center;
+}
+
+/* ── Ticket row: radio + price ───────────────────────────────────────── */
+.prize-draw__ticket-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px 16px;
+  background: var(--wel-sem-color-primary-container-low, #f9f9ff);
+  border-bottom: 1px dashed var(--wel-sem-color-outline-low, #d9dadc);
+}
+
+.prize-draw__radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.prize-draw__radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #050033;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.prize-draw__radio-dot::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #050033;
+}
+
+.prize-draw__radio-text {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+.prize-draw__ticket-price {
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-outline-primary-hi, #050033);
+  white-space: nowrap;
+}
+
+/* ── Input stepper ───────────────────────────────────────────────────── */
+.prize-draw__stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  max-width: 280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.prize-draw__stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  border: 1px solid #050033;
+  border-radius: 100px;
+  background: transparent;
+  color: #050033;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.prize-draw__stepper-btn:hover:not(:disabled) {
+  background: rgba(5, 0, 51, 0.06);
+}
+
+.prize-draw__stepper-btn--disabled,
+.prize-draw__stepper-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.prize-draw__stepper-value {
+  flex: 1;
+  text-align: center;
+  font: var(--wel-typography-input-02, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+/* ── Buy button ──────────────────────────────────────────────────────── */
+.prize-draw__buy-btn {
+  margin-top: 0;
+  border-radius: 100px;
+  padding: 12px 16px;
+  background: linear-gradient(232deg, #524f81 5.7%, #050033 92.5%);
+  border: 1px solid #b7b3ec;
+  color: #f9f9ff;
+  font: var(--wel-typography-label-default-01);
+}
+
+.prize-draw__buy-btn:hover:not(:disabled),
+.prize-draw__buy-btn:active:not(:disabled) {
+  background: linear-gradient(90deg, rgba(232, 198, 232, 0.6) 0%, rgba(198, 198, 240, 0.6) 100%);
+  border-color: transparent;
+  color: #050033;
+  opacity: 1;
+}
+
+/* ── Sidebar card adjustments ────────────────────────────────────────── */
+.prize-draw__sidebar-card .prize-draw__ticket-section {
+  gap: 20px;
+}
+
+/* ── Mobile-only ticket section ──────────────────────────────────────── */
+.prize-draw__ticket-section--mobile {
+  display: flex;
+}
+
+/* ── Sticky bottom bar — visible when in-flow button scrolls out ──── */
+.prize-draw__sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: var(--wel-sem-color-surface, #fff);
+  box-shadow: 0 -2px 6px 0 rgba(7, 5, 24, 0.05);
+  animation: sticky-bar-slide-up 0.2s ease-out;
+}
+
+@keyframes sticky-bar-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@media (min-width: 601px) {
+  .prize-draw__sticky-bar {
+    display: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RECAP PAGE — "Confirm and pay" full-page overlay
+   ══════════════════════════════════════════════════════════════════════ */
+.recap-page {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--wel-sem-color-surface, #fff);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.recap-page__content {
+  flex: 1;
+  padding: 16px 16px 100px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recap-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-link, #0051ae);
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.recap-page__back:hover {
+  text-decoration: underline;
+}
+
+.recap-page__title {
+  font: var(--wel-typography-display-06, 700 20px/24px 'Montserrat', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.recap-page__event-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.recap-page__event-thumb {
+  width: 112px;
+  height: 112px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.recap-page__event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.recap-page__redeem-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  background: #2A71DB;
+  border: 1px solid #f9f9ff;
+  border-radius: 4px;
+  color: #f9f9ff;
+  font: var(--wel-typography-label-default-03, 400 12px/16px 'Roboto', sans-serif);
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.recap-page__event-name {
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.recap-page__event-label {
+  font: 500 12px/16px 'Roboto', sans-serif;
+  color: #3a34ab;
+}
+
+.recap-page__divider {
+  height: 1px;
+  background: var(--wel-sem-color-outline-mid, #afb1b3);
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+
+.recap-page__details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recap-page__detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recap-page__detail-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6d7072;
+}
+
+.recap-page__detail-header svg {
+  flex-shrink: 0;
+  color: #6d7072;
+}
+
+.recap-page__detail-label {
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: #6d7072;
+}
+
+.recap-page__detail-value {
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+}
+
+.recap-page__detail-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.recap-page__detail-row-label {
+  flex: 1;
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__detail-row-value {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  white-space: nowrap;
+}
+
+.recap-page__pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recap-page__pricing-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__pricing-row span:first-child {
+  flex: 1;
+}
+
+.recap-page__pricing-total {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.recap-page__pricing-total span:first-child {
+  flex: 1;
+  font: 500 18px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__pricing-total span:last-child {
+  font: 500 20px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-outline-primary-hi, #050033);
+}
+
+/* ── Payment method section inside recap ─────────────────────────────── */
+.recap-page__payment {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.recap-page__payment-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recap-page__payment-line {
+  flex: 1;
+  height: 1px;
+  background: var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.recap-page__payment-label {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+  white-space: nowrap;
+}
+
+/* ── ALL Rewards Points link ─────────────────────────────────────────── */
+.recap-page__rewards-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-link, #0051ae);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.recap-page__rewards-link svg {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-link, #0051ae);
+}
+
+/* ── Rewards applied inline state ────────────────────────────────────── */
+.recap-page__rewards-applied {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recap-page__rewards-applied-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__rewards-applied-header svg {
+  flex-shrink: 0;
+}
+
+.recap-page__rewards-applied-title {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__rewards-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 12px;
+  border: 1.5px solid var(--wel-sem-color-primary, #050033);
+  border-radius: 100px;
+  background: transparent;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.recap-page__rewards-chip-label {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  white-space: nowrap;
+}
+
+.recap-page__rewards-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__pricing-muted {
+  color: var(--wel-sem-color-neutral-container, #6d7072);
+  font-weight: 400;
+}
+
+/* ── Rewards bottom-sheet overlay ────────────────────────────────────── */
+.recap-page__rewards-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 0, 51, 0.8);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: recap-overlay-fade-in 0.2s ease-out;
+}
+
+@keyframes recap-overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.recap-page__rewards-sheet {
+  background: var(--wel-sem-color-surface, #fff);
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+  padding-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: recap-sheet-slide-up 0.25s ease-out;
+  box-shadow: 0 -2px 6px rgba(7, 5, 24, 0.05);
+}
+
+@keyframes recap-sheet-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.recap-page__rewards-sheet-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+}
+
+.recap-page__rewards-sheet-spacer {
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.recap-page__rewards-sheet-title {
+  flex: 1;
+  font: 500 18px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recap-page__rewards-sheet-close {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.recap-page__rewards-sheet-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
+
+/* badge row */
+.recap-page__rewards-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.recap-page__rewards-badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--wel-sem-color-gold, #af913a);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.recap-page__rewards-badge-text {
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-outline-primary-hi, #050033);
+}
+
+/* description */
+.recap-page__rewards-sheet-desc {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+  text-align: center;
+}
+
+/* stepper */
+.recap-page__rewards-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.recap-page__rewards-stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 100px;
+  border: 1px solid var(--wel-sem-color-primary, #050033);
+  background: transparent;
+  color: var(--wel-sem-color-primary, #050033);
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recap-page__rewards-stepper-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.recap-page__rewards-stepper-input {
+  width: 120px;
+  height: 48px;
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  border-radius: 6px;
+  background: var(--wel-sem-color-surface, #fff);
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-primary, #050033);
+  text-align: center;
+  outline: none;
+}
+
+.recap-page__rewards-stepper-input:focus {
+  border-color: var(--wel-sem-color-primary, #050033);
+}
+
+/* discount text */
+.recap-page__rewards-sheet-discount {
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+  text-align: center;
+}
+
+.recap-page__rewards-sheet-discount strong {
+  font-weight: 500;
+}
+
+.recap-page__voucher-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-link, #0051ae);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.recap-page__voucher-link svg {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-link, #0051ae);
+}
+
+/* ── Voucher / gift card expanded section ────────────────────────────── */
+.recap-page__voucher-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recap-page__voucher-title {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+}
+
+.recap-page__voucher-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  border-radius: 4px;
+}
+
+.recap-page__voucher-input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  border-radius: 6px;
+  background: var(--wel-sem-color-surface, #fff);
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.recap-page__voucher-input::placeholder {
+  color: var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.recap-page__voucher-input:focus {
+  border-color: var(--wel-sem-color-primary, #050033);
+}
+
+.recap-page__voucher-apply {
+  flex-shrink: 0;
+  width: 80px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: 1px solid #508ffa;
+  border-radius: 100px;
+  background: #e8edff;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: #1f1b4b;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.recap-page__voucher-apply:hover:not(:disabled) {
+  background: #d8e2ff;
+}
+
+.recap-page__voucher-apply:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* ── Voucher success snackbar ────────────────────────────────────────── */
+.recap-page__voucher-snack {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #caffea;
+  animation: recap-snack-slide-in 0.3s ease-out;
+}
+
+@keyframes recap-snack-slide-in {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.recap-page__voucher-snack-icon {
+  flex-shrink: 0;
+}
+
+.recap-page__voucher-snack-text {
+  flex: 1;
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: #00513f;
+}
+
+.recap-page__voucher-snack-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #00513f;
+}
+
+/* ── Voucher applied state ───────────────────────────────────────────── */
+.recap-page__voucher-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recap-page__voucher-header svg {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__voucher-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  border-radius: 100px;
+  align-self: flex-start;
+}
+
+.recap-page__voucher-chip-label {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-primary, #050033);
+  padding: 0 4px;
+}
+
+.recap-page__voucher-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recap-page__payment-option-wrap {
+  border: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.recap-page__payment-option-wrap:hover {
+  border-color: var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.recap-page__payment-option-wrap--selected {
+  border-color: var(--wel-sem-color-primary, #050033);
+}
+
+.recap-page__payment-option-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.recap-page__payment-radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.recap-page__payment-radio-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--wel-sem-color-outline-mid, #afb1b3);
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.recap-page__payment-option-wrap--selected .recap-page__payment-radio-circle {
+  border-color: var(--wel-sem-color-primary, #050033);
+}
+
+.recap-page__payment-option-wrap--selected .recap-page__payment-radio-circle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--wel-sem-color-primary, #050033);
+}
+
+.recap-page__payment-option-label {
+  flex: 1;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+.recap-page__payment-option-icon {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+/* ── Card form (expanded when "Credit or Debit card" selected) ──────── */
+.recap-page__card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.recap-page__card-input {
+  width: 100%;
+  height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  border-radius: 4px;
+  background: var(--wel-sem-color-surface, #fff);
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.recap-page__card-input::placeholder {
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+  font: 400 14px/20px 'Roboto', sans-serif;
+}
+
+.recap-page__card-input:focus {
+  border-color: var(--wel-sem-color-primary, #050033);
+}
+
+.recap-page__card-row {
+  display: flex;
+  gap: 8px;
+}
+
+.recap-page__card-row .recap-page__card-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.recap-page__card-secure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  border-radius: 4px;
+}
+
+.recap-page__card-secure svg {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__card-secure span {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.recap-page__footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: var(--wel-sem-color-surface, #fff);
+  z-index: 901;
+}
+
+.recap-page__footer .prize-draw__buy-btn,
+.recap-page__footer .standard__buy-btn {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.recap-page__apple-pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 48px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recap-page__apple-pay-btn:active {
+  opacity: 0.8;
+}
+
+.recap-page__google-pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 48px;
+  background: #fff;
+  border: 1px solid #d9dadc;
+  border-radius: 100px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.recap-page__google-pay-btn:active {
+  background: #f5f5f5;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESKTOP — min-width: 1024px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 601px) {
+  .prize-draw__ticket-section--mobile {
+    display: none;
+  }
+
+  .prize-draw .auction-page__divider--mobile-only {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .recap-page__content {
+    max-width: 800px;
+    padding: 24px 64px 120px;
+  }
+
+  .recap-page__footer {
+    padding: 16px 64px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PURCHASE CONFIRMED page
+   ══════════════════════════════════════════════════════════════════════ */
+
+.confirmation__success-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #caffea;
+  border-radius: 6px;
+}
+
+.confirmation__success-banner svg:first-child {
+  flex-shrink: 0;
+}
+
+.confirmation__success-text {
+  flex: 1;
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: #006a53;
+  margin: 0;
+}
+
+.confirmation__success-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #006a53;
+}
+
+.confirmation__header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.confirmation__order-id {
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: #6d7072;
+}
+
+.confirmation__info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  border-radius: 6px;
+}
+
+.confirmation__info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.confirmation__info-row svg {
+  flex-shrink: 0;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.confirmation__info-text {
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+}
+
+.confirmation__info-text strong {
+  font-weight: 500;
+}
+
+.confirmation__info-link {
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-link, #0051ae);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.confirmation__info-link:hover {
+  text-decoration: underline;
+}
+
+.confirmation__actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.confirmation__actions .ads-btn {
+  flex: 1;
+  border-radius: 100px;
+}
+
+.confirmation__orders-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  background: #e8edff;
+  border: 1px solid #508ffa;
+  border-radius: 100px;
+  color: #1f1b4b;
+  font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.confirmation__orders-btn:hover {
+  background: #d8e2ff;
+}
+
+@media (min-width: 1024px) {
+  .recap-page__rewards-overlay {
+    align-items: center;
+    background: rgba(6, 35, 44, 0.88);
+  }
+
+  .recap-page__rewards-sheet {
+    max-width: 480px;
+    border-radius: 16px;
+    box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
+    animation: rewards-scale-in 0.2s ease-out;
+  }
+
+  @keyframes rewards-scale-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+}

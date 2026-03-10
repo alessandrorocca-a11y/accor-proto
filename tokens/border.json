@@ -1,0 +1,11 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "description": "Border tokens — Web Appearances (Figma)",
+  "wel": {
+    "sem": {
+      "borderWidth": {
+        "default": { "value": "1", "type": "dimension" }
+      }
+    }
+  }
+}

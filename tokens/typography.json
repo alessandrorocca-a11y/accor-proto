@@ -1,0 +1,141 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "description": "Typography tokens — Web Appearances (Figma). Primitives + composite font styles.",
+  "wel": {
+    "sem": {
+      "fontFamilies": {
+        "display": { "value": "Montserrat" },
+        "title": { "value": "Roboto" },
+        "subtitle": { "value": "Unna" },
+        "body": { "value": "Roboto" },
+        "caption": { "value": "Roboto" },
+        "detail": { "value": "Roboto" },
+        "label": { "value": "Roboto" },
+        "input": { "value": "Roboto" }
+      },
+      "fontSizes": {
+        "display": {
+          "2xl": { "value": "62", "type": "dimension" },
+          "xl": { "value": "50", "type": "dimension" },
+          "lg": { "value": "40", "type": "dimension" },
+          "md": { "value": "32", "type": "dimension" },
+          "sm": { "value": "26", "type": "dimension" },
+          "xs": { "value": "20", "type": "dimension" }
+        },
+        "title": {
+          "lg": { "value": "22", "type": "dimension" },
+          "md": { "value": "20", "type": "dimension" },
+          "sm": { "value": "18", "type": "dimension" }
+        },
+        "subtitle": {
+          "lg": { "value": "26", "type": "dimension" },
+          "md": { "value": "20", "type": "dimension" }
+        },
+        "body": {
+          "md": { "value": "16", "type": "dimension" },
+          "sm": { "value": "14", "type": "dimension" }
+        },
+        "caption": { "value": "12", "type": "dimension" },
+        "detail": { "value": "12", "type": "dimension" },
+        "label": {
+          "lg": { "value": "16", "type": "dimension" },
+          "md": { "value": "14", "type": "dimension" },
+          "sm": { "value": "12", "type": "dimension" }
+        },
+        "input": {
+          "lg": { "value": "48", "type": "dimension" },
+          "md": { "value": "16", "type": "dimension" },
+          "sm": { "value": "14", "type": "dimension" }
+        }
+      },
+      "fontWeights": {
+        "display": { "value": "700" },
+        "title": { "value": "500" },
+        "subtitle": { "default": { "value": "400" } },
+        "body": { "default": { "value": "400" }, "strong": { "value": "500" } },
+        "caption": { "default": { "value": "400" }, "strong": { "value": "500" } },
+        "detail": { "value": "400" },
+        "label": { "default": { "value": "400" }, "strong": { "value": "500" } },
+        "input": { "value": "400" }
+      },
+      "lineHeights": {
+        "display": {
+          "2xl": { "value": "76", "type": "dimension" },
+          "xl": { "value": "64", "type": "dimension" },
+          "lg": { "value": "52", "type": "dimension" },
+          "md": { "value": "40", "type": "dimension" },
+          "sm": { "value": "32", "type": "dimension" },
+          "xs": { "value": "24", "type": "dimension" }
+        },
+        "title": {
+          "lg": { "value": "28", "type": "dimension" },
+          "md": { "value": "24", "type": "dimension" },
+          "sm": { "value": "24", "type": "dimension" }
+        },
+        "subtitle": {
+          "lg": { "value": "32", "type": "dimension" },
+          "md": { "value": "24", "type": "dimension" }
+        },
+        "body": {
+          "md": { "value": "24", "type": "dimension" },
+          "sm": { "value": "20", "type": "dimension" }
+        },
+        "caption": { "value": "16", "type": "dimension" },
+        "detail": { "value": "16", "type": "dimension" },
+        "label": {
+          "lg": { "value": "24", "type": "dimension" },
+          "md": { "value": "20", "type": "dimension" },
+          "sm": { "value": "16", "type": "dimension" }
+        },
+        "input": {
+          "lg": { "value": "68", "type": "dimension" },
+          "md": { "value": "24", "type": "dimension" },
+          "sm": { "value": "20", "type": "dimension" }
+        }
+      },
+      "letterSpacing": {
+        "display": {
+          "wide": { "value": "1", "type": "dimension" },
+          "condensed": { "value": "0.5", "type": "dimension" }
+        },
+        "title": { "value": "0", "type": "dimension" },
+        "subtitle": { "value": "0", "type": "dimension" },
+        "body": { "value": "0", "type": "dimension" },
+        "caption": { "value": "0", "type": "dimension" },
+        "detail": { "value": "0", "type": "dimension" },
+        "label": { "value": "0", "type": "dimension" },
+        "input": { "value": "0", "type": "dimension" }
+      }
+    }
+  },
+  "composite": {
+    "description": "Named text styles built from primitives. Use for design-to-code alignment.",
+    "display-01": { "family": "wel.sem.fontFamilies.display", "size": "wel.sem.fontSizes.display.2xl", "weight": "wel.sem.fontWeights.display", "lineHeight": "wel.sem.lineHeights.display.2xl", "letterSpacing": "wel.sem.letterSpacing.display.wide" },
+    "display-02": { "family": "wel.sem.fontFamilies.display", "size": "wel.sem.fontSizes.display.xl", "weight": "wel.sem.fontWeights.display", "lineHeight": "wel.sem.lineHeights.display.xl", "letterSpacing": "wel.sem.letterSpacing.display.wide" },
+    "display-03": { "family": "wel.sem.fontFamilies.display", "size": "wel.sem.fontSizes.display.lg", "weight": "wel.sem.fontWeights.display", "lineHeight": "wel.sem.lineHeights.display.lg", "letterSpacing": "wel.sem.letterSpacing.display.wide" },
+    "display-04": { "family": "wel.sem.fontFamilies.display", "size": "wel.sem.fontSizes.display.md", "weight": "wel.sem.fontWeights.display", "lineHeight": "wel.sem.lineHeights.display.md", "letterSpacing": "wel.sem.letterSpacing.display.condensed" },
+    "display-05": { "family": "wel.sem.fontFamilies.display", "size": "wel.sem.fontSizes.display.sm", "weight": "wel.sem.fontWeights.display", "lineHeight": "wel.sem.lineHeights.display.sm", "letterSpacing": "wel.sem.letterSpacing.display.condensed" },
+    "display-06": { "family": "wel.sem.fontFamilies.display", "size": "wel.sem.fontSizes.display.xs", "weight": "wel.sem.fontWeights.display", "lineHeight": "wel.sem.lineHeights.display.xs", "letterSpacing": "wel.sem.letterSpacing.display.condensed" },
+    "title-01": { "family": "wel.sem.fontFamilies.title", "size": "wel.sem.fontSizes.title.lg", "weight": "wel.sem.fontWeights.title", "lineHeight": "wel.sem.lineHeights.title.lg", "letterSpacing": "wel.sem.letterSpacing.title" },
+    "title-02": { "family": "wel.sem.fontFamilies.title", "size": "wel.sem.fontSizes.title.md", "weight": "wel.sem.fontWeights.title", "lineHeight": "wel.sem.lineHeights.title.md", "letterSpacing": "wel.sem.letterSpacing.title" },
+    "title-03": { "family": "wel.sem.fontFamilies.title", "size": "wel.sem.fontSizes.title.sm", "weight": "wel.sem.fontWeights.title", "lineHeight": "wel.sem.lineHeights.title.sm", "letterSpacing": "wel.sem.letterSpacing.title" },
+    "sub-01": { "family": "wel.sem.fontFamilies.subtitle", "size": "wel.sem.fontSizes.subtitle.lg", "weight": "wel.sem.fontWeights.subtitle.default", "lineHeight": "wel.sem.lineHeights.subtitle.lg", "letterSpacing": "wel.sem.letterSpacing.subtitle" },
+    "sub-02": { "family": "wel.sem.fontFamilies.subtitle", "size": "wel.sem.fontSizes.subtitle.md", "weight": "wel.sem.fontWeights.subtitle.default", "lineHeight": "wel.sem.lineHeights.subtitle.md", "letterSpacing": "wel.sem.letterSpacing.subtitle" },
+    "body-default-01": { "family": "wel.sem.fontFamilies.body", "size": "wel.sem.fontSizes.body.md", "weight": "wel.sem.fontWeights.body.default", "lineHeight": "wel.sem.lineHeights.body.md", "letterSpacing": "wel.sem.letterSpacing.body" },
+    "body-strong-01": { "family": "wel.sem.fontFamilies.body", "size": "wel.sem.fontSizes.body.md", "weight": "wel.sem.fontWeights.body.strong", "lineHeight": "wel.sem.lineHeights.body.md", "letterSpacing": "wel.sem.letterSpacing.body" },
+    "body-default-02": { "family": "wel.sem.fontFamilies.body", "size": "wel.sem.fontSizes.body.sm", "weight": "wel.sem.fontWeights.body.default", "lineHeight": "wel.sem.lineHeights.body.sm", "letterSpacing": "0" },
+    "body-strong-02": { "family": "wel.sem.fontFamilies.body", "size": "wel.sem.fontSizes.body.sm", "weight": "wel.sem.fontWeights.body.strong", "lineHeight": "wel.sem.lineHeights.body.sm", "letterSpacing": "wel.sem.letterSpacing.body" },
+    "caption-default": { "family": "wel.sem.fontFamilies.caption", "size": "wel.sem.fontSizes.caption", "weight": "wel.sem.fontWeights.caption.default", "lineHeight": "wel.sem.lineHeights.caption", "letterSpacing": "wel.sem.letterSpacing.caption" },
+    "caption-strong": { "family": "wel.sem.fontFamilies.caption", "size": "wel.sem.fontSizes.caption", "weight": "wel.sem.fontWeights.caption.strong", "lineHeight": "wel.sem.lineHeights.caption", "letterSpacing": "wel.sem.letterSpacing.caption" },
+    "detail": { "family": "wel.sem.fontFamilies.detail", "size": "wel.sem.fontSizes.detail", "weight": "wel.sem.fontWeights.detail", "lineHeight": "wel.sem.lineHeights.detail", "letterSpacing": "wel.sem.letterSpacing.detail" },
+    "label-default-01": { "family": "wel.sem.fontFamilies.label", "size": "wel.sem.fontSizes.label.lg", "weight": "wel.sem.fontWeights.label.default", "lineHeight": "wel.sem.lineHeights.label.lg", "letterSpacing": "wel.sem.letterSpacing.label" },
+    "label-strong-01": { "family": "wel.sem.fontFamilies.label", "size": "wel.sem.fontSizes.label.lg", "weight": "wel.sem.fontWeights.label.strong", "lineHeight": "wel.sem.lineHeights.label.lg", "letterSpacing": "wel.sem.letterSpacing.label" },
+    "label-default-02": { "family": "wel.sem.fontFamilies.label", "size": "wel.sem.fontSizes.label.md", "weight": "wel.sem.fontWeights.label.default", "lineHeight": "wel.sem.lineHeights.label.md", "letterSpacing": "wel.sem.letterSpacing.label" },
+    "label-strong-02": { "family": "wel.sem.fontFamilies.label", "size": "wel.sem.fontSizes.label.md", "weight": "wel.sem.fontWeights.label.strong", "lineHeight": "wel.sem.lineHeights.label.md", "letterSpacing": "wel.sem.letterSpacing.label" },
+    "label-default-03": { "family": "wel.sem.fontFamilies.label", "size": "wel.sem.fontSizes.label.sm", "weight": "wel.sem.fontWeights.label.default", "lineHeight": "wel.sem.lineHeights.label.sm", "letterSpacing": "wel.sem.letterSpacing.label" },
+    "label-strong-03": { "family": "wel.sem.fontFamilies.label", "size": "wel.sem.fontSizes.label.sm", "weight": "wel.sem.fontWeights.label.strong", "lineHeight": "wel.sem.lineHeights.label.sm", "letterSpacing": "wel.sem.letterSpacing.label" },
+    "input-01": { "family": "wel.sem.fontFamilies.input", "size": "wel.sem.fontSizes.input.lg", "weight": "wel.sem.fontWeights.input", "lineHeight": "wel.sem.lineHeights.input.lg", "letterSpacing": "wel.sem.letterSpacing.input" },
+    "input-02": { "family": "wel.sem.fontFamilies.input", "size": "wel.sem.fontSizes.input.md", "weight": "wel.sem.fontWeights.input", "lineHeight": "wel.sem.lineHeights.input.md", "letterSpacing": "wel.sem.letterSpacing.input" },
+    "input-03": { "family": "wel.sem.fontFamilies.input", "size": "wel.sem.fontSizes.input.sm", "weight": "wel.sem.fontWeights.input", "lineHeight": "wel.sem.lineHeights.input.sm", "letterSpacing": "wel.sem.letterSpacing.input" }
+  }
+}

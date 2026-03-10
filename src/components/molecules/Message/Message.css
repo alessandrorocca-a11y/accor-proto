@@ -1,0 +1,38 @@
+.ads-message {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  border: var(--wel-sem-border-width-default) solid transparent;
+}
+
+.ads-message-title {
+  font: var(--wel-typography-label-strong-02);
+  margin-bottom: 0.25rem;
+}
+
+.ads-message-body {
+  font: var(--wel-typography-body-default-02);
+}
+
+.ads-msg-info {
+  background: var(--wel-sem-color-overlay-low);
+  color: var(--wel-sem-color-on-surface-hi);
+  border-color: var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-msg-success {
+  background: var(--wel-sem-color-eco-container-low);
+  color: var(--wel-sem-color-on-eco-container-low);
+  border-color: var(--wel-sem-color-outline-eco);
+}
+
+.ads-msg-warning {
+  background: var(--wel-sem-color-overlay-mid);
+  color: var(--wel-sem-color-on-surface-hi);
+  border-color: var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-msg-error {
+  background: var(--wel-sem-color-eco-container-hi);
+  color: var(--wel-sem-color-on-eco-container-hi);
+  border-color: var(--wel-sem-color-outline-eco);
+}

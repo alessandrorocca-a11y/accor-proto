@@ -1,0 +1,51 @@
+.ads-stepper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.ads-stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.ads-stepper-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  font: var(--wel-typography-caption-default);
+  font-weight: var(--wel-sem-font-weight-caption-strong);
+  background: var(--wel-sem-color-overlay-mid);
+  color: var(--wel-sem-color-on-surface-hi);
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-stepper-item-active .ads-stepper-dot {
+  background: var(--wel-sem-color-focus);
+  border-color: var(--wel-sem-color-focus);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-stepper-item-past .ads-stepper-dot {
+  background: var(--wel-sem-color-eco-container-hi);
+  border-color: var(--wel-sem-color-outline-eco);
+  color: var(--wel-sem-color-on-eco-container-hi);
+}
+
+.ads-stepper-label {
+  font: var(--wel-typography-caption-default);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-stepper-line {
+  width: 2rem;
+  height: 2px;
+  margin: 0 0.25rem;
+  background: var(--wel-sem-color-outline-primary-low);
+  flex-shrink: 0;
+}

@@ -1,0 +1,762 @@
+@import './AuctionPage.css';
+@import './LinkoutPage.css';
+@import './PrizeDrawPage.css';
+
+.standard__purchase {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.standard__purchase--mobile {
+  display: flex;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CALENDAR
+   ══════════════════════════════════════════════════════════════════════ */
+.standard__cal-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.standard__calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.standard__calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.standard__calendar-title {
+  font: 500 18px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  text-align: center;
+}
+
+.standard__calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+/* weekdays: "mon tue wed …" */
+.standard__calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding-bottom: 4px;
+}
+
+.standard__calendar-wd {
+  text-align: center;
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  text-transform: lowercase;
+}
+
+/* day grid */
+.standard__calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  justify-items: center;
+}
+
+.standard__calendar-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  max-width: 56px;
+  height: 56px;
+  padding: var(--wel-sem-spacingstatic-inset-2xs, 4px);
+  border: 1px solid transparent;
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.standard__calendar-day--empty {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* available + NOT selected: lavender bg */
+.standard__calendar-day--available {
+  background: var(--wel-sem-color-primary-container-low, #f9f9ff);
+}
+
+/* muted (unavailable / sold-out): no bg, gray text */
+.standard__calendar-day--muted {
+  background: transparent;
+}
+
+.standard__calendar-day--muted .standard__calendar-day-num {
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+}
+
+.standard__calendar-day--muted .standard__calendar-day-price {
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+}
+
+/* today marker: accent-colored number */
+.standard__calendar-day--today .standard__calendar-day-num {
+  color: var(--wel-sem-color-accent, #2d4cd5);
+}
+
+/* selected: accent border, no fill */
+.standard__calendar-day--selected {
+  border-color: var(--wel-sem-color-accent, #2d4cd5);
+  background: transparent;
+}
+
+.standard__calendar-day--selected .standard__calendar-day-num {
+  color: var(--wel-sem-color-accent, #2d4cd5);
+  font-weight: 500;
+}
+
+/* corner diamond badge for selected cells */
+.standard__calendar-day-corner {
+  position: absolute;
+  top: -12px;
+  right: -12.63px;
+  width: 22.63px;
+  height: 22.63px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.standard__calendar-day-corner::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: var(--wel-sem-color-accent, #2d4cd5);
+  transform: rotate(-45deg);
+}
+
+/* day number */
+.standard__calendar-day-num {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-primary, #050033);
+}
+
+/* price text */
+.standard__calendar-day-price {
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-neutral-container, #6d7072);
+}
+
+/* indicator bars at bottom */
+.standard__calendar-day-indicators {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 24px;
+}
+
+.standard__calendar-day-bar {
+  flex: 1 0 0;
+  height: 2px;
+  min-width: 0;
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
+}
+
+.standard__calendar-day-bar--best {
+  background: var(--wel-sem-color-success, #006a53);
+}
+
+.standard__calendar-day-bar--low {
+  background: var(--wel-sem-color-danger, #be003c);
+}
+
+.standard__calendar-day--available:hover {
+  background: rgba(5, 0, 51, 0.06);
+}
+
+/* ── Calendar legend ─────────────────────────────────────────────────── */
+.standard__calendar-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 4px;
+}
+
+.standard__calendar-legend-note {
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+.standard__calendar-legend-keys {
+  display: flex;
+  gap: 24px;
+}
+
+.standard__calendar-legend-key {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 500 12px/16px 'Roboto', sans-serif;
+}
+
+.standard__calendar-legend-dash {
+  width: 11px;
+  height: 2px;
+  border-radius: 4px;
+}
+
+.standard__calendar-legend-key--low {
+  color: var(--wel-sem-color-danger, #be003c);
+}
+
+.standard__calendar-legend-key--low .standard__calendar-legend-dash {
+  background: var(--wel-sem-color-danger, #be003c);
+}
+
+.standard__calendar-legend-key--best {
+  color: var(--wel-sem-color-success, #006a53);
+}
+
+.standard__calendar-legend-key--best .standard__calendar-legend-dash {
+  background: var(--wel-sem-color-success, #006a53);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TIME SLOTS — horizontal scroll
+   ══════════════════════════════════════════════════════════════════════ */
+.standard__times-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid var(--wel-sem-color-outline-mid, #afb1b3);
+  padding-bottom: 16px;
+  gap: 0;
+}
+
+.standard__times-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-width: 0;
+  padding-right: 48px;
+}
+
+.standard__times-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.standard__time-pill {
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 36px;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font: 400 14px/20px 'Roboto', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  overflow: hidden;
+}
+
+/* SELECTED: fully filled dark with white text */
+.standard__time-pill--selected {
+  border: 1px solid var(--wel-sem-color-accent, #2d4cd5);
+  background: var(--wel-sem-color-accent, #2d4cd5);
+  color: #fff;
+}
+
+/* DEFAULT: outlined */
+.standard__time-pill--default {
+  border: 1px solid var(--wel-sem-color-outline-mid, #afb1b3);
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+/* DISABLED: gray bg + muted text */
+.standard__time-pill--disabled {
+  border: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  color: var(--wel-sem-color-outline-mid, #afb1b3);
+  cursor: not-allowed;
+}
+
+/* BEST PRICE: outlined with blue underline */
+.standard__time-pill--best {
+  border: 1px solid var(--wel-sem-color-outline-mid, #afb1b3);
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.standard__time-pill-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* corner checkmark for selected pill */
+.standard__time-pill-check {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.standard__time-pill-check svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* blue underline bar for best-price slots */
+.standard__time-pill-best-line {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  border-radius: 4px;
+  background: var(--wel-sem-color-accent, #2d4cd5);
+}
+
+/* right fade + arrow */
+.standard__times-fade {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  cursor: pointer;
+  background: linear-gradient(to right, rgba(255,255,255,0), #fff 40%);
+  z-index: 2;
+  padding-left: 16px;
+  border: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ZONE TICKET CARDS — split Content | Selector
+   ══════════════════════════════════════════════════════════════════════ */
+.standard__zones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.standard__ticket-row {
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+
+/* LEFT side: content */
+.standard__ticket-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 96px;
+  padding: 12px;
+  border-width: 1px;
+  border-style: solid;
+  border-right-width: 0;
+  border-radius: 6px 0 0 6px;
+}
+
+.standard__ticket-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.standard__ticket-zone {
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.standard__ticket-link {
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-accent, #2d4cd5);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+.standard__ticket-desc {
+  font: 400 11px/15px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-variant, #5f6368);
+  margin-top: 2px;
+}
+
+.standard__ticket-desc .standard__ticket-link {
+  display: inline;
+  font: 400 11px/15px 'Roboto', sans-serif;
+  margin-left: 2px;
+}
+
+.standard__ticket-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.standard__ticket-discount {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--wel-sem-color-offer, #b40875);
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-primary, #f9f9ff);
+}
+
+.standard__ticket-pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.standard__ticket-original {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  text-decoration: line-through;
+}
+
+.standard__ticket-price {
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.standard__ticket-fee {
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+/* RIGHT side: selector */
+.standard__ticket-selector {
+  width: 136px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 96px;
+  padding: 12px;
+  border-width: 1px;
+  border-style: solid;
+  border-left-width: 0;
+  border-radius: 0 6px 6px 0;
+}
+
+/* ── Sold out variant ────────────────────────────────────────────────── */
+.standard__ticket-sold-out-wrap {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+}
+
+.standard__ticket-sold-out-wrap .standard__ticket-content {
+  border-color: var(--wel-sem-color-outline-mid, #afb1b3);
+  border-right-width: 0;
+  border-radius: 6px 0 0 6px;
+  opacity: 0.38;
+}
+
+.standard__ticket-selector-sold {
+  width: 136px;
+  flex-shrink: 0;
+  min-height: 96px;
+  border: 1px solid var(--wel-sem-color-outline-mid, #afb1b3);
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  opacity: 0.38;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.standard__sold-out-badge {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--wel-sem-color-danger, #be003c);
+  font: 400 12px/16px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-primary, #f9f9ff);
+  white-space: nowrap;
+  z-index: 2;
+}
+
+/* ── zone item wrapper ────────────────────────────────────────────────── */
+.standard__zone-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ── Stepper (shared) ────────────────────────────────────────────────── */
+.standard__zone-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.standard__zone-stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  cursor: pointer;
+  padding: 12px;
+  flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.standard__zone-stepper-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.standard__zone-stepper-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* minus: outlined tertiary */
+.standard__zone-stepper-btn--tertiary {
+  border: 1px solid var(--wel-comp-btn-tertiary-border-color, #050033);
+  background: transparent;
+  color: #050033;
+}
+
+.standard__zone-stepper-btn--tertiary:hover:not(:disabled) {
+  background: rgba(5, 0, 51, 0.06);
+}
+
+/* plus: filled primary with gradient */
+.standard__zone-stepper-btn--primary {
+  border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
+  background: linear-gradient(264deg, var(--wel-comp-btn-primary-bg-gradient-end, #524f81) 5.7%, var(--wel-comp-btn-primary-bg-gradient-start, #050033) 92.5%);
+  color: #f9f9ff;
+}
+
+.standard__zone-stepper-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(264deg, #6b6899 5.7%, #1a1752 92.5%);
+}
+
+.standard__zone-stepper-val {
+  min-width: 18px;
+  text-align: center;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ADD-ONS DIVIDER — line | text | line
+   ══════════════════════════════════════════════════════════════════════ */
+.standard__addons-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+
+.standard__addons-line {
+  flex: 1;
+  height: 1px;
+  background: var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.standard__addons-label {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-outline-mid, #afb1b3);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ADDON CARD (Flexible cancellation)
+   ══════════════════════════════════════════════════════════════════════ */
+.standard__addon-card {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: var(--wel-sem-color-primary-container-low, #f9f9ff);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.standard__addon-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 8px;
+}
+
+.standard__addon-header svg {
+  flex-shrink: 0;
+}
+
+.standard__addon-name {
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.standard__addon-desc {
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  margin: 0;
+  padding-bottom: 8px;
+}
+
+.standard__addon-bottom {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.standard__addon-price {
+  flex: 1;
+  text-align: right;
+  font: 500 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   BUY BUTTON + STICKY BAR
+   ══════════════════════════════════════════════════════════════════════ */
+.standard__buy-btn {
+  margin-top: 0;
+  border-radius: 100px;
+  padding: 16px 20px;
+  background: linear-gradient(232deg, #524f81 5.7%, #050033 92.5%);
+  border: 1px solid #b7b3ec;
+  color: #f9f9ff;
+  font: var(--wel-typography-label-default-01);
+}
+
+.standard__buy-btn:hover:not(:disabled),
+.standard__buy-btn:active:not(:disabled) {
+  background: linear-gradient(90deg, rgba(232, 198, 232, 0.6) 0%, rgba(198, 198, 240, 0.6) 100%);
+  border-color: transparent;
+  color: #050033;
+  opacity: 1;
+}
+
+.standard__buy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.standard__reward-points-alt {
+  margin: 0;
+  padding: 8px 0;
+  text-align: center;
+  font: 400 14px/20px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-loyalty, #5f5bd2);
+}
+
+.standard__sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  background: var(--wel-sem-color-surface, #fff);
+  box-shadow: 0 -2px 6px 0 rgba(7, 5, 24, 0.05);
+  border-top: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  animation: sticky-bar-slide-up 0.2s ease-out;
+}
+
+.standard__sidebar-card .standard__purchase {
+  gap: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESKTOP SIDEBAR — 601px+
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 601px) {
+  .standard__purchase--mobile {
+    display: none;
+  }
+
+  .standard .auction-page__divider--mobile-only {
+    display: none;
+  }
+
+  .standard__sticky-bar {
+    display: none;
+  }
+
+  .standard .auction-page__sidebar {
+    min-width: 0;
+  }
+
+  .standard .auction-page__bid-card {
+    overflow: hidden;
+    max-width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px 0 rgba(7, 5, 24, 0.1);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESKTOP — 1024px+
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  .standard .auction-page__content-layout {
+    padding-top: 24px;
+  }
+}

@@ -1,0 +1,206 @@
+/**
+ * Design tokens — Web Appearances
+ * CSS custom properties generated from Figma variables.
+ * Import this file once (e.g. in root layout or main CSS) to use var(--token-name) anywhere.
+ */
+
+:root {
+  /* ─── Border ───────────────────────────────────────────────────────────── */
+  --wel-sem-border-width-default: 1px;
+
+  /* ─── Color — semantic (light theme by default) ─────────────────────────── */
+  --wel-sem-color-surface: #ffffff;
+  --wel-sem-color-on-surface-hi: #232136;
+  --wel-sem-color-on-surface-low: #5e5b73;
+  --wel-sem-color-on-surface-mid: #38364d;
+  --wel-sem-color-outline-hi: #898c8e;
+  --wel-sem-color-neutral-container: #6d7072;
+  --wel-sem-color-surface-container-mid: #f7f9fb;
+  --wel-sem-color-surface-container-low: #ffffff;
+  --wel-sem-color-primary: #050033;
+  --wel-sem-color-on-primary-container: #1f1b4b;
+  --wel-sem-color-outline-primary-hi: #050033;
+  --wel-sem-color-link: #0051ae;
+  --wel-comp-btn-primary-bg-gradient-start: #050033;
+  --wel-comp-btn-primary-bg-gradient-end: #524f81;
+  --wel-comp-btn-primary-border-color: #b7b3ec;
+  --wel-comp-btn-primary-fg-color: #f9f9ff;
+  --wel-sem-color-hover-link: #003d82;
+  --wel-sem-color-outline-mid: #afb1b3;
+  --wel-sem-color-outline-primary-low: #8e8bc1;
+  --wel-sem-color-hover-eco: #175a00;
+  --wel-sem-color-pressed-eco: #124d00;
+  --wel-sem-color-on-eco: #ffffff;
+  --wel-sem-color-eco-container-low: #072d00;
+  --wel-sem-color-eco-container-hi: #124d00;
+  --wel-sem-color-on-eco-container-low: #ccffb3;
+  --wel-sem-color-on-eco-container-hi: #ccffb3;
+  --wel-sem-color-outline-eco: #237b00;
+  --wel-sem-color-family: #f6f2ff;
+  --wel-sem-color-on-family: #050033;
+  --wel-sem-color-on-family-container-low: #e8edff;
+  --wel-sem-color-on-family-container-hi: #e8edff;
+  --wel-sem-color-pressed-link: #003779;
+  --wel-sem-color-focus: #2a71db;
+  --wel-sem-color-watermark: #0705180d;
+  --wel-sem-color-overlay-low: #0705184d;
+  --wel-sem-color-overlay-mid: #0705188a;
+  --wel-sem-color-overlay-hi: #070518b2;
+  --wel-sem-color-overlay-max: #070518e5;
+  --wel-sem-color-shadow-default: #0705180d;
+  --wel-sem-color-shadow-strong: #07051833;
+  --wel-sem-color-gradient-primary-hi-start: #ffffff;
+  --wel-sem-color-gradient-primary-hi-end: #e3dfff;
+  --wel-sem-color-gradient-primary-low-start: #ffd4ea;
+  --wel-sem-color-gradient-primary-low-end: #d6d3ff;
+  --wel-sem-color-gradient-secondary-start: #fff0f4;
+  --wel-sem-color-gradient-secondary-end: #e9e5ff;
+  --wel-sem-color-gradient-white-min: #ffffff00;
+  --wel-sem-color-gradient-white-max: #ffffff;
+  --wel-sem-color-gradient-black-min: #07051800;
+  --wel-sem-color-gradient-black-mid: #0705188a;
+  --wel-sem-color-gradient-black-max: #070518;
+
+  /* ─── Color — web brand semantic (mode-specific) ────────────────────────── */
+  --wel-web-bsem-color-light-family-container-low: #f9f9ff;
+  --wel-web-bsem-color-light-family-container-hi: #e8edff;
+  --wel-web-bsem-color-light-outline-family: #050033;
+  --wel-web-bsem-color-dark-outline-family: #f6f2ff;
+  --wel-web-bsem-color-dark-gradient-black-hi: #070518e5;
+
+  /* ─── Effect (shadow) ──────────────────────────────────────────────────── */
+  --wel-sem-number-shadow-blur: 6px;
+  --wel-sem-number-shadow-wide-blur: 16px;
+  --wel-sem-number-shadow-down-y: 2px;
+  --wel-sem-number-shadow-down-wide-y: 8px;
+  --wel-web-bsem-number-light-shadow-up-y: -2px;
+
+  /* ─── Typography — font families ───────────────────────────────────────── */
+  --wel-sem-font-families-display: Montserrat, sans-serif;
+  --wel-sem-font-families-title: Roboto, sans-serif;
+  --wel-sem-font-families-subtitle: Unna, serif;
+  --wel-sem-font-families-body: Roboto, sans-serif;
+  --wel-sem-font-families-caption: Roboto, sans-serif;
+  --wel-sem-font-families-detail: Roboto, sans-serif;
+  --wel-sem-font-families-label: Roboto, sans-serif;
+  --wel-sem-font-families-input: Roboto, sans-serif;
+
+  /* ─── Typography — font sizes (px) ──────────────────────────────────────── */
+  --wel-sem-font-size-display-2xl: 62px;
+  --wel-sem-font-size-display-xl: 50px;
+  --wel-sem-font-size-display-lg: 40px;
+  --wel-sem-font-size-display-md: 32px;
+  --wel-sem-font-size-display-sm: 26px;
+  --wel-sem-font-size-display-xs: 20px;
+  --wel-sem-font-size-title-lg: 22px;
+  --wel-sem-font-size-title-md: 20px;
+  --wel-sem-font-size-title-sm: 18px;
+  --wel-sem-font-size-subtitle-lg: 26px;
+  --wel-sem-font-size-subtitle-md: 20px;
+  --wel-sem-font-size-body-md: 16px;
+  --wel-sem-font-size-body-sm: 14px;
+  --wel-sem-font-size-caption: 12px;
+  --wel-sem-font-size-detail: 12px;
+  --wel-sem-font-size-label-lg: 16px;
+  --wel-sem-font-size-label-md: 14px;
+  --wel-sem-font-size-label-sm: 12px;
+  --wel-sem-font-size-input-lg: 48px;
+  --wel-sem-font-size-input-md: 16px;
+  --wel-sem-font-size-input-sm: 14px;
+
+  /* ─── Typography — font weights ──────────────────────────────────────────── */
+  --wel-sem-font-weight-display: 700;
+  --wel-sem-font-weight-title: 500;
+  --wel-sem-font-weight-subtitle-default: 400;
+  --wel-sem-font-weight-body-default: 400;
+  --wel-sem-font-weight-body-strong: 500;
+  --wel-sem-font-weight-caption-default: 400;
+  --wel-sem-font-weight-caption-strong: 500;
+  --wel-sem-font-weight-detail: 400;
+  --wel-sem-font-weight-label-default: 400;
+  --wel-sem-font-weight-label-strong: 500;
+  --wel-sem-font-weight-input: 400;
+  --wel-sem-font-style-subtitle: italic;
+
+  /* ─── Typography — line heights ──────────────────────────────────────────── */
+  --wel-sem-line-height-display-2xl: 76px;
+  --wel-sem-line-height-display-xl: 64px;
+  --wel-sem-line-height-display-lg: 52px;
+  --wel-sem-line-height-display-md: 40px;
+  --wel-sem-line-height-display-sm: 32px;
+  --wel-sem-line-height-display-xs: 24px;
+  --wel-sem-line-height-title-lg: 28px;
+  --wel-sem-line-height-title-md: 24px;
+  --wel-sem-line-height-title-sm: 24px;
+  --wel-sem-line-height-subtitle-lg: 32px;
+  --wel-sem-line-height-subtitle-md: 24px;
+  --wel-sem-line-height-body-md: 24px;
+  --wel-sem-line-height-body-sm: 20px;
+  --wel-sem-line-height-caption: 16px;
+  --wel-sem-line-height-detail: 16px;
+  --wel-sem-line-height-label-lg: 24px;
+  --wel-sem-line-height-label-md: 20px;
+  --wel-sem-line-height-label-sm: 16px;
+  --wel-sem-line-height-input-lg: 68px;
+  --wel-sem-line-height-input-md: 24px;
+  --wel-sem-line-height-input-sm: 20px;
+
+  /* ─── Typography — letter spacing ────────────────────────────────────────── */
+  --wel-sem-letter-spacing-display-wide: 1px;
+  --wel-sem-letter-spacing-display-condensed: 0.5px;
+  --wel-sem-letter-spacing-title: 0;
+  --wel-sem-letter-spacing-subtitle: 0;
+  --wel-sem-letter-spacing-body: 0;
+  --wel-sem-letter-spacing-caption: 0;
+  --wel-sem-letter-spacing-detail: 0;
+  --wel-sem-letter-spacing-label: 0;
+  --wel-sem-letter-spacing-input: 0;
+
+  /* ─── Composite text styles (convenience shorthands) ──────────────────────── */
+  --wel-typography-display-01: var(--wel-sem-font-weight-display) var(--wel-sem-font-size-display-2xl) / var(--wel-sem-line-height-display-2xl) var(--wel-sem-font-families-display);
+  --wel-typography-display-02: var(--wel-sem-font-weight-display) var(--wel-sem-font-size-display-xl) / var(--wel-sem-line-height-display-xl) var(--wel-sem-font-families-display);
+  --wel-typography-display-03: var(--wel-sem-font-weight-display) var(--wel-sem-font-size-display-lg) / var(--wel-sem-line-height-display-lg) var(--wel-sem-font-families-display);
+  --wel-typography-display-04: var(--wel-sem-font-weight-display) var(--wel-sem-font-size-display-md) / var(--wel-sem-line-height-display-md) var(--wel-sem-font-families-display);
+  --wel-typography-display-05: var(--wel-sem-font-weight-display) var(--wel-sem-font-size-display-sm) / var(--wel-sem-line-height-display-sm) var(--wel-sem-font-families-display);
+  --wel-typography-display-06: var(--wel-sem-font-weight-display) var(--wel-sem-font-size-display-xs) / var(--wel-sem-line-height-display-xs) var(--wel-sem-font-families-display);
+  --wel-typography-title-01: var(--wel-sem-font-weight-title) var(--wel-sem-font-size-title-lg) / var(--wel-sem-line-height-title-lg) var(--wel-sem-font-families-title);
+  --wel-typography-title-02: var(--wel-sem-font-weight-title) var(--wel-sem-font-size-title-md) / var(--wel-sem-line-height-title-md) var(--wel-sem-font-families-title);
+  --wel-typography-title-03: var(--wel-sem-font-weight-title) var(--wel-sem-font-size-title-sm) / var(--wel-sem-line-height-title-sm) var(--wel-sem-font-families-title);
+  --wel-typography-sub-01: var(--wel-sem-font-style-subtitle) var(--wel-sem-font-weight-subtitle-default) var(--wel-sem-font-size-subtitle-lg) / var(--wel-sem-line-height-subtitle-lg) var(--wel-sem-font-families-subtitle);
+  --wel-typography-sub-02: var(--wel-sem-font-style-subtitle) var(--wel-sem-font-weight-subtitle-default) var(--wel-sem-font-size-subtitle-md) / var(--wel-sem-line-height-subtitle-md) var(--wel-sem-font-families-subtitle);
+  --wel-typography-body-default-01: var(--wel-sem-font-weight-body-default) var(--wel-sem-font-size-body-md) / var(--wel-sem-line-height-body-md) var(--wel-sem-font-families-body);
+  --wel-typography-body-strong-01: var(--wel-sem-font-weight-body-strong) var(--wel-sem-font-size-body-md) / var(--wel-sem-line-height-body-md) var(--wel-sem-font-families-body);
+  --wel-typography-body-default-02: var(--wel-sem-font-weight-body-default) var(--wel-sem-font-size-body-sm) / var(--wel-sem-line-height-body-sm) var(--wel-sem-font-families-body);
+  --wel-typography-body-strong-02: var(--wel-sem-font-weight-body-strong) var(--wel-sem-font-size-body-sm) / var(--wel-sem-line-height-body-sm) var(--wel-sem-font-families-body);
+  --wel-typography-caption-default: var(--wel-sem-font-weight-caption-default) var(--wel-sem-font-size-caption) / var(--wel-sem-line-height-caption) var(--wel-sem-font-families-caption);
+  --wel-typography-caption-strong: var(--wel-sem-font-weight-caption-strong) var(--wel-sem-font-size-caption) / var(--wel-sem-line-height-caption) var(--wel-sem-font-families-caption);
+  --wel-typography-detail: var(--wel-sem-font-weight-detail) var(--wel-sem-font-size-detail) / var(--wel-sem-line-height-detail) var(--wel-sem-font-families-detail);
+  --wel-typography-label-default-01: var(--wel-sem-font-weight-label-default) var(--wel-sem-font-size-label-lg) / var(--wel-sem-line-height-label-lg) var(--wel-sem-font-families-label);
+  --wel-typography-label-strong-01: var(--wel-sem-font-weight-label-strong) var(--wel-sem-font-size-label-lg) / var(--wel-sem-line-height-label-lg) var(--wel-sem-font-families-label);
+  --wel-typography-label-default-02: var(--wel-sem-font-weight-label-default) var(--wel-sem-font-size-label-md) / var(--wel-sem-line-height-label-md) var(--wel-sem-font-families-label);
+  --wel-typography-label-strong-02: var(--wel-sem-font-weight-label-strong) var(--wel-sem-font-size-label-md) / var(--wel-sem-line-height-label-md) var(--wel-sem-font-families-label);
+  --wel-typography-label-default-03: var(--wel-sem-font-weight-label-default) var(--wel-sem-font-size-label-sm) / var(--wel-sem-line-height-label-sm) var(--wel-sem-font-families-label);
+  --wel-typography-label-strong-03: var(--wel-sem-font-weight-label-strong) var(--wel-sem-font-size-label-sm) / var(--wel-sem-line-height-label-sm) var(--wel-sem-font-families-label);
+  --wel-typography-input-01: var(--wel-sem-font-weight-input) var(--wel-sem-font-size-input-lg) / var(--wel-sem-line-height-input-lg) var(--wel-sem-font-families-input);
+  --wel-typography-input-02: var(--wel-sem-font-weight-input) var(--wel-sem-font-size-input-md) / var(--wel-sem-line-height-input-md) var(--wel-sem-font-families-input);
+  --wel-typography-input-03: var(--wel-sem-font-weight-input) var(--wel-sem-font-size-input-sm) / var(--wel-sem-line-height-input-sm) var(--wel-sem-font-families-input);
+}
+
+/* Dark theme — opt-in via class */
+.theme-dark {
+  --wel-sem-color-surface: #070518;
+  --wel-sem-color-on-surface-hi: #f7f9fb;
+  --wel-sem-color-on-surface-low: #b0aec4;
+  --wel-sem-color-on-surface-mid: #d0cfe0;
+  --wel-sem-color-outline-hi: #5e5b73;
+  --wel-sem-color-neutral-container: #38364d;
+  --wel-sem-color-surface-container-mid: #1a1830;
+  --wel-sem-color-surface-container-low: #0e0c22;
+  --wel-sem-color-primary: #f6f2ff;
+  --wel-sem-color-on-primary-container: #e8edff;
+  --wel-sem-color-outline-primary-hi: #f6f2ff;
+  --wel-sem-color-link: #92b6ff;
+  --wel-sem-color-outline-primary-low: #8e8bc1;
+  --wel-sem-color-hover-link: #2a71db;
+  --wel-sem-color-outline-mid: #5e5b73;
+}

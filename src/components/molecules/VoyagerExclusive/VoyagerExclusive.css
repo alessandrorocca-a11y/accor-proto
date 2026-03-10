@@ -1,0 +1,185 @@
+/* ══════════════════════════════════════════════════════════════════════
+   VOYAGER EXCLUSIVE — Badge + Upgrade Dialog
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Badge (inline, below tags) ──────────────────────────────────────── */
+.voyager-badge {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.voyager-badge__card {
+  height: 56px;
+  width: auto;
+  display: block;
+}
+
+/* ── Dialog backdrop ─────────────────────────────────────────────────── */
+.voyager-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 0, 51, 0.8);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* ── Dialog panel ────────────────────────────────────────────────────── */
+.voyager-dialog {
+  background: var(--wel-sem-color-surface, #fff);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  padding: 16px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-shadow: 0 -2px 6px var(--wel-sem-color-shadow-default, rgba(7, 5, 24, 0.05));
+  animation: voyager-slide-up 0.25s ease-out;
+}
+
+@media (min-width: 600px) {
+  .voyager-dialog__backdrop {
+    align-items: center;
+  }
+
+  .voyager-dialog {
+    max-width: 420px;
+    border-radius: 16px;
+  }
+}
+
+@keyframes voyager-slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.voyager-dialog__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+}
+
+.voyager-dialog__title {
+  flex: 1;
+  font: var(--wel-typography-title-03, 500 18px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  text-align: center;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voyager-dialog__spacer {
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.voyager-dialog__close {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Body ────────────────────────────────────────────────────────────── */
+.voyager-dialog__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.voyager-dialog__card {
+  width: 200px;
+  height: auto;
+  border-radius: 6px;
+  filter: drop-shadow(0 2px 8px rgba(5, 0, 51, 0.15));
+}
+
+.voyager-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.voyager-dialog__heading {
+  font: var(--wel-typography-title-03, 500 18px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+}
+
+.voyager-dialog__text {
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  margin: 0;
+}
+
+.voyager-dialog__text strong {
+  font-weight: 500;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+/* ── Actions ─────────────────────────────────────────────────────────── */
+.voyager-dialog__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.voyager-dialog__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  border-radius: 100px;
+  background: linear-gradient(206deg,
+    var(--wel-comp-btn-primary-bg-gradient-end, rgb(82, 79, 129)) 5.7%,
+    var(--wel-comp-btn-primary-bg-gradient-start, rgb(5, 0, 51)) 92.5%);
+  border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
+  color: #fff;
+  font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.voyager-dialog__cta:hover {
+  background: linear-gradient(90deg,
+    rgba(232, 198, 232, 0.6),
+    rgba(198, 198, 240, 0.6));
+  color: #050033;
+}
+
+.voyager-dialog__cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  border-radius: 100px;
+  background: transparent;
+  border: 1px solid var(--wel-sem-color-outline-primary-hi, #050033);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
+  cursor: pointer;
+}
+
+.voyager-dialog__cancel:hover {
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+}

@@ -1,0 +1,189 @@
+/**
+ * Redeem page — extends auction-page base styles
+ * Only redeem-specific elements are defined here.
+ * Shared layout (hero, info, sections, dialogs, notifications) comes from AuctionPage.css.
+ * Recap and confirmation styles come from PrizeDrawPage.css.
+ */
+@import './AuctionPage.css';
+@import './PrizeDrawPage.css';
+
+/* ── Redeem badge — loyalty purple ──────────────────────────────────── */
+.redeem__badge {
+  background: #5f5bd2 !important;
+}
+
+/* ── Recap badge override for Redeem ────────────────────────────────── */
+.redeem__recap-badge {
+  background: #5f5bd2 !important;
+}
+
+/* ── Pre Sale badge on hero ─────────────────────────────────────────── */
+.redeem__presale-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 12px;
+  background: var(--wel-sem-color-primary-container-low, #f9f9ff);
+  border: 1px solid var(--wel-sem-color-on-primary, #f9f9ff);
+  border-radius: 2px;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-primary, #050033);
+  z-index: 2;
+  white-space: nowrap;
+}
+
+/* ── Ticket section — reuses prize-draw patterns ────────────────────── */
+.redeem__ticket-section {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.redeem__ticket-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px 16px;
+  background: var(--wel-sem-color-primary-container-low, #f9f9ff);
+  border-bottom: 1px dashed var(--wel-sem-color-outline-low, #d9dadc);
+}
+
+.redeem__radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.redeem__radio-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #050033;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.redeem__radio-dot::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #050033;
+}
+
+.redeem__radio-text {
+  font: 500 16px/24px 'Roboto', sans-serif;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+.redeem__ticket-price {
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-outline-primary-hi, #050033);
+  white-space: nowrap;
+}
+
+/* ── Input stepper ───────────────────────────────────────────────────── */
+.redeem__stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  max-width: 280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.redeem__stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  border: 1px solid #050033;
+  border-radius: 100px;
+  background: transparent;
+  color: #050033;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.redeem__stepper-btn:hover:not(:disabled) {
+  background: rgba(5, 0, 51, 0.06);
+}
+
+.redeem__stepper-btn--disabled,
+.redeem__stepper-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.redeem__stepper-value {
+  flex: 1;
+  text-align: center;
+  font: var(--wel-typography-input-02, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+}
+
+/* ── Buy button ──────────────────────────────────────────────────────── */
+.redeem__buy-btn {
+  margin-top: 0;
+  border-radius: 100px;
+  padding: 12px 16px;
+  background: linear-gradient(232deg, #524f81 5.7%, #050033 92.5%);
+  border: 1px solid #b7b3ec;
+  color: #f9f9ff;
+  font: var(--wel-typography-label-default-01);
+}
+
+.redeem__buy-btn:hover:not(:disabled),
+.redeem__buy-btn:active:not(:disabled) {
+  background: linear-gradient(90deg, rgba(232, 198, 232, 0.6) 0%, rgba(198, 198, 240, 0.6) 100%);
+  border-color: transparent;
+  color: #050033;
+  opacity: 1;
+}
+
+/* ── Sidebar card adjustments ────────────────────────────────────────── */
+.redeem__sidebar-card .redeem__ticket-section {
+  gap: 20px;
+}
+
+/* ── Mobile-only ticket section ──────────────────────────────────────── */
+.redeem__ticket-section--mobile {
+  display: flex;
+}
+
+/* ── Sticky bottom bar ──────────────────────────────────────────────── */
+.redeem__sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: var(--wel-sem-color-surface, #fff);
+  box-shadow: 0 -2px 6px 0 rgba(7, 5, 24, 0.05);
+  animation: sticky-bar-slide-up 0.2s ease-out;
+}
+
+@media (min-width: 601px) {
+  .redeem__sticky-bar {
+    display: none;
+  }
+
+  .redeem__ticket-section--mobile {
+    display: none;
+  }
+
+  .redeem .auction-page__divider--mobile-only {
+    display: none;
+  }
+}

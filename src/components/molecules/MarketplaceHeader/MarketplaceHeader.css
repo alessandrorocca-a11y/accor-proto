@@ -1,0 +1,366 @@
+/**
+ * Marketplace Header (mobile) — All Accor Marketplace
+ * Uses design tokens from theme.css
+ */
+
+/* Optional: loyalty badge background (Figma gold #af913a when not in tokens) */
+:root {
+  --marketplace-header-points-gold: #af913a;
+  --marketplace-header-points-classic: var(--wel-sem-color-on-family);
+  --marketplace-header-points-silver: #9ca3af;
+  --marketplace-header-points-platinum: #6b7280;
+  --marketplace-header-points-diamond: var(--wel-sem-color-family);
+}
+
+.marketplace-header {
+  width: 100%;
+  --header-bg: var(--wel-web-bsem-color-light-family-container-low);
+  --header-fg: var(--wel-sem-color-on-family);
+  --header-shadow: 0 var(--wel-sem-number-shadow-down-y) var(--wel-sem-number-shadow-blur) var(--wel-sem-color-shadow-default);
+}
+
+.marketplace-header--light {
+  --header-bg: #fff;
+  --header-fg: var(--wel-sem-color-on-surface-hi);
+}
+
+.marketplace-header--dark {
+  --header-bg: var(--wel-sem-color-surface);
+  --header-fg: var(--wel-sem-color-on-surface-hi);
+}
+
+.marketplace-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  min-height: 48px;
+  background: var(--header-bg);
+  box-shadow: var(--header-shadow);
+}
+
+.marketplace-header__start {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  min-width: 0;
+}
+
+.marketplace-header__logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--header-fg);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.marketplace-header__logo:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.marketplace-header__logo-img {
+  display: block;
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.marketplace-header__logo-text {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.marketplace-header__logo-all {
+  font: var(--wel-typography-title-03);
+  font-weight: var(--wel-sem-font-weight-title);
+  color: var(--header-fg);
+  letter-spacing: 0.02em;
+}
+
+.marketplace-header__logo-accor {
+  font: var(--wel-typography-caption-default);
+  font-weight: var(--wel-sem-font-weight-caption-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--header-fg);
+}
+
+/* Points badge (logged in) */
+.marketplace-header__points {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font: var(--wel-typography-label-default-03);
+  color: #fff;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.marketplace-header__points--classic {
+  background: var(--marketplace-header-points-classic);
+}
+
+.marketplace-header__points--silver {
+  background: var(--marketplace-header-points-silver);
+}
+
+.marketplace-header__points--gold {
+  background: var(--marketplace-header-points-gold);
+  color: #fff;
+}
+
+.marketplace-header__points--platinum {
+  background: var(--marketplace-header-points-platinum);
+}
+
+.marketplace-header__points--diamond {
+  background: var(--marketplace-header-points-diamond);
+  color: var(--wel-sem-color-on-family);
+}
+
+.marketplace-header__points-icon {
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.marketplace-header__points-value {
+  white-space: nowrap;
+}
+
+.marketplace-header__center {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  max-width: 600px;
+  min-width: 0;
+  padding: 8px 16px;
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.marketplace-header__center svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.marketplace-header__center-placeholder {
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-outline-mid, #afb1b3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Desktop inline search wrapper & dropdown */
+.marketplace-header__center-wrap {
+  display: none;
+  position: relative;
+  flex: 1 1 0;
+  max-width: 600px;
+  min-width: 0;
+}
+
+.marketplace-header__center--active {
+  border-color: var(--wel-sem-color-focus, #2a71db);
+  border-width: 2px;
+  padding: 7px 15px;
+}
+
+.marketplace-header__center-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: var(--wel-typography-input-02, 400 16px/24px 'Roboto', sans-serif);
+  font-size: 16px;
+  color: var(--wel-sem-color-on-surface-hi, #050033);
+  min-width: 0;
+}
+
+.marketplace-header__center-input::placeholder {
+  color: var(--wel-sem-color-outline-mid, #afb1b3);
+}
+
+.marketplace-header__search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+  z-index: 1100;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: search-dropdown-slide-in 0.2s ease-out;
+}
+
+@keyframes search-dropdown-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.marketplace-header__end {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .marketplace-header__center-wrap {
+    display: block;
+  }
+
+  .marketplace-header__center {
+    display: flex;
+  }
+}
+
+.marketplace-header__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--header-fg);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.marketplace-header__icon-btn:hover {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.marketplace-header__icon-btn:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.marketplace-header__icon-btn svg {
+  width: 32px;
+  height: 32px;
+}
+
+.marketplace-header__avatar {
+  flex-shrink: 0;
+  border: var(--wel-sem-border-width-default) solid var(--header-fg);
+}
+
+.marketplace-header__menu-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--header-fg);
+  cursor: pointer;
+  font: var(--wel-typography-label-default-03);
+  font-weight: var(--wel-sem-font-weight-label-strong);
+  letter-spacing: 0.84px;
+  text-transform: uppercase;
+}
+
+.marketplace-header__menu-btn:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.marketplace-header__menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.marketplace-header__menu-label {
+  line-height: 1;
+}
+
+/* Optional labels row (payment, event, favourite) */
+.marketplace-header__labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.5rem 1rem;
+  border-top: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  background: var(--header-bg);
+}
+
+.marketplace-header__payment-label {
+  font: var(--wel-typography-caption-default);
+  font-weight: var(--wel-sem-font-weight-caption-strong);
+  color: var(--wel-sem-color-outline-primary-low);
+}
+
+.marketplace-header__event-label {
+  font: var(--wel-typography-label-default-03);
+  font-weight: var(--wel-sem-font-weight-label-strong);
+  color: var(--wel-sem-color-on-family);
+}
+
+.marketplace-header--dark .marketplace-header__event-label {
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.marketplace-header__favourite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--header-fg);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.marketplace-header__favourite:hover {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.marketplace-header__favourite[aria-pressed="true"] {
+  color: var(--wel-sem-color-pressed-link);
+}
+
+.marketplace-header__favourite:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.marketplace-header__favourite svg {
+  width: 32px;
+  height: 32px;
+}

@@ -1,0 +1,133 @@
+---
+description: Auction event page template — structure, variants, interactions, and styling rules
+alwaysApply: true
+---
+
+# Auction Page Template
+
+When asked to create an "auction" page, replicate the patterns established in `src/pages/AuctionPage.tsx` and `src/pages/AuctionPage.css`. Use `CarAuctionPage.tsx` as a reference for how to create a new auction with different content variables.
+
+## File Structure
+
+- Page component: `src/pages/<Name>AuctionPage.tsx`
+- Styles: shared `src/pages/AuctionPage.css` (all auction pages reuse the same CSS classes)
+- Route: add to `src/App.tsx` with a hash route (e.g. `#car`)
+
+## Page Layout
+
+1. **MarketplaceHeader** — light theme, points badge, search bar, menu button
+2. **Menu** — bottom-sheet with profile, navigation, favourites, orders
+3. **Loyalty sheet** — bottom-sheet showing status and reward points
+4. **Breadcrumb** — desktop only, "Previous page" link
+5. **Hero section** — full-width swipeable image gallery (mobile), 5-image grid (desktop)
+6. **Two-column layout** — `main` (content) + `aside` (bid card, desktop only)
+7. **Content sections** separated by `<hr>`: description, what's included, about venue, how to get there, terms & conditions
+
+## Hero Section
+
+- Swipeable image track on mobile with dot indicators and gallery counter (e.g. "1/6")
+- 5-image grid on desktop (first image large)
+- **Badge container** at bottom-left with:
+  - "Auction" badge (always visible, blue `#508ffa`)
+  - Optional status badge: `--winning` (green), `--winner` (gold), `--outbid` (red)
+- **Optional top-left tag**: `--presale`, `--sold-out`, `--discount`, `--exclusive`
+
+## Info Section (below hero)
+
+- Date row with bell and heart icon buttons on the right
+- Title (`display-06` typography, Montserrat Bold)
+- Location with outline pin icon
+- 0–2 pill-shaped tags (`border-radius: 8px`, `border: 1.5px solid #050033`)
+- Gap between elements: `16px`, heading to subtitle: `32px`
+- Conditional "highest bidder" / "winner" success banner (green `#e0f5ec`)
+
+## Bid Section
+
+- **Time left** label row (gray background `#f7f9fb`)
+- **Countdown** component (days/hours/minutes/seconds blocks)
+- **Current Bid** label + large value (Montserrat Bold 26px) + bid count
+- **Place bid** input + min/max increment hints
+- **Chip shortcuts** — 4 preset bid values
+- **Place bid** button (primary, full-width)
+- On desktop: same content in a sticky sidebar card
+
+## Constants Per Auction Page
+
+Each auction page defines these variables at the top:
+
+```typescript
+const AUCTION_MS_LEFT = (days * 24 * 60 + hours * 60 + minutes) * 60 * 1000;
+const USER_POINTS = 42430;
+const CURRENT_BID = 25000;
+const BID_CHIPS = [25500, 26000, 26500, 27000];
+const HERO_IMAGES = [{ src, alt }, ...]; // 6 images
+const INCLUDED_ITEMS = ['item 1', 'item 2', ...];
+```
+
+## Bid Flow & Validation
+
+1. **Bid must be > current bid** — otherwise button does nothing
+2. **Bid must be <= user's points** — if exceeded, show error snackbar:
+   - Background `#ffecec`, title color `#9e0031`, body color `#be003c`
+   - Warning triangle icon
+   - Text: "Insufficient Points balance" / "You do not have enough points to place this bid."
+3. **Valid bid** → opens **Confirm Bid dialog** (bottom-sheet):
+   - Title "Confirm your bid" + close button
+   - Time left row + end date
+   - "Actual bid: X points"
+   - "Your bid" in large display font
+   - Cancel (tertiary) + Confirm bid (primary) buttons
+4. **On confirm**:
+   - `currentBid` updates to user's bid, `bidCount` increments
+   - `isHighestBidder = true`
+   - Hero shows "Winning" badge
+   - Green banner: "You are the highest bidder"
+
+## Auction Ended State
+
+When countdown reaches zero (`Countdown` component's `onEnd` callback):
+
+- `auctionEnded = true`
+- If `isHighestBidder`:
+  - Hero badge changes to "Winner"
+  - Banner: "You won this auction. You'll receive an email with all the related informations."
+  - Bid label: "Winner Bid" (instead of "Current Bid")
+  - "Ended" badge appears in bid section
+  - Countdown, bid input, chips, and button are all hidden
+
+## Notifications (Snackbars)
+
+- **Position**: `fixed`, `top: 80px`, full-width with `14px` horizontal padding, `z-index: 1000`
+- **Success** (bell/heart): green background `#caffea`, icon `#00513f`, title `#00513f`, body `#006a53`
+- **Error** (insufficient points): pink background `#ffecec`, icon `#9e0031`, title `#9e0031`, body `#be003c`
+- Auto-dismiss after 5–6 seconds, with manual close button
+- Slide-in animation from top
+
+## Icon Interactions
+
+- **Heart**: toggles favourite, fill color `#B40875` when active
+- **Bell**: toggles notifications, fill color `#2D4CD5` when active
+- Both show success snackbar with checkmark icon (not the action icon)
+
+## Dialogs & Bottom Sheets
+
+- **Full-width** on mobile (< 600px viewport)
+- **max-width: 420px** on desktop (>= 600px)
+- Dark overlay: `rgba(5, 0, 51, 0.8)` for confirm bid, `rgba(7, 5, 24, 0.5)` for loyalty
+- Rounded top corners: `16px`
+- Slide-up animation
+
+## Button Styling
+
+- **Primary** default: gradient background (`--wel-sem-color-family`), light text
+- **Primary hover/pressed**: `linear-gradient(90deg, rgba(232,198,232,0.6), rgba(198,198,240,0.6))`, text color `#050033`
+- **Tertiary**: transparent background, `#050033` border, `border-radius: 100px` (pill)
+- **Disabled**: `opacity: 0.5`, `cursor: not-allowed`
+
+## Styling Conventions
+
+- CSS file: `AuctionPage.css` with BEM-like class names prefixed `auction-page__`
+- Design tokens: `var(--wel-sem-color-...)`, `var(--wel-typography-...)`
+- Responsive breakpoints: mobile-first, `768px` (tablet), `1024px` (desktop)
+- Location icon: outline/stroke style (not filled)
+- All images should be relevant to the event title

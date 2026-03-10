@@ -1,0 +1,19 @@
+.ads-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.ads-rating-star {
+  color: var(--wel-sem-color-overlay-mid);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.ads-rating-sm .ads-rating-star {
+  font-size: 1rem;
+}
+
+.ads-rating-star-filled {
+  color: var(--wel-sem-color-on-eco-container-hi);
+}

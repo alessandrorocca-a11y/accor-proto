@@ -1,0 +1,14 @@
+---
+description: General UI conventions that apply across all pages
+alwaysApply: true
+---
+
+# General Conventions
+
+## Navbar
+
+The `MarketplaceHeader` must always use `theme="light"` (white background). Never use `"dark"` or `"default"`.
+
+## City Page Hero Images
+
+Every city must have its own hero image in `CITY_CONFIGS` inside `src/pages/CityPage.tsx`. The image must depict the actual city (e.g. Rome shows Rome, New York shows New York). When adding a new city route, always add a matching entry in `CITY_CONFIGS` with a city-specific Unsplash photo. Never rely on the generic `DEFAULT_CONFIG` fallback for a known city.

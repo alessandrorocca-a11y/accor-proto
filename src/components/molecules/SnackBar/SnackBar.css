@@ -1,0 +1,40 @@
+.ads-snackbar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--wel-sem-color-overlay-hi);
+  color: var(--wel-sem-color-on-surface-hi);
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  border-radius: 4px;
+  box-shadow: 0 var(--wel-sem-number-shadow-down-y) var(--wel-sem-number-shadow-blur) var(--wel-sem-color-shadow-default);
+  z-index: 1000;
+  max-width: calc(100vw - 2rem);
+}
+
+.ads-snackbar-message {
+  font: var(--wel-typography-body-default-02);
+}
+
+.ads-snackbar-action {
+  flex-shrink: 0;
+}
+
+.ads-snackbar-close {
+  padding: 0 0.25rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.ads-snackbar-close:hover {
+  opacity: 1;
+}

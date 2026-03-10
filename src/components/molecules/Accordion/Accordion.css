@@ -1,0 +1,46 @@
+.ads-accordion {
+  border: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ads-accordion-item {
+  border-bottom: var(--wel-sem-border-width-default) solid var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-accordion-item:last-child {
+  border-bottom: none;
+}
+
+.ads-accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  font: var(--wel-typography-title-03);
+  color: var(--wel-sem-color-on-surface-hi);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.ads-accordion-trigger:hover {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.ads-accordion-icon {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+.ads-accordion-panel {
+  padding: 0 1rem 1rem;
+  font: var(--wel-typography-body-default-01);
+}
+
+.ads-accordion-panel[hidden] {
+  display: none;
+}

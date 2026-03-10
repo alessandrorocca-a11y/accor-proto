@@ -1,0 +1,117 @@
+/**
+ * Waitlist page — extends auction-page and linkout base styles.
+ * Only waitlist-specific elements are defined here.
+ */
+@import './LinkoutPage.css';
+
+/* ── Waitlist badge — dark primary ──────────────────────────────────── */
+.waitlist__badge {
+  background: var(--wel-sem-color-primary, #050033) !important;
+}
+
+/* ── Bottom CTA bar — sticky to viewport bottom ─────────────────────── */
+.waitlist__cta-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 16px 0;
+  background: var(--wel-sem-color-surface, #fff);
+  border-top: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  box-shadow: 0 -2px var(--wel-sem-number-shadow-blur, 6px) 0 var(--wel-sem-color-shadow-default, rgba(7, 5, 24, 0.05));
+}
+
+.waitlist__cta-spacer {
+  height: 1px;
+}
+
+.waitlist__cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
+  background: linear-gradient(232deg, var(--wel-comp-btn-primary-bg-gradient-end, #524f81) 5.7%, var(--wel-comp-btn-primary-bg-gradient-start, #050033) 92.5%);
+  color: #f9f9ff;
+  font: var(--wel-typography-label-default-01);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.waitlist__cta-btn:hover:not(.waitlist__cta-btn--joined) {
+  background: linear-gradient(90deg, rgba(232, 198, 232, 0.6) 0%, rgba(198, 198, 240, 0.6) 100%);
+  border-color: transparent;
+  color: #050033;
+}
+
+.waitlist__cta-btn--joined {
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  border-color: var(--wel-sem-color-outline-low, #d9dadc);
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+  cursor: default;
+}
+
+.waitlist__cta-disclaimer {
+  padding: 4px 0 4px;
+  margin: 0;
+  font: var(--wel-typography-label-default-02, 400 14px/20px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-outline-hi, #898c8e);
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DESKTOP SIDEBAR — min-width: 601px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 601px) {
+  .waitlist__cta-bar,
+  .waitlist__cta-spacer {
+    display: none;
+  }
+
+  .waitlist__sidebar-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .waitlist__sidebar-cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
+    background: linear-gradient(232deg, var(--wel-comp-btn-primary-bg-gradient-end, #524f81) 5.7%, var(--wel-comp-btn-primary-bg-gradient-start, #050033) 92.5%);
+    color: #f9f9ff;
+    font: var(--wel-typography-label-default-01);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .waitlist__sidebar-cta-btn:hover:not(.waitlist__sidebar-cta-btn--joined) {
+    background: linear-gradient(90deg, rgba(232, 198, 232, 0.6) 0%, rgba(198, 198, 240, 0.6) 100%);
+    border-color: transparent;
+    color: #050033;
+  }
+
+  .waitlist__sidebar-cta-btn--joined {
+    background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+    border-color: var(--wel-sem-color-outline-low, #d9dadc);
+    color: var(--wel-sem-color-on-surface-mid, #38364d);
+    cursor: default;
+  }
+
+  .waitlist__sidebar-disclaimer {
+    font: var(--wel-typography-label-default-02, 400 14px/20px 'Roboto', sans-serif);
+    color: var(--wel-sem-color-outline-hi, #898c8e);
+    text-align: center;
+    margin: 0;
+  }
+}

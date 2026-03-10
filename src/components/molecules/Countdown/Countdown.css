@@ -1,0 +1,40 @@
+.countdown {
+  width: 100%;
+}
+
+.countdown__blocks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+}
+
+.countdown__block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.5rem;
+}
+
+.countdown__value {
+  font: var(--wel-typography-title-02);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.countdown__label {
+  font: var(--wel-typography-label-default-03);
+  color: var(--wel-sem-color-outline-primary-low);
+}
+
+.countdown__sep {
+  width: 1px;
+  height: 2rem;
+  background: var(--wel-sem-color-outline-primary-low);
+  flex-shrink: 0;
+}
+
+.countdown--ended .countdown__ended {
+  font: var(--wel-typography-body-strong-02);
+  color: var(--wel-sem-color-outline-primary-low);
+}

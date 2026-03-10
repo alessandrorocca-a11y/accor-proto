@@ -1,0 +1,134 @@
+.ads-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font: var(--wel-typography-label-default-02);
+  font-weight: var(--wel-sem-font-weight-label-strong);
+  border: var(--wel-sem-border-width-default) solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.ads-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ads-btn-sm {
+  padding: 0.375rem 0.75rem;
+  min-height: 32px;
+}
+
+.ads-btn-md {
+  padding: 0.5rem 1rem;
+  min-height: 40px;
+}
+
+.ads-btn-lg {
+  padding: 0.75rem 1.25rem;
+  min-height: 48px;
+  font: var(--wel-typography-label-default-01);
+}
+
+.ads-btn-full {
+  width: 100%;
+}
+
+.ads-btn-primary {
+  background: linear-gradient(249deg, #524f81 6%, #050033 92%);
+  color: #f9f9ff;
+  border-color: #b7b3ec;
+}
+
+.ads-btn-primary:hover:not(:disabled),
+.ads-btn-primary:active:not(:disabled) {
+  background: linear-gradient(90deg, rgba(232, 198, 232, 0.6) 0%, rgba(198, 198, 240, 0.6) 100%);
+  border-color: transparent;
+  color: #050033;
+}
+
+.ads-btn-primary:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.ads-btn-secondary {
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi);
+  border-color: var(--wel-sem-color-outline-primary-low);
+}
+
+.ads-btn-secondary:hover:not(:disabled) {
+  background: var(--wel-sem-color-overlay-low);
+  border-color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-btn-secondary:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.ads-btn-tertiary {
+  background: transparent;
+  color: #050033;
+  border-color: #050033;
+  border-radius: 100px;
+}
+
+.ads-btn-tertiary:hover:not(:disabled) {
+  background: var(--wel-sem-color-overlay-low, rgba(7, 5, 24, 0.04));
+}
+
+.ads-btn-tertiary:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.ads-btn-eco {
+  background: var(--wel-sem-color-eco-container-hi);
+  color: var(--wel-sem-color-on-eco-container-hi);
+  border-color: var(--wel-sem-color-outline-eco);
+}
+
+.ads-btn-eco:hover:not(:disabled) {
+  background: var(--wel-sem-color-hover-eco);
+  border-color: var(--wel-sem-color-hover-eco);
+}
+
+.ads-btn-eco:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.ads-btn-ghost {
+  background: transparent;
+  color: var(--wel-sem-color-on-surface-hi);
+  border-color: transparent;
+}
+
+.ads-btn-ghost:hover:not(:disabled) {
+  background: var(--wel-sem-color-overlay-low);
+}
+
+.ads-btn-ghost:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.ads-btn-link {
+  background: transparent;
+  color: var(--wel-sem-color-link);
+  border-color: transparent;
+  text-decoration: underline;
+}
+
+.ads-btn-link:hover:not(:disabled) {
+  color: var(--wel-sem-color-hover-link);
+}
+
+.ads-btn-link:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}

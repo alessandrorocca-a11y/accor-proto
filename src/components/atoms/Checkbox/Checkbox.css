@@ -1,0 +1,31 @@
+.ads-checkbox-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ads-checkbox-wrap:has(.ads-checkbox-label) {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ads-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  accent-color: var(--wel-sem-color-focus);
+  cursor: pointer;
+}
+
+.ads-checkbox-label {
+  font: var(--wel-typography-body-default-02);
+  color: var(--wel-sem-color-on-surface-hi);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ads-checkbox-hint {
+  font: var(--wel-typography-caption-default);
+  color: var(--wel-sem-color-outline-primary-low);
+}

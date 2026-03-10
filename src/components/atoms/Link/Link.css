@@ -1,0 +1,15 @@
+.ads-link {
+  font: var(--wel-typography-body-default-02);
+  color: var(--wel-sem-color-link);
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+
+.ads-link:hover {
+  color: var(--wel-sem-color-hover-link);
+}
+
+.ads-link:focus-visible {
+  outline: 2px solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}

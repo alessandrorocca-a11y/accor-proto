@@ -1,0 +1,18 @@
+.ads-range-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ads-range-label {
+  font: var(--wel-typography-caption-default);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.ads-range {
+  width: 100%;
+  min-width: 8rem;
+  height: 0.5rem;
+  accent-color: var(--wel-sem-color-focus);
+  cursor: pointer;
+}

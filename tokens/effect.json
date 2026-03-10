@@ -1,0 +1,23 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "description": "Effect (shadow) number tokens — Web Appearances (Figma)",
+  "wel": {
+    "sem": {
+      "number": {
+        "shadow-blur": { "value": "6", "type": "dimension" },
+        "shadow-wide-blur": { "value": "16", "type": "dimension" },
+        "shadow-down-y": { "value": "2", "type": "dimension" },
+        "shadow-down-wide-y": { "value": "8", "type": "dimension" }
+      }
+    },
+    "web": {
+      "bSem": {
+        "number": {
+          "light": {
+            "shadow-up-y": { "value": "-2", "type": "dimension" }
+          }
+        }
+      }
+    }
+  }
+}

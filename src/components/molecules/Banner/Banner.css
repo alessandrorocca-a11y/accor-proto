@@ -1,0 +1,38 @@
+.ads-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--wel-web-bsem-color-light-family-container-low);
+  color: var(--wel-sem-color-on-family);
+  border: var(--wel-sem-border-width-default) solid var(--wel-web-bsem-color-light-outline-family);
+}
+
+.ads-banner-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ads-banner-title {
+  font: var(--wel-typography-title-03);
+  margin-bottom: 0.25rem;
+}
+
+.ads-banner-body {
+  font: var(--wel-typography-body-default-02);
+}
+
+.ads-banner-close {
+  padding: 0.25rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.ads-banner-close:hover {
+  opacity: 1;
+}

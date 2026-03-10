@@ -1,0 +1,16 @@
+.ads-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--wel-sem-color-overlay-low) 25%,
+    var(--wel-sem-color-overlay-mid) 50%,
+    var(--wel-sem-color-overlay-low) 75%
+  );
+  background-size: 200% 100%;
+  animation: ads-skeleton-shimmer 1.2s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+@keyframes ads-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
