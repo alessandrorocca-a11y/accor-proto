@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { MarketplaceHeader, Menu } from '@/components';
+import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
-import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData } from '@/data/events/eventRegistry';
+import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './HomePage.css';
@@ -23,6 +23,7 @@ interface EventCard {
   hasTimer?: boolean;
   msLeft?: number;
   eventTag?: string;
+  marketingTag?: MarketingTagType;
 }
 
 interface TopExperience {
@@ -51,6 +52,8 @@ interface PlannedTrip {
   city: string;
   hotelName: string;
   dates: string;
+  dateFrom: string;
+  dateTo: string;
   image: string;
 }
 
@@ -58,6 +61,8 @@ const PLANNED_TRIP: PlannedTrip | null = {
   city: 'Paris',
   hotelName: 'Staying at Sofitel Le Scribe Paris',
   dates: '12 - 15 April 2026',
+  dateFrom: '2026-04-12',
+  dateTo: '2026-04-15',
   image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=200&fit=crop',
 };
 
@@ -80,25 +85,28 @@ function registryToCard(e: EventData): EventCard {
     hasTimer: !!e.msLeft,
     msLeft: e.msLeft,
     eventTag: e.eventTag,
+    marketingTag: e.marketingTag,
   };
 }
 
-const parisEvents = EVENT_REGISTRY.filter((e) => e.city === 'Paris');
+const isAccor = (e: EventData) => e.eventTag === 'Limitless Experiences';
+
+const parisEvents = EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e));
 
 const NEXT_TRIP_EVENTS: EventCard[] = parisEvents.slice(0, 8).map(registryToCard);
 
 const CONCERTS_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.category === 'Concerts and festivals' && e.city === 'Paris')
+  .filter((e) => e.category === 'Concerts and festivals' && isAccor(e))
   .slice(0, 8)
   .map(registryToCard);
 
 const SPORT_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.category === 'Sport and leisure')
+  .filter((e) => e.category === 'Sport and leisure' && isAccor(e))
   .slice(0, 8)
   .map(registryToCard);
 
 const PRIZE_DRAW_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.pageType === 'prize-draw')
+  .filter((e) => e.pageType === 'prize-draw' && isAccor(e))
   .slice(0, 8)
   .map(registryToCard);
 
@@ -106,53 +114,53 @@ const TOP_EXPERIENCES: TopExperience[] = [
   {
     id: 'te1',
     title: 'Paris Saint-Germain - Monaco',
-    image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&h=700&fit=crop',
+    image: '/psg-stadium.jpg',
     video: 'https://cdn.pixabay.com/video/2020/07/30/45349-446050392_tiny.mp4',
-    hash: '#standard',
+    hash: '#draw/evt-031',
   },
   {
     id: 'te2',
     title: 'Rio de Janeiro Carnaval 2026',
-    image: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=400&h=700&fit=crop',
+    image: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg',
     video: 'https://cdn.pixabay.com/video/2024/03/08/203849-921386938_tiny.mp4',
-    hash: '#standard',
+    hash: '#auction/evt-101',
   },
   {
     id: 'te3',
     title: 'Andrea Bocelli',
-    image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=700&fit=crop',
-    hash: '#standard',
+    image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
+    hash: '#auction/evt-003',
   },
   {
     id: 'te4',
     title: 'Monaco Grand Prix 2026',
     image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&h=700&fit=crop',
     video: 'https://cdn.pixabay.com/video/2017/08/05/11080-228267789_tiny.mp4',
-    hash: '#standard',
+    hash: '#auction/evt-024',
   },
   {
     id: 'te5',
-    title: 'Candlelight Concert Series',
-    image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=700&fit=crop',
-    hash: '#standard',
+    title: 'Sofitel x Devialet Candle Experience',
+    image: 'https://limitlessexperiences.accor.com/media/.renditions/wysiwyg/2025/ALL/December2025/SofitelxDevialet/Sofitel_Candle_Experience_Banner_355x320.png',
+    hash: '#redeem/evt-076',
   },
   {
     id: 'te6',
     title: 'Roland Garros VIP 2026',
-    image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=400&h=700&fit=crop',
+    image: '/roland-garros-1.png',
     video: 'https://cdn.pixabay.com/video/2020/05/25/39738-424930741_tiny.mp4',
-    hash: '#standard',
+    hash: '#draw/evt-021',
   },
 ];
 
 const CATEGORIES: Category[] = [
   { label: 'Shows & culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=350&h=200&fit=crop', hash: '#category/shows-and-culture' },
   { label: 'Food & drinks', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=350&h=200&fit=crop', hash: '#category/food-and-drinks' },
-  { label: 'Sports & leisure', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=350&h=200&fit=crop', hash: '#category/sport-and-leisure' },
+  { label: 'Sports & leisure', image: '/psg-stadium.jpg', hash: '#category/sport-and-leisure' },
   { label: 'Wellness', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=350&h=200&fit=crop', hash: '#category/wellness' },
-  { label: 'Concerts & festivals', image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=350&h=200&fit=crop', hash: '#category/concerts-and-festivals' },
+  { label: 'Concerts & festivals', image: 'https://limitlessexperiences.accor.com/media/wysiwyg/Accor-Arena-760x524.jpg', hash: '#category/concerts-and-festivals' },
   { label: 'Visits', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=350&h=200&fit=crop', hash: '#category/visits' },
-  { label: 'Hotel experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=350&h=200&fit=crop', hash: '#category/hotel-experiences' },
+  { label: 'Hotel experiences', image: 'https://limitlessexperiences.accor.com/media/.renditions/wysiwyg/2025/ALL/December2025/EmblemsDreamStays/EDS-HeroBanner_510x510.jpg', hash: '#category/hotel-experiences' },
 ];
 
 /* Events are now derived from EVENT_REGISTRY above */
@@ -199,7 +207,7 @@ function formatTimeLeft(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(days)} days ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+  return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 function LiveTimer({ initialMs }: { initialMs: number }) {
@@ -520,7 +528,8 @@ function EventCardCompact({
   return (
     <article className="home-page__event-card" onClick={handleCardClick}>
       <div className="home-page__event-card-img">
-        <img src={event.image} alt={event.title} loading="lazy" />
+        <img src={event.image} alt={event.title} loading="lazy" style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined} />
+        {event.marketingTag && <MarketingTag type={event.marketingTag} className="home-page__event-card-marketing-tag" />}
         <button
           type="button"
           className="home-page__event-card-fav"
@@ -533,6 +542,9 @@ function EventCardCompact({
       <div className="home-page__event-card-body">
         <span className="home-page__event-card-date">{event.date}</span>
         <h3 className="home-page__event-card-title">{event.title}</h3>
+        {event.eventTag && (
+          <span className="home-page__event-card-tag">{event.eventTag}</span>
+        )}
         <div className="home-page__event-card-payment">
           {label && <span className="home-page__event-card-payment-label">{label}</span>}
 
@@ -586,6 +598,7 @@ export default function HomePage() {
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
+  const [showFavSnack, setShowFavSnack] = useState(false);
 
   const [citySelectorOpen, setCitySelectorOpen] = useState(false);
   const [cityQuery, setCityQuery] = useState('');
@@ -675,12 +688,17 @@ export default function HomePage() {
   const citiesVisible = POPULAR_CITIES.slice((citiesPage - 1) * perPage, citiesPage * perPage);
 
   const toggleFavourite = (id: string) => {
+    const wasAdded = !favourites.has(id);
     setFavourites((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
+    if (wasAdded) {
+      setShowFavSnack(true);
+      setTimeout(() => setShowFavSnack(false), 5000);
+    }
     const evt = EVENT_REGISTRY.find((e) => e.id === id);
     if (evt) {
       toggleFavCtx({
@@ -696,7 +714,9 @@ export default function HomePage() {
     }
   };
 
-  const allEvents = [...NEXT_TRIP_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS];
+  const allEvents = Array.from(
+    new Map([...NEXT_TRIP_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS].map((e) => [e.id, e])).values(),
+  );
 
   const menuFavourites: MenuFavouriteEvent[] = useMemo(
     () =>
@@ -717,6 +737,29 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
+      {showFavSnack && (
+        <div className="home-page__fav-snack" role="status">
+          <svg className="home-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="12" r="10" fill="#00513f" />
+            <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="home-page__fav-snack-content">
+            <p className="home-page__fav-snack-title">Added to your favourites</p>
+            <p className="home-page__fav-snack-body">You can review your favourites in your profile menu.</p>
+          </div>
+          <button
+            type="button"
+            className="home-page__fav-snack-close"
+            onClick={() => setShowFavSnack(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* ── Desktop Navbar (desktop only) ─────────────────────────────── */}
       <nav className="home-page__desktop-nav">
         <img src={allAccorLogo} alt="ALL Accor" className="home-page__desktop-nav-logo" />
@@ -817,8 +860,8 @@ export default function HomePage() {
               className="home-page__trip-card home-page__trip-card--hero"
               role="button"
               tabIndex={0}
-              onClick={() => { window.location.hash = '#category/next-trip-to-paris'; }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { window.location.hash = '#category/next-trip-to-paris'; } }}
+              onClick={() => { window.location.hash = `#city/${PLANNED_TRIP!.city.toLowerCase()}?from=${PLANNED_TRIP!.dateFrom}&to=${PLANNED_TRIP!.dateTo}`; }}
+              onKeyDown={(e) => { if (e.key === 'Enter') { window.location.hash = `#city/${PLANNED_TRIP!.city.toLowerCase()}?from=${PLANNED_TRIP!.dateFrom}&to=${PLANNED_TRIP!.dateTo}`; } }}
             >
               <div className="home-page__trip-thumb">
                 <img src={PLANNED_TRIP.image} alt={PLANNED_TRIP.city} />
@@ -849,7 +892,7 @@ export default function HomePage() {
             <button
               type="button"
               className="home-page__section-link"
-              onClick={() => { window.location.hash = '#category/next-trip-to-paris'; }}
+              onClick={() => { window.location.hash = `#city/${PLANNED_TRIP!.city.toLowerCase()}?from=${PLANNED_TRIP!.dateFrom}&to=${PLANNED_TRIP!.dateTo}`; }}
             >See all</button>
           </div>
           <div className="home-page__scroll">
@@ -1006,21 +1049,21 @@ export default function HomePage() {
 
       {/* ── Near cities ──────────────────────────────────────────────── */}
       <section className="home-page__section home-page__near-cities-section">
-        <div className="home-page__section-header">
-          <h2 className="home-page__section-title">Near cities</h2>
-        </div>
-        <div className="home-page__near-cities">
-          {NEAR_CITIES.map((city) => (
-            <button
-              key={city.name}
-              type="button"
-              className="home-page__near-city-chip"
-              onClick={() => { window.location.hash = city.hash; }}
-            >
-              <IconPin />
-              {city.name}
-            </button>
-          ))}
+        <div className="home-page__near-cities-card">
+          <h2 className="home-page__near-cities-title">Near cities</h2>
+          <div className="home-page__near-cities">
+            {NEAR_CITIES.map((city) => (
+              <button
+                key={city.name}
+                type="button"
+                className="home-page__near-city-chip"
+                onClick={() => { window.location.hash = city.hash; }}
+              >
+                <IconPin />
+                {city.name}
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             className="home-page__find-city-btn"

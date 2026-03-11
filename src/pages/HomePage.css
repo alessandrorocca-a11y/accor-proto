@@ -63,7 +63,7 @@
 
 .home-page__hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -250,6 +250,10 @@
   min-height: 420px;
 }
 
+.home-page__hero--with-trip .home-page__hero-content {
+  padding-bottom: 16px;
+}
+
 /* ── Section shared styles ────────────────────────────────────────────── */
 .home-page__section {
   padding: 32px 0 0;
@@ -285,6 +289,7 @@
 /* ── Horizontal scroll container ──────────────────────────────────────── */
 .home-page__scroll {
   display: flex;
+  align-items: flex-start;
   gap: 8px;
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -320,9 +325,18 @@
 }
 
 .home-page__event-card-img img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.home-page__event-card-marketing-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
 }
 
 .home-page__event-card-fav {
@@ -366,6 +380,14 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.home-page__event-card-tag {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
 }
 
 .home-page__event-card-payment {
@@ -670,30 +692,48 @@
 }
 
 /* ── Near cities ──────────────────────────────────────────────────────── */
+.home-page__near-cities-card {
+  margin: 0 16px;
+  padding: 20px 16px;
+  background: var(--wel-sem-color-surface, #fff);
+  border: 1px solid var(--wel-sem-color-outline-low, #d9dadc);
+  border-radius: var(--wel-sem-borderradius-container-high, 6px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-page__near-cities-title {
+  font: 700 20px/24px 'Montserrat', sans-serif;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
 .home-page__near-cities {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  padding: 0 16px;
 }
 
 .home-page__near-city-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 6px;
+  padding: 8px 12px;
   border-radius: 100px;
-  border: 1.5px solid var(--wel-sem-color-primary, #050033);
-  background: var(--wel-sem-color-surface, #fff);
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  background: transparent;
   color: var(--wel-sem-color-primary, #050033);
-  font: var(--wel-typography-body-strong-01, 500 16px/24px 'Roboto', sans-serif);
+  font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s, color 0.15s;
 }
 
 .home-page__near-city-chip:hover {
-  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  background: var(--wel-sem-color-surface-container-low, #f5f5f5);
+  border-color: var(--wel-sem-color-on-surface-hi, #050033);
 }
 
 .home-page__near-city-chip svg {
@@ -703,9 +743,12 @@
 }
 
 .home-page__find-city-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  width: 100%;
+  max-width: 475px;
   padding: 10px 24px;
   border-radius: 100px;
   border: none;
@@ -980,6 +1023,51 @@
   flex: 0 0 220px;
 }
 
+/* ── Responsive: Small mobile font adjustments ───────────────────────── */
+@media (max-width: 425px) {
+  .home-page__event-card-date {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .home-page__event-card-tag {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .home-page__event-card-payment-label {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .home-page__event-card-points span {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .home-page__event-card-timer {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .home-page__event-card-cash {
+    font-size: 15px;
+    line-height: 22px;
+  }
+}
+
+/* ── Responsive: Tablet+ (left-align hero) ────────────────────────────── */
+@media (min-width: 600px) {
+  .home-page__hero {
+    align-items: flex-start;
+  }
+
+  .home-page__hero-content {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
 /* ── Responsive: Desktop ──────────────────────────────────────────────── */
 @media (min-width: 768px) {
   .home-page__hero {
@@ -999,6 +1087,14 @@
     min-height: 480px;
   }
 
+  .home-page__hero--with-trip .home-page__hero-content {
+    padding-bottom: 16px;
+  }
+
+  .home-page__trip-card--hero {
+    margin-left: 24px;
+  }
+
   .home-page__section-header {
     padding: 0 24px;
   }
@@ -1009,8 +1105,8 @@
     margin-right: 24px;
   }
 
-  .home-page__near-cities {
-    padding: 0 24px;
+  .home-page__near-cities-card {
+    margin: 0 24px;
   }
 }
 
@@ -1028,8 +1124,12 @@
     min-height: 540px;
   }
 
+  .home-page__hero--with-trip .home-page__hero-content {
+    padding-bottom: 20px;
+  }
+
   .home-page__trip-card--hero {
-    margin: 0;
+    margin-left: 32px;
     max-width: 420px;
   }
 
@@ -1043,8 +1143,8 @@
     margin-right: 40px;
   }
 
-  .home-page__near-cities {
-    padding: 0 40px;
+  .home-page__near-cities-card {
+    margin: 0 40px;
   }
 
   .home-page__banner {
@@ -1078,6 +1178,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 310 / 240;
+  position: relative;
 }
 
 .home-page__yml-grid .home-page__event-card-title {
@@ -1216,6 +1317,10 @@
     min-height: 680px;
   }
 
+  .home-page__hero--with-trip .home-page__hero-content {
+    padding-bottom: 24px;
+  }
+
   .home-page__hero-content {
     padding: 0 64px 64px;
     gap: 24px;
@@ -1237,7 +1342,7 @@
 
   /* ── Trip card inside hero on desktop ───────────────────────────── */
   .home-page__trip-card--hero {
-    margin: 0;
+    margin-left: 64px;
     max-width: 420px;
   }
 
@@ -1361,8 +1466,8 @@
     display: none;
   }
 
-  .home-page__near-cities {
-    padding: 0 64px;
+  .home-page__near-cities-card {
+    margin: 0 64px;
   }
 
   /* ── Scroll → Grid on desktop ────────────────────────────────────── */
@@ -1570,5 +1675,77 @@
 
   .home-page__signature .home-page__event-card {
     flex: unset;
+  }
+}
+
+/* ── Favourite snackbar ──────────────────────────────────────────────── */
+.home-page__fav-snack {
+  position: fixed;
+  top: 80px;
+  left: 14px;
+  right: 14px;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #caffea;
+  border-radius: 6px;
+  box-shadow: 0 var(--wel-sem-number-shadow-down-y, 2px) var(--wel-sem-number-shadow-blur, 6px) 0 var(--wel-sem-color-shadow-default, rgba(7, 5, 24, 0.05));
+  animation: home-fav-snack-in 0.3s ease-out;
+}
+
+@keyframes home-fav-snack-in {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-page__fav-snack-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.home-page__fav-snack-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-page__fav-snack-title {
+  margin: 0;
+  font: var(--wel-typography-body-strong-01);
+  color: #00513f;
+  line-height: 24px;
+}
+
+.home-page__fav-snack-body {
+  margin: 0;
+  font: var(--wel-typography-body-default-01);
+  color: #006a53;
+  line-height: 24px;
+}
+
+.home-page__fav-snack-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #00513f;
+}
+
+@media (min-width: 1024px) {
+  .home-page__fav-snack {
+    left: auto;
+    right: 24px;
+    width: 420px;
   }
 }

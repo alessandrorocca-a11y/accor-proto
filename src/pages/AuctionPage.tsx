@@ -5,6 +5,7 @@ import {
   Input,
   Link,
   MarketplaceHeader,
+  MarketingTag,
   Menu,
   TermsDialog,
   VoyagerBadge,
@@ -422,11 +423,9 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         )}
 
         <div className="auction-page__hero-image">
-          {/* Optional tag in top-left corner — use one of: --presale, --sold-out, --discount, --exclusive */}
-          {/* <span className="auction-page__hero-tag auction-page__hero-tag--presale">Pre Sale</span> */}
-          {/* <span className="auction-page__hero-tag auction-page__hero-tag--sold-out">Sold-out</span> */}
-          {/* <span className="auction-page__hero-tag auction-page__hero-tag--discount">Discount</span> */}
-          {/* <span className="auction-page__hero-tag auction-page__hero-tag--exclusive">Exclusive</span> */}
+          {eventData?.marketingTag && (
+            <MarketingTag type={eventData.marketingTag} className="auction-page__hero-tag" />
+          )}
 
           {/* Swipeable image track */}
           <div

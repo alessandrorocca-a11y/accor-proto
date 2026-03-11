@@ -5,6 +5,7 @@ import {
   MarketplaceHeader,
   Menu,
   TermsDialog,
+  MarketingTag,
   VoyagerBadge,
   VoyagerDialog,
   useVoyagerGate,
@@ -12,6 +13,7 @@ import {
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import { getEventById } from '@/data/events/eventRegistry';
+import { getVenueInfo } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './PrizeDrawPage.css';
@@ -20,9 +22,9 @@ const DEFAULT_DRAW_MS_LEFT = (21 * 24 * 60 + 5 * 60 + 34) * 60 * 1000;
 
 const DEFAULT_HERO_IMAGES = [
   { src: '/carnival-hero.png', alt: 'Rio de Janeiro Carnival 2026' },
-  { src: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=800&h=600&fit=crop', alt: 'Sambadrome parade with colourful floats' },
-  { src: 'https://images.unsplash.com/photo-1551279880-03041531948f?w=800&h=600&fit=crop', alt: 'Rio carnival dancers in costume' },
-  { src: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop', alt: 'Christ the Redeemer overlooking Rio' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', alt: 'Sambadrome parade with colourful floats' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_20260219fdf5e866a18e49c0ae3143a8c6e8d5fd.jpg', alt: 'Rio carnival dancers in costume' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_20260219d0b178a09112433a8eb12ff67b9df0e9.jpg', alt: 'Rio carnival float' },
   { src: 'https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=800&h=600&fit=crop', alt: 'Copacabana beach aerial view' },
   { src: 'https://images.unsplash.com/photo-1544989164-31dc3c645987?w=800&h=600&fit=crop', alt: 'Fairmont Copacabana Palace at dusk' },
 ];
@@ -136,7 +138,9 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const EVENT_TITLE = eventData?.title ?? 'Rio de Janeiro Carnival 2026 – ALL Accor Lounge';
   const EVENT_DESCRIPTION = eventData?.description ?? 'Experience the world\'s most famous carnival.';
   const EVENT_LOCATION = eventData?.location ?? 'Fairmont Copacabana Palace, Rio de Janeiro';
+  const EVENT_CITY = eventData?.city ?? 'Rio de Janeiro';
   const _EVENT_DATE = eventData?.date ?? 'February 16, 2026';
+  const venueInfo = getVenueInfo(EVENT_LOCATION, EVENT_CITY);
 
   const endDate = useMemo(
     () => new Date(Date.now() + DRAW_MS_LEFT),
@@ -520,6 +524,9 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
         )}
 
         <div className="auction-page__hero-image">
+          {eventData?.marketingTag && (
+            <MarketingTag type={eventData.marketingTag} className="auction-page__hero-tag" />
+          )}
           <div
             className="auction-page__hero-track"
             ref={trackRef}
@@ -617,8 +624,8 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               {EVENT_DESCRIPTION}
             </p>
             <img
-              src="https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=900&h=400&fit=crop"
-              alt="Rio Carnival parade"
+              src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src}
+              alt={EVENT_TITLE}
               className="auction-page__section-img"
             />
           </section>
@@ -639,15 +646,13 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
           <section className="auction-page__section auction-page__section--side-image">
             <div className="auction-page__section-text">
               <h2 className="auction-page__heading">About the venue</h2>
-              <p className="auction-page__body auction-page__body--strong">Marquês de Sapucaí Sambadrome</p>
-              <p className="auction-page__body">
-                The Sambadrome Marquês de Sapucaí is a purpose-built parade area built for the Rio Carnival in Rio de Janeiro, Brazil. The venue is also known as Passarela Professor Darcy Ribeiro or simply the Sambódromo in Portuguese or Sambadrome in English.
-              </p>
+              <p className="auction-page__body auction-page__body--strong">{venueInfo.name}</p>
+              <p className="auction-page__body">{venueInfo.description}</p>
               <Link href="#">Read more</Link>
             </div>
             <img
-              src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=422&h=280&fit=crop"
-              alt="Sambadrome venue"
+              src={venueInfo.imageUrl}
+              alt={venueInfo.name}
               className="auction-page__side-img"
             />
           </section>
@@ -657,15 +662,13 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
           <section className="auction-page__section auction-page__section--side-image">
             <div className="auction-page__section-text">
               <h2 className="auction-page__heading">How to get there</h2>
-              <p className="auction-page__body auction-page__body--strong">Alma Rio Box – Marquês de Sapucaí Sambadrome</p>
-              <p className="auction-page__body auction-page__body--muted">
-                R. Marquês de Sapucaí - Santo Cristo, Rio de Janeiro - RJ, 20220-007, Brazil
-              </p>
+              <p className="auction-page__body auction-page__body--strong">{venueInfo.name}</p>
+              <p className="auction-page__body auction-page__body--muted">{venueInfo.address}</p>
             </div>
             <iframe
               className="auction-page__map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.3!2d-43.1967!3d-22.9119!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997f58a6800a67%3A0x39930defe3a0e8c5!2sSamb%C3%B3dromo%20da%20Marqu%C3%AAs%20de%20Sapuca%C3%AD!5e0!3m2!1spt-BR!2sbr!4v1700000000000"
-              title="Marquês de Sapucaí Sambadrome location"
+              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${venueInfo.mapQuery}`}
+              title={`${venueInfo.name} location`}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
@@ -972,7 +975,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} title="Terms & Conditions (Prize Draw)" />
+      <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} variant="prize-draw" />
       <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} />
     </div>
   );

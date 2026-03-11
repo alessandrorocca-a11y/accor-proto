@@ -414,6 +414,13 @@
   object-fit: cover;
 }
 
+.near-you__event-card-marketing-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+}
+
 .near-you__event-card-fav {
   position: absolute;
   top: 8px;

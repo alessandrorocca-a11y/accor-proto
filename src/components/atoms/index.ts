@@ -7,6 +7,7 @@ export { Icon } from './Icon';
 export { Input } from './Input';
 export { Link } from './Link';
 export { Loading } from './Loading';
+export { MarketingTag } from './MarketingTag';
 export { Radio } from './Radio';
 export { RangeSlider } from './RangeSlider';
 export { Rating } from './Rating';

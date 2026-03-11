@@ -2,10 +2,11 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   MarketplaceHeader,
   Menu,
+  MarketingTag,
 } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
-import { EVENT_REGISTRY, getEventRoute, formatPoints } from '@/data/events/eventRegistry';
+import { EVENT_REGISTRY, getEventRoute, formatPoints, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './CategoryPage.css';
@@ -25,6 +26,7 @@ interface CategoryEvent {
   hasTimer?: boolean;
   msLeft?: number;
   showBrandLogo?: boolean;
+  marketingTag?: MarketingTagType;
 }
 
 const CATEGORIES = [
@@ -58,6 +60,7 @@ const ALL_EVENTS: CategoryEvent[] = EVENT_REGISTRY.map((e) => ({
   cashPrice: e.pageType === 'standard' ? `${formatPoints(e.points)} pts` : undefined,
   hasTimer: !!e.msLeft,
   msLeft: e.msLeft,
+  marketingTag: e.marketingTag,
 }));
 
 const PAYMENT_OPTIONS = ['Auctions', 'Prize Draws', 'Redeem now', 'Flex', 'Cash only', 'Linkout', 'Waitlist'];
@@ -239,7 +242,7 @@ function formatTimeLeft(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(days)} days ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+  return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 function LiveTimer({ initialMs }: { initialMs: number }) {
@@ -300,6 +303,7 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(defaultCategory);
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
+  const [showFavSnack, setShowFavSnack] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
 
   const [calMonth, setCalMonth] = useState(6);
@@ -314,6 +318,11 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
   const [selectedCity, setSelectedCity] = useState<string | null>(defaultLocation ?? null);
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [orderOpen, setOrderOpen] = useState(false);
+
+  useEffect(() => {
+    setSelectedCategory(defaultCategory);
+    setCategoriesOpen(false);
+  }, [defaultCategory]);
 
   const displayTitle = pageTitle ?? selectedCategory;
   const showAllCategories = !!pageTitle;
@@ -344,6 +353,7 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
   });
 
   const handleCategorySelect = (category: string) => {
+    setCategoriesOpen(false);
     const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and');
     window.location.hash = `#category/${slug}`;
   };
@@ -351,8 +361,13 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
   const toggleFavourite = (id: string) => {
     setFavourites((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+        setShowFavSnack(true);
+        setTimeout(() => setShowFavSnack(false), 5000);
+      }
       return next;
     });
   };
@@ -458,6 +473,29 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
 
   return (
     <div className="category-page">
+      {showFavSnack && (
+        <div className="category-page__fav-snack" role="status">
+          <svg className="category-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="12" r="10" fill="#00513f" />
+            <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="category-page__fav-snack-content">
+            <p className="category-page__fav-snack-title">Added to your favourites</p>
+            <p className="category-page__fav-snack-body">You can review your favourites in your profile menu.</p>
+          </div>
+          <button
+            type="button"
+            className="category-page__fav-snack-close"
+            onClick={() => setShowFavSnack(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       <MarketplaceHeader
         theme="light"
         isLoggedIn
@@ -669,7 +707,9 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
                   alt={event.title}
                   className="category-page__card-img"
                   loading="lazy"
+                  style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined}
                 />
+                {event.marketingTag && <MarketingTag type={event.marketingTag} className="category-page__card-marketing-tag" />}
                 <button
                   type="button"
                   className="category-page__card-fav"

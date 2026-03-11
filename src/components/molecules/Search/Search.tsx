@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { searchCities } from '@/data/europeanCities';
+import { EVENT_REGISTRY, getEventRoute, type EventData } from '@/data/events/eventRegistry';
 
 export interface SearchProps {
   open: boolean;
@@ -8,7 +9,7 @@ export interface SearchProps {
 
 const SUGGESTION_CHIPS = [
   'Food and drinks',
-  'Shows & culture',
+  'Shows and culture',
   'Wellness',
   'Sport and leisure',
   'Concerts and festivals',
@@ -18,67 +19,6 @@ interface CategoryResult {
   name: string;
   count: number;
 }
-
-interface EventResult {
-  image: string;
-  date: string;
-  title: string;
-}
-
-const CATEGORIES: CategoryResult[] = [
-  { name: 'Candlelight Concerts', count: 9 },
-  { name: 'Carnival Experiences', count: 4 },
-  { name: 'Food and drinks', count: 12 },
-  { name: 'Shows & culture', count: 8 },
-  { name: 'Wellness', count: 6 },
-  { name: 'Sport and leisure', count: 15 },
-  { name: 'Concerts and festivals', count: 11 },
-  { name: 'VIP Experiences', count: 7 },
-  { name: 'Family Experiences', count: 5 },
-];
-
-const EVENTS: EventResult[] = [
-  {
-    image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=128&h=128&fit=crop',
-    date: 'March 18, 2026',
-    title: 'Candlelight Southampton: Homenaje a Coldplay',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=128&h=128&fit=crop',
-    date: 'March 13, 2026',
-    title: "Candlelight: Hans Zimmer's Best Works",
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=128&h=128&fit=crop',
-    date: 'February 16, 2026',
-    title: 'Rio de Janeiro Carnival 2026 - ALL Accor Lounge',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1551279880-03041531948f?w=128&h=128&fit=crop',
-    date: 'February 16, 2026',
-    title: 'Carnival VIP Samba Parade Experience',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=128&h=128&fit=crop',
-    date: 'April 5, 2026',
-    title: 'Cannes Gourmet Food & Wine Festival',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=128&h=128&fit=crop',
-    date: 'May 20, 2026',
-    title: 'Cannes Film Festival - VIP Access',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=128&h=128&fit=crop',
-    date: 'April 12, 2026',
-    title: 'Paris Jazz Festival - Private Lounge',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=128&h=128&fit=crop',
-    date: 'March 28, 2026',
-    title: 'Barcelona Concert Series: Mediterranean Nights',
-  },
-];
 
 function IconArrowLeft() {
   return (
@@ -166,6 +106,17 @@ function match(text: string, query: string): boolean {
   return text.toLowerCase().includes(query.toLowerCase());
 }
 
+function searchEvents(query: string): EventData[] {
+  const q = query.toLowerCase();
+  return EVENT_REGISTRY.filter(
+    (e) =>
+      e.title.toLowerCase().includes(q) ||
+      e.description.toLowerCase().includes(q) ||
+      e.location.toLowerCase().includes(q) ||
+      e.category.toLowerCase().includes(q),
+  );
+}
+
 export interface SearchResultsPanelProps {
   query: string;
   onQueryChange: (q: string) => void;
@@ -175,9 +126,17 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
   const q = query.trim();
   const hasQuery = q.length > 0;
 
+  const categories = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const evt of EVENT_REGISTRY) {
+      map.set(evt.category, (map.get(evt.category) ?? 0) + 1);
+    }
+    return Array.from(map, ([name, count]) => ({ name, count }));
+  }, []);
+
   const matchedCities = hasQuery ? searchCities(q).slice(0, 2) : [];
-  const matchedCategories = hasQuery ? CATEGORIES.filter((c) => match(c.name, q)).slice(0, 2) : [];
-  const matchedEvents = hasQuery ? EVENTS.filter((e) => match(e.title, q)).slice(0, 3) : [];
+  const matchedCategories = hasQuery ? categories.filter((c) => match(c.name, q)).slice(0, 2) : [];
+  const matchedEvents = hasQuery ? searchEvents(q).slice(0, 6) : [];
 
   const topCity = matchedCities[0];
   const hasResults = matchedCities.length > 0 || matchedCategories.length > 0 || matchedEvents.length > 0;
@@ -254,8 +213,8 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
                 Experiences{topCity ? ` in ${topCity.name}` : ''}
               </h3>
               <div className="search-results__events-list">
-                {matchedEvents.map((event, i) => (
-                  <a key={i} href="#" className="search-results__event-card">
+                {matchedEvents.map((event) => (
+                  <a key={event.id} href={getEventRoute(event)} className="search-results__event-card">
                     <img
                       src={event.image}
                       alt=""

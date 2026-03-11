@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { MarketplaceHeader, Menu } from '@/components';
+import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { getNearbyCities, searchCities } from '@/data/europeanCities';
-import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData } from '@/data/events/eventRegistry';
+import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './CityPage.css';
@@ -23,6 +23,7 @@ interface EventCard {
   msLeft?: number;
   eventTag?: string;
   route?: string;
+  marketingTag?: MarketingTagType;
 }
 
 interface CityConfig {
@@ -33,6 +34,8 @@ interface CityConfig {
 export interface CityPageProps {
   cityName: string;
   country: string;
+  dateFrom?: string;
+  dateTo?: string;
 }
 
 /* ── City-specific config ───────────────────────────────────────────── */
@@ -118,7 +121,7 @@ function formatTimeLeft(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(days)} days ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+  return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 function LiveTimer({ initialMs }: { initialMs: number }) {
@@ -161,6 +164,25 @@ const PAYMENT_ROUTE_MAP: Record<PaymentType, string> = {
   'waitlist': '#waitlist',
 };
 
+function parseEventDate(dateStr: string): Date | null {
+  const cleaned = dateStr.replace(/[-–]\d+/, '');
+  const ts = Date.parse(cleaned);
+  return isNaN(ts) ? null : new Date(ts);
+}
+
+function isEventInRange(dateStr: string, from: string, to: string): boolean {
+  const eventDate = parseEventDate(dateStr);
+  if (!eventDate) return false;
+  const start = new Date(from + 'T00:00:00');
+  const end = new Date(to + 'T23:59:59');
+  return eventDate >= start && eventDate <= end;
+}
+
+function formatFilterDate(isoDate: string): string {
+  const d = new Date(isoDate + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+}
+
 /* ── Registry-derived event helpers ─────────────────────────────────── */
 
 function registryToCard(e: EventData): EventCard {
@@ -179,6 +201,7 @@ function registryToCard(e: EventData): EventCard {
     msLeft: e.msLeft,
     eventTag: e.eventTag,
     route: getEventRoute(e),
+    marketingTag: e.marketingTag,
   };
 }
 
@@ -339,7 +362,8 @@ function EventCardCompact({
   return (
     <article className="city-page__event-card" onClick={handleCardClick}>
       <div className="city-page__event-card-img">
-        <img src={event.image} alt={event.title} loading="lazy" />
+        <img src={event.image} alt={event.title} loading="lazy" style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined} />
+        {event.marketingTag && <MarketingTag type={event.marketingTag} className="city-page__event-card-marketing-tag" />}
         <button
           type="button"
           className="city-page__event-card-fav"
@@ -412,7 +436,7 @@ function EventSection({ title, events, favourites, onToggleFav, page, totalPages
 
 /* ── Main component ─────────────────────────────────────────────────── */
 
-export default function CityPage({ cityName, country }: CityPageProps) {
+export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPageProps) {
   useEffect(() => { window.scrollTo(0, 0); }, [cityName]);
 
   const { points: USER_POINTS } = useUser();
@@ -426,12 +450,23 @@ export default function CityPage({ cityName, country }: CityPageProps) {
   const [citySelectorOpen, setCitySelectorOpen] = useState(false);
   const [cityQuery, setCityQuery] = useState(cityName);
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
+  const [showFavSnack, setShowFavSnack] = useState(false);
+  const [dateFilterActive, setDateFilterActive] = useState(!!(dateFrom && dateTo));
   const cityInputRef = useRef<HTMLInputElement>(null);
 
   const matchedCities = searchCities(cityQuery.trim()).slice(0, 10);
 
-  const cityEvents = getEventsForCity(cityName);
-  const TOP_10 = getTopForCity(cityName);
+  const allCityEvents = getEventsForCity(cityName);
+  const cityEvents = (dateFilterActive && dateFrom && dateTo)
+    ? allCityEvents.filter((e) => isEventInRange(e.date, dateFrom, dateTo))
+    : allCityEvents;
+  const TOP_10 = cityEvents.slice(0, 10).map((e) => ({
+    id: e.id,
+    title: e.title,
+    date: e.date,
+    image: e.image,
+    route: getEventRoute(e),
+  }));
   const ACCOR_PLUS_EVENTS = cityEvents.filter((e) => e.category === 'Hotel experiences').map(registryToCard);
   const CONCERTS_EVENTS = cityEvents.filter((e) => e.category === 'Concerts and festivals').map(registryToCard);
   const SPORT_EVENTS = cityEvents.filter((e) => e.category === 'Sport and leisure').map(registryToCard);
@@ -471,11 +506,16 @@ export default function CityPage({ cityName, country }: CityPageProps) {
   const psVisible = PSG_EVENTS.slice((psPage - 1) * perPage, psPage * perPage);
 
   const toggleFav = (id: string) => {
+    const wasAdded = !favourites.has(id);
     setFavourites((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
+    if (wasAdded) {
+      setShowFavSnack(true);
+      setTimeout(() => setShowFavSnack(false), 5000);
+    }
     const evt = EVENT_REGISTRY.find((e) => e.id === id);
     if (evt) {
       toggleFavCtx({
@@ -499,6 +539,29 @@ export default function CityPage({ cityName, country }: CityPageProps) {
 
   return (
     <div className="city-page">
+      {showFavSnack && (
+        <div className="city-page__fav-snack" role="status">
+          <svg className="city-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="12" r="10" fill="#00513f" />
+            <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="city-page__fav-snack-content">
+            <p className="city-page__fav-snack-title">Added to your favourites</p>
+            <p className="city-page__fav-snack-body">You can review your favourites in your profile menu.</p>
+          </div>
+          <button
+            type="button"
+            className="city-page__fav-snack-close"
+            onClick={() => setShowFavSnack(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       <MarketplaceHeader
         theme="light"
         isLoggedIn
@@ -530,6 +593,30 @@ export default function CityPage({ cityName, country }: CityPageProps) {
           <p className="city-page__hero-subtitle">{config.subtitle}</p>
         </div>
       </section>
+
+      {/* ── Date filter banner ─────────────────────────────────────── */}
+      {dateFrom && dateTo && dateFilterActive && (
+        <div className="city-page__date-filter-bar">
+          <div className="city-page__date-filter-bar-inner">
+            <span className="city-page__date-filter-label">
+              Showing: from {formatFilterDate(dateFrom)} to {formatFilterDate(dateTo)}
+            </span>
+            <button
+              type="button"
+              className="city-page__date-filter-clear"
+              onClick={() => setDateFilterActive(false)}
+              aria-label="Clear date filter"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+          {cityEvents.length === 0 && (
+            <p className="city-page__date-filter-empty">No events found during your trip dates.</p>
+          )}
+        </div>
+      )}
 
       {/* ── Top 10 / For you ────────────────────────────────────────── */}
       <section className="city-page__section city-page__top10">

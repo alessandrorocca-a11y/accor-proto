@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import {
   Button,
   Link,
+  MarketingTag,
   MarketplaceHeader,
   Menu,
   TermsDialog,
@@ -11,13 +12,14 @@ import { useFavourites } from '@/context/FavouritesContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './StandardPage.css';
 import { getEventById } from '@/data/events/eventRegistry';
+import { getVenueInfo } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 
 const DEFAULT_HERO_IMAGES = [
   { src: '/carnival-hero.png', alt: 'Rio de Janeiro Carnival 2026' },
-  { src: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=800&h=600&fit=crop', alt: 'Sambadrome parade with colourful floats' },
-  { src: 'https://images.unsplash.com/photo-1551279880-03041531948f?w=800&h=600&fit=crop', alt: 'Rio carnival dancers in costume' },
-  { src: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop', alt: 'Christ the Redeemer overlooking Rio' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', alt: 'Sambadrome parade with colourful floats' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_20260219fdf5e866a18e49c0ae3143a8c6e8d5fd.jpg', alt: 'Rio carnival dancers in costume' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_20260219d0b178a09112433a8eb12ff67b9df0e9.jpg', alt: 'Rio carnival float' },
   { src: 'https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=800&h=600&fit=crop', alt: 'Copacabana beach aerial view' },
   { src: 'https://images.unsplash.com/photo-1544989164-31dc3c645987?w=800&h=600&fit=crop', alt: 'Fairmont Copacabana Palace at dusk' },
 ];
@@ -99,9 +101,9 @@ const ADDON_FLEX = {
 };
 
 const RECOMMENDED_EVENTS = [
-  { id: 'rec-monaco-gp', title: 'Monaco Grand Prix Fairmont Hairpin Experience', date: 'May 24, 2026', image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&h=400&fit=crop', points: '120.000', eventTag: 'Fever Original', paymentLabel: 'Auction', countdown: '10 days 08 : 15 : 42' },
-  { id: 'rec-spa-sofitel', title: 'Spa & Wellness Day at Sofitel Paris Le Faubourg', date: 'April 5, 2026', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop', points: '18.000', eventTag: 'Hotel Experience', paymentLabel: 'Redeem', countdown: '' },
-  { id: 'rec-tour-france', title: 'Tour de France VIP Finish Line Experience', date: 'July 19, 2026', image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=400&fit=crop', points: '200.000', eventTag: 'Limitless Experiences', paymentLabel: 'Prize Draw', countdown: '07 days 18 : 22 : 30' },
+  { id: 'rec-monaco-gp', title: 'Monaco Grand Prix Fairmont Hairpin Experience', date: 'May 24, 2026', image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&h=400&fit=crop', points: '120.000', eventTag: 'Fever Original', paymentLabel: 'Auction', countdown: '10d 08h 15m 42s', route: '#auction/evt-024' },
+  { id: 'rec-spa-sofitel', title: 'Spa & Wellness Day at Sofitel Paris Le Faubourg', date: 'April 5, 2026', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop', points: '18.000', eventTag: 'Hotel Experience', paymentLabel: 'Redeem', countdown: '', route: '#redeem/evt-076' },
+  { id: 'rec-tour-france', title: 'Tour de France VIP Finish Line Experience', date: 'July 19, 2026', image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=400&fit=crop', points: '200.000', eventTag: 'Limitless Experiences', paymentLabel: 'Prize Draw', countdown: '7d 18h 22m 30s', route: '#draw/evt-023' },
 ];
 
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -199,7 +201,11 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const EVENT_TITLE = eventData?.title ?? 'Rio de Janeiro Carnival 2026 – Standard Tickets';
   const EVENT_DESCRIPTION = eventData?.description ?? 'Get your tickets to this unforgettable event.';
   const EVENT_LOCATION = eventData?.location ?? 'Fairmont Copacabana Palace, Rio de Janeiro';
+  const EVENT_CITY = eventData?.city ?? 'Rio de Janeiro';
   const _EVENT_DATE = eventData?.date ?? 'February 16, 2026';
+  const venueInfo = getVenueInfo(EVENT_LOCATION, EVENT_CITY);
+  const isEventSoldOut = eventData?.marketingTag === 'sold-out';
+  const hasEventDiscount = eventData?.marketingTag === 'discount';
 
   const [selectedDate, setSelectedDate] = useState(16);
   const [selectedTimeIdx, setSelectedTimeIdx] = useState<number | null>(null);
@@ -362,7 +368,15 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   }, [selectedDate]);
   const selectedTimeLabel = selectedTimeSlot?.time ?? '';
 
-  const purchaseSection = (variant: 'mobile' | 'sidebar') => (
+  const purchaseSection = (variant: 'mobile' | 'sidebar') => isEventSoldOut ? (
+    <section className={`standard__purchase${variant === 'mobile' ? ' standard__purchase--mobile' : ''}`}>
+      <div ref={variant === 'mobile' ? buyBtnRef : undefined}>
+        <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" disabled>
+          Sold out
+        </Button>
+      </div>
+    </section>
+  ) : (
     <section className={`standard__purchase${variant === 'mobile' ? ' standard__purchase--mobile' : ''}`}>
       {/* ── Calendar ────────────────────────────────────────────── */}
       <div className="standard__cal-wrap">
@@ -503,7 +517,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                       </div>
                       <div className="standard__ticket-bottom">
                         <div className="standard__ticket-pricing">
-                          {zone.discount !== null && <span className="standard__ticket-original">{formatEur(zone.originalPrice)}</span>}
+                          {hasEventDiscount && zone.discount !== null && <span className="standard__ticket-original">{formatEur(zone.originalPrice)}</span>}
                           <span className="standard__ticket-price">{formatEur(zone.price)}</span>
                         </div>
                         <span className="standard__ticket-fee">+ {formatEur(zone.bookingFee)} booking fee</span>
@@ -524,11 +538,11 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                       )}
                     </div>
                       <div className="standard__ticket-bottom">
-                        {zone.discount !== null && (
+                        {hasEventDiscount && zone.discount !== null && (
                           <span className="standard__ticket-discount">{zone.discount}% discount</span>
                         )}
                         <div className="standard__ticket-pricing">
-                          {zone.discount !== null && <span className="standard__ticket-original">{formatEur(zone.originalPrice)}</span>}
+                          {hasEventDiscount && zone.discount !== null && <span className="standard__ticket-original">{formatEur(zone.originalPrice)}</span>}
                           <span className="standard__ticket-price">{formatEur(zone.price)}</span>
                         </div>
                         <span className="standard__ticket-fee">+ {formatEur(zone.bookingFee)} booking fee</span>
@@ -586,17 +600,17 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           disabled={totalTickets === 0}
           onClick={handleBuyTicket}
         >
-          Get it - {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
+          Get it - {formatEur(totalPriceEur)}
         </Button>
         <p className="standard__reward-points-alt">
-          or {formatEur(totalPriceEur)}
+          or {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
         </p>
       </div>
     </section>
   );
 
   return (
-    <div className="auction-page standard">
+    <div className={`auction-page standard${isEventSoldOut ? ' standard--sold-out' : ''}`}>
       <MarketplaceHeader
         theme="light"
         isLoggedIn
@@ -684,6 +698,9 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         )}
 
         <div className="auction-page__hero-image">
+          {eventData?.marketingTag && (
+            <MarketingTag type={eventData.marketingTag} className="auction-page__hero-tag" />
+          )}
           <div className="auction-page__hero-track" ref={trackRef} onScroll={handleScroll}>
             {HERO_IMAGES.map((img, i) => (<img key={i} src={img.src} alt={img.alt} className="auction-page__hero-img" draggable={false} />))}
           </div>
@@ -724,7 +741,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
             <p className="auction-page__body">{EVENT_DESCRIPTION}</p>
             <p className="auction-page__body">Get ready to samba, celebrate, and experience the greatest show in the world with all the comfort and exclusivity that only ALL Accor can offer.</p>
             <p className="auction-page__body">On Monday, 16 February 2026, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.</p>
-            <img src="https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=900&h=400&fit=crop" alt="Rio Carnival parade" className="auction-page__section-img" />
+            <img src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src} alt={EVENT_TITLE} className="auction-page__section-img" />
           </section>
 
           <hr className="auction-page__divider" aria-hidden />
@@ -737,21 +754,21 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           <section className="auction-page__section auction-page__section--side-image">
             <div className="auction-page__section-text">
               <h2 className="auction-page__heading">About the venue</h2>
-              <p className="auction-page__body auction-page__body--strong">Marquês de Sapucaí Sambadrome</p>
-              <p className="auction-page__body">The Sambadrome Marquês de Sapucaí is a purpose-built parade area built for the Rio Carnival in Rio de Janeiro, Brazil. The venue is also known as Passarela Professor Darcy Ribeiro or simply the Sambódromo in Portuguese or Sambadrome in English.</p>
+              <p className="auction-page__body auction-page__body--strong">{venueInfo.name}</p>
+              <p className="auction-page__body">{venueInfo.description}</p>
               <Link href="#">Read more</Link>
             </div>
-            <img src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=422&h=280&fit=crop" alt="Sambadrome venue" className="auction-page__side-img" />
+            <img src={venueInfo.imageUrl} alt={venueInfo.name} className="auction-page__side-img" />
           </section>
 
           <hr className="auction-page__divider" aria-hidden />
           <section className="auction-page__section auction-page__section--side-image">
             <div className="auction-page__section-text">
               <h2 className="auction-page__heading">How to get there</h2>
-              <p className="auction-page__body auction-page__body--strong">Alma Rio Box – Marquês de Sapucaí Sambadrome</p>
-              <p className="auction-page__body auction-page__body--muted">R. Marquês de Sapucaí - Santo Cristo, Rio de Janeiro - RJ, 20220-007, Brazil</p>
+              <p className="auction-page__body auction-page__body--strong">{venueInfo.name}</p>
+              <p className="auction-page__body auction-page__body--muted">{venueInfo.address}</p>
             </div>
-            <iframe className="auction-page__map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.3!2d-43.1967!3d-22.9119!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997f58a6800a67%3A0x39930defe3a0e8c5!2sSamb%C3%B3dromo%20da%20Marqu%C3%AAs%20de%20Sapuca%C3%AD!5e0!3m2!1spt-BR!2sbr!4v1700000000000" title="Marquês de Sapucaí Sambadrome location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            <iframe className="auction-page__map" src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${venueInfo.mapQuery}`} title={`${venueInfo.name} location`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
           </section>
 
           <hr className="auction-page__divider" aria-hidden />
@@ -766,10 +783,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
             <h2 className="linkout__recommendations-title">You may also like</h2>
             <div className="linkout__recommendations-scroll">
               {RECOMMENDED_EVENTS.map((event) => (
-                <div key={event.id} className="linkout__card">
+                <a key={event.id} className="linkout__card" href={event.route} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="linkout__card-img-wrap">
                     <img src={event.image} alt={event.title} className="linkout__card-img" />
-                    <button type="button" className="linkout__card-fav" aria-label={isGlobalFav(event.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isGlobalFav(event.id)} onClick={() => toggleGlobalFav({ id: event.id, image: event.image, date: event.date, title: event.title, eventTag: event.eventTag, paymentLabel: event.paymentLabel, points: event.points + ' Reward Points', countdown: event.countdown })}><IconHeart filled={isGlobalFav(event.id)} /></button>
+                    <button type="button" className="linkout__card-fav" aria-label={isGlobalFav(event.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isGlobalFav(event.id)} onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleGlobalFav({ id: event.id, image: event.image, date: event.date, title: event.title, eventTag: event.eventTag, paymentLabel: event.paymentLabel, points: event.points + ' Reward Points', countdown: event.countdown }); }}><IconHeart filled={isGlobalFav(event.id)} /></button>
                   </div>
                   <div className="linkout__card-body">
                     <p className="linkout__card-date">{event.date}</p>
@@ -777,7 +794,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                     <div className="linkout__card-price-badge"><IconStar /><span>{event.points} Reward Points</span></div>
                     {event.countdown && <div className="linkout__card-countdown"><span>Time left:</span><span>{event.countdown}</span></div>}
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </section>
@@ -790,10 +807,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         </aside>
       </div>
 
-      {showStickyBar && !showRecap && !showConfirmation && totalTickets > 0 && (
+      {showStickyBar && !showRecap && !showConfirmation && !isEventSoldOut && totalTickets > 0 && (
         <div className="standard__sticky-bar">
           <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handleBuyTicket}>
-            Get it - {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
+            Get it - {formatEur(totalPriceEur)}
           </Button>
         </div>
       )}
@@ -1227,7 +1244,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} />
+      <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} variant="standard" />
     </div>
   );
 }

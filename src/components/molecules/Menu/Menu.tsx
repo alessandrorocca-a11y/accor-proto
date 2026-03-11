@@ -75,8 +75,17 @@ const SIDEBAR_CATEGORIES: SidebarCategory[] = [
   { label: 'Hotel Experiences', hash: '#category/hotel-experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=96&h=96&fit=crop' },
   { label: 'Arena', hash: '#category/arena', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=96&h=96&fit=crop' },
   { label: 'Paris Saint Germain', hash: '#category/paris-saint-germain', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=96&h=96&fit=crop' },
-  { label: 'All Signature Exclusives', hash: '#category/all-signature-exclusives' },
-  { label: 'All Accor Plus Exclusives', hash: '#category/all-accor-plus-exclusives' },
+];
+
+interface SidebarSubscription {
+  label: string;
+  hash: string;
+  image: string;
+}
+
+const SIDEBAR_SUBSCRIPTIONS: SidebarSubscription[] = [
+  { label: 'ALL Signature Exclusives', hash: '#category/all-signature-exclusives', image: '/all-signature.png' },
+  { label: 'ALL Accor+ Exclusives', hash: '#category/all-accor-plus-exclusives', image: '/all-accorplus.png' },
 ];
 
 interface SidebarPayment {
@@ -252,43 +261,43 @@ interface FavouriteEvent {
 const FAVOURITE_EVENTS: FavouriteEvent[] = [
   {
     id: '1',
-    image: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=328&h=328&fit=crop',
-    date: 'March 7, 2026',
-    title: 'Rio de Janeiro Carnival 2026 - ALL Accor Lounge',
+    image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
+    date: 'April 1, 2026',
+    title: 'Andrea Bocelli – 2 Tickets',
     eventTag: 'Limitless Experiences',
-    paymentLabel: 'Prize Draw',
-    points: '1.000.000 Reward Points',
-    countdown: '00 days 00 : 00 : 00',
+    paymentLabel: 'Current bid',
+    points: '18.000 Reward Points',
+    countdown: '43d 12h 00m 00s',
   },
   {
     id: '2',
-    image: 'https://images.unsplash.com/photo-1551279880-03041531948f?w=328&h=328&fit=crop',
-    date: 'March 7, 2026',
-    title: 'Rio de Janeiro Carnival 2026 - Samba Parade VIP',
+    image: 'https://limitlessexperiences.accor.com/media/catalog/product/R/o/Rosalia_2026_Affiche_01_032b.jpg',
+    date: 'March 20, 2026',
+    title: 'Rosalía – VIP Suite & Night at Pullman',
     eventTag: 'Limitless Experiences',
-    paymentLabel: 'Prize Draw',
-    points: '1.000.000 Reward Points',
-    countdown: '00 days 00 : 00 : 00',
+    paymentLabel: 'Current bid',
+    points: '20.000 Reward Points',
+    countdown: '14d 08h 00m 00s',
   },
   {
     id: '3',
-    image: 'https://images.unsplash.com/photo-1565214975484-3cfa9e56f914?w=328&h=328&fit=crop',
-    date: 'March 7, 2026',
-    title: 'Rio de Janeiro Carnival 2026 - Sambadrome Box',
+    image: '/roland-garros-1.png',
+    date: 'May 25-29, 2026',
+    title: 'Roland-Garros Prize Draw – One Point Away',
     eventTag: 'Limitless Experiences',
     paymentLabel: 'Prize Draw',
-    points: '1.000.000 Reward Points',
-    countdown: '00 days 00 : 00 : 00',
+    points: '40 Reward Points',
+    countdown: '80d 00h 00m 00s',
   },
   {
     id: '4',
-    image: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=328&h=328&fit=crop',
-    date: 'March 7, 2026',
-    title: 'Rio de Janeiro Carnival 2026 - Copacabana Party',
+    image: 'https://limitlessexperiences.accor.com/media/catalog/product/W/u/Wu_Tang_Clan_500x500_510c.jpg',
+    date: 'March 28, 2026',
+    title: 'Wu-Tang Clan – 2x Suite Tickets',
     eventTag: 'Limitless Experiences',
-    paymentLabel: 'Prize Draw',
-    points: '1.000.000 Reward Points',
-    countdown: '00 days 00 : 00 : 00',
+    paymentLabel: 'Current bid',
+    points: '8.000 Reward Points',
+    countdown: '22d 16h 00m 00s',
   },
 ];
 
@@ -341,6 +350,7 @@ export function Menu({
   const [navHidden, setNavHidden] = useState(false);
   const [ordersTab, setOrdersTab] = useState<'upcoming' | 'past'>('upcoming');
   const [categoriesExpanded, setCategoriesExpanded] = useState(true);
+  const [subscriptionsExpanded, setSubscriptionsExpanded] = useState(true);
   const [paymentsExpanded, setPaymentsExpanded] = useState(true);
   const [citySearchOpen, setCitySearchOpen] = useState(false);
   const [cityQuery, setCityQuery] = useState('');
@@ -566,6 +576,40 @@ export function Menu({
                           <span className="menu__category-thumb-empty" />
                         )}
                         <span className="menu__category-name">{cat.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Subscriptions accordion */}
+              <div className="menu__sidebar-section">
+                <button
+                  type="button"
+                  className="menu__accordion-trigger"
+                  onClick={() => setSubscriptionsExpanded(!subscriptionsExpanded)}
+                  aria-expanded={subscriptionsExpanded}
+                >
+                  <span className="menu__accordion-label">Subscriptions</span>
+                  {subscriptionsExpanded ? <IconChevronUp /> : <IconChevronDown />}
+                </button>
+
+                {subscriptionsExpanded && (
+                  <div className="menu__accordion-body">
+                    {SIDEBAR_SUBSCRIPTIONS.map((sub) => (
+                      <button
+                        key={sub.hash}
+                        type="button"
+                        className="menu__category-row"
+                        onClick={() => navigateTo(sub.hash)}
+                      >
+                        <img
+                          src={sub.image}
+                          alt=""
+                          className="menu__subscription-thumb"
+                          loading="lazy"
+                        />
+                        <span className="menu__category-name">{sub.label}</span>
                       </button>
                     ))}
                   </div>

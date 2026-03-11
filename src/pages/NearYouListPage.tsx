@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   MarketplaceHeader,
   Menu,
+  MarketingTag,
 } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
@@ -24,6 +25,7 @@ interface NearYouEvent {
   msLeft?: number;
   showBrandLogo?: boolean;
   route?: string;
+  marketingTag?: 'presale' | 'exclusivity' | 'sold-out' | 'discount';
 }
 
 const USER_POINTS = 42430;
@@ -33,7 +35,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     id: 'ny1',
     title: 'Roland Garros VIP 2026',
     date: 'March 7, 2026',
-    image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=400&h=400&fit=crop',
+    image: '/roland-garros-1.png',
     categories: ['Sport and leisure'],
     eventTag: 'Limitless Experiences',
     paymentType: 'prize-draw',
@@ -130,7 +132,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     id: 'ny9',
     title: 'PSG Match Day VIP at Parc des Princes',
     date: 'March 7, 2026',
-    image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&h=400&fit=crop',
+    image: '/psg-stadium.jpg',
     categories: ['Sport and leisure'],
     paymentType: 'linkout',
     route: '#linkout',
@@ -357,7 +359,7 @@ function formatTimeLeft(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(days)} days ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+  return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 function LiveTimer({ initialMs }: { initialMs: number }) {
@@ -709,7 +711,8 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
                 onClick={() => navigateTo(href)}
               >
                 <div className="ny-list__card-img-wrap">
-                  <img src={event.image} alt={event.title} className="ny-list__card-img" loading="lazy" />
+                  <img src={event.image} alt={event.title} className="ny-list__card-img" loading="lazy" style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined} />
+                  {event.marketingTag && <MarketingTag type={event.marketingTag} className="ny-list__card-marketing-tag" />}
                   <button
                     type="button"
                     className="ny-list__card-fav"

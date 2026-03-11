@@ -15,12 +15,12 @@ const EXTERNAL_PROVIDER_NAME = 'Paris Saint-Germain';
 const REDIRECT_DELAY_MS = 2500;
 
 const HERO_IMAGES = [
-  { src: 'https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=800&h=600&fit=crop', alt: 'Rio de Janeiro Carnival parade' },
-  { src: 'https://images.unsplash.com/photo-1551279880-03041531948f?w=800&h=600&fit=crop', alt: 'Rio carnival dancers in costume' },
-  { src: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop', alt: 'Christ the Redeemer overlooking Rio' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', alt: 'Rio de Janeiro Carnival parade' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_20260219fdf5e866a18e49c0ae3143a8c6e8d5fd.jpg', alt: 'Rio carnival dancers in costume' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_20260219d0b178a09112433a8eb12ff67b9df0e9.jpg', alt: 'Rio carnival float' },
   { src: 'https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=800&h=600&fit=crop', alt: 'Copacabana beach aerial view' },
   { src: 'https://images.unsplash.com/photo-1544989164-31dc3c645987?w=800&h=600&fit=crop', alt: 'Fairmont Copacabana Palace at dusk' },
-  { src: 'https://images.unsplash.com/photo-1526139334526-f591a54b477c?w=800&h=600&fit=crop', alt: 'Rio de Janeiro fireworks' },
+  { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', alt: 'Rio de Janeiro carnival celebrations' },
 ];
 
 const INCLUDED_ITEMS = [
@@ -42,17 +42,19 @@ const RECOMMENDED_EVENTS = [
     points: '75.000',
     eventTag: 'Fever Original',
     paymentLabel: 'Auction',
-    countdown: '14 days 06 : 32 : 15',
+    countdown: '14d 06h 32m 15s',
+    route: '#redeem/evt-001',
   },
   {
     id: 'rec-roland-garros',
     title: 'Roland Garros VIP Hospitality 2026',
     date: 'May 25, 2026',
-    image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=400&h=400&fit=crop',
+    image: '/roland-garros-1.png',
     points: '500.000',
     eventTag: 'Limitless Experiences',
     paymentLabel: 'Prize Draw',
-    countdown: '21 days 12 : 45 : 00',
+    countdown: '21d 12h 45m 00s',
+    route: '#draw/evt-021',
   },
   {
     id: 'rec-wine-tasting',
@@ -63,6 +65,7 @@ const RECOMMENDED_EVENTS = [
     eventTag: 'Hotel Experience',
     paymentLabel: 'Redeem',
     countdown: '',
+    route: '#standard/evt-052',
   },
 ];
 
@@ -391,8 +394,8 @@ export default function LinkoutPage() {
               On Monday, 16 February 2026, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.
             </p>
             <img
-              src="https://images.unsplash.com/photo-1518639192441-8fce0a366e2e?w=900&h=400&fit=crop"
-              alt="Rio Carnival parade"
+              src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src}
+              alt={HERO_IMAGES[1]?.alt ?? HERO_IMAGES[0]?.alt}
               className="auction-page__section-img"
             />
           </section>
@@ -420,8 +423,8 @@ export default function LinkoutPage() {
               <Link href="#">Read more</Link>
             </div>
             <img
-              src="https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=422&h=280&fit=crop"
-              alt="Sambadrome venue"
+              src={HERO_IMAGES[2]?.src ?? HERO_IMAGES[0]?.src}
+              alt={HERO_IMAGES[2]?.alt ?? HERO_IMAGES[0]?.alt}
               className="auction-page__side-img"
             />
           </section>
@@ -452,7 +455,7 @@ export default function LinkoutPage() {
             <h2 className="linkout__recommendations-title">You may also like</h2>
             <div className="linkout__recommendations-scroll">
               {RECOMMENDED_EVENTS.map((event) => (
-                <div key={event.id} className="linkout__card">
+                <a key={event.id} className="linkout__card" href={event.route} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="linkout__card-img-wrap">
                     <img src={event.image} alt={event.title} className="linkout__card-img" />
                     <button
@@ -460,7 +463,7 @@ export default function LinkoutPage() {
                       className="linkout__card-fav"
                       aria-label={isGlobalFav(event.id) ? 'Remove from favourites' : 'Add to favourites'}
                       aria-pressed={isGlobalFav(event.id)}
-                      onClick={() => toggleGlobalFav({ id: event.id, image: event.image, date: event.date, title: event.title, eventTag: event.eventTag, paymentLabel: event.paymentLabel, points: event.points + ' Reward Points', countdown: event.countdown })}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleGlobalFav({ id: event.id, image: event.image, date: event.date, title: event.title, eventTag: event.eventTag, paymentLabel: event.paymentLabel, points: event.points + ' Reward Points', countdown: event.countdown }); }}
                     >
                       <IconHeart filled={isGlobalFav(event.id)} />
                     </button>
@@ -479,7 +482,7 @@ export default function LinkoutPage() {
                       </div>
                     )}
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </section>

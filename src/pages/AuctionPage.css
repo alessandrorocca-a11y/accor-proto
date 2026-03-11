@@ -168,38 +168,10 @@
   top: 8px;
   left: 8px;
   z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   height: 32px;
   padding: 0 12px;
-  border: 1px solid #f9f9ff;
-  border-radius: 2px;
   font: var(--wel-typography-label-default-01);
-  white-space: nowrap;
-}
-
-.auction-page__hero-tag--presale {
-  background: #f9f9ff;
-  color: #050033;
-}
-
-.auction-page__hero-tag--sold-out {
-  background: #b71c3c;
-  border-color: #b71c3c;
-  color: #fff;
-}
-
-.auction-page__hero-tag--discount {
-  background: #a81e6b;
-  border-color: #a8235e;
-  color: #fff;
-}
-
-.auction-page__hero-tag--exclusive {
-  background: #6366b3;
-  border-color: #6366b3;
-  color: #fff;
+  border-radius: 4px;
 }
 
 /* ── Main: padded content area (Figma: px-16, gap-24) ──────────────────── */
@@ -459,6 +431,9 @@
 }
 
 .auction-page__time-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: var(--wel-sem-color-surface-container-mid);
   border-radius: 4px;
   padding: 8px;
@@ -474,25 +449,14 @@
   margin-bottom: 0;
 }
 
-/* Countdown: gap 23px, value title/md, label label sm outline-hi, sep 38px */
-.auction-page .countdown__blocks {
-  gap: 0 23px;
-}
-
 .auction-page .countdown__value {
-  font: 500 20px / 24px var(--wel-sem-font-families-title);
+  font: var(--wel-typography-label-strong-default-03);
   color: var(--wel-sem-color-on-surface-hi);
 }
 
-.auction-page .countdown__label {
+.auction-page .countdown__unit {
   font: var(--wel-typography-label-default-03);
-  color: var(--wel-sem-color-outline-hi);
-}
-
-.auction-page .countdown__sep {
-  width: 1px;
-  height: 38px;
-  background: var(--wel-sem-color-outline-hi);
+  color: var(--wel-sem-color-on-surface-hi);
   flex-shrink: 0;
 }
 

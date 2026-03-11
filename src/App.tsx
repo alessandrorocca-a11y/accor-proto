@@ -101,6 +101,12 @@ function extractEventId(hash: string, prefix: string): string | undefined {
   return undefined;
 }
 
+function parseHashParams(hash: string): { basePath: string; params: URLSearchParams } {
+  const qIdx = hash.indexOf('?');
+  if (qIdx === -1) return { basePath: hash, params: new URLSearchParams() };
+  return { basePath: hash.slice(0, qIdx), params: new URLSearchParams(hash.slice(qIdx + 1)) };
+}
+
 export default function App() {
   const [hash, setHash] = useState(window.location.hash);
 
@@ -152,6 +158,11 @@ export default function App() {
   else if (hash in CITY_ROUTES) {
     const route = CITY_ROUTES[hash];
     page = <CityPage cityName={route.cityName} country={route.country} />;
+  }
+  else if ((() => { const { basePath } = parseHashParams(hash); return basePath in CITY_ROUTES; })()) {
+    const { basePath, params } = parseHashParams(hash);
+    const route = CITY_ROUTES[basePath];
+    page = <CityPage cityName={route.cityName} country={route.country} dateFrom={params.get('from') || undefined} dateTo={params.get('to') || undefined} />;
   }
   else if (hash === '#auction') page = <AuctionPage />;
   else if (hash.startsWith('#plan/')) {

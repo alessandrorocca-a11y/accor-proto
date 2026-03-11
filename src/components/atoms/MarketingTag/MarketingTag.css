@@ -1,0 +1,31 @@
+.marketing-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font: var(--wel-typography-label-default-03);
+  white-space: nowrap;
+  line-height: 16px;
+}
+
+.marketing-tag--presale {
+  background: #d6d3ff;
+  color: #3a34ab;
+}
+
+.marketing-tag--exclusivity {
+  background: #f3efff;
+  color: #3a34ab;
+}
+
+.marketing-tag--sold-out {
+  background: #be003c;
+  color: #fff;
+}
+
+.marketing-tag--discount {
+  background: #ffd4ea;
+  color: #b40875;
+}

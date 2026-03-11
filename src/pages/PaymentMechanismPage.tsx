@@ -2,10 +2,11 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   MarketplaceHeader,
   Menu,
+  MarketingTag,
 } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
-import { EVENT_REGISTRY, getEventRoute, formatPoints } from '@/data/events/eventRegistry';
+import { EVENT_REGISTRY, getEventRoute, formatPoints, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './CategoryPage.css';
@@ -25,6 +26,7 @@ interface PaymentEvent {
   hasTimer?: boolean;
   msLeft?: number;
   showBrandLogo?: boolean;
+  marketingTag?: MarketingTagType;
 }
 
 const PAYMENT_MECHANISMS: { label: string; type: PaymentType }[] = [
@@ -69,6 +71,7 @@ const ALL_EVENTS: PaymentEvent[] = EVENT_REGISTRY.map((e) => ({
   cashPrice: e.pageType === 'standard' ? `${formatPoints(e.points)} pts` : undefined,
   hasTimer: !!e.msLeft,
   msLeft: e.msLeft,
+  marketingTag: e.marketingTag,
 }));
 
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
@@ -238,7 +241,7 @@ function formatTimeLeft(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(days)} days ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+  return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 function LiveTimer({ initialMs }: { initialMs: number }) {
@@ -605,6 +608,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                   className="category-page__card-img"
                   loading="lazy"
                 />
+                {event.marketingTag && <MarketingTag type={event.marketingTag} className="category-page__card-marketing-tag" />}
                 <button
                   type="button"
                   className="category-page__card-fav"

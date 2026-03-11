@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MarketplaceHeader, Menu } from '@/components';
+import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import './NearYouPage.css';
@@ -20,6 +20,7 @@ interface MapEventCard {
   msLeft?: number;
   eventTag?: string;
   route?: string;
+  marketingTag?: 'presale' | 'exclusivity' | 'sold-out' | 'discount';
 }
 
 export interface NearYouPageProps {
@@ -67,7 +68,7 @@ const MAP_EVENTS: MapEventCard[] = [
     id: 'me1',
     title: 'Roland Garros VIP 2026',
     date: 'March 7, 2026',
-    image: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=400&h=400&fit=crop',
+    image: '/roland-garros-1.png',
     paymentType: 'prize-draw',
     points: '1.000.000 Reward Points',
     hasTimer: true,
@@ -79,7 +80,7 @@ const MAP_EVENTS: MapEventCard[] = [
     id: 'me2',
     title: 'Candlelight: Best of Hans Zimmer',
     date: 'March 18, 2026',
-    image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop',
+    image: 'https://applications-media.feverup.com/image/upload/f_auto,w_720,h_720/fever2/plan/photo/443ebdda-88ac-11ea-bf03-06551cb39bc6.jpg',
     paymentType: 'redeem',
     points: '6.000 Reward Points',
     eventTag: 'Limitless Experiences',
@@ -146,9 +147,9 @@ const MAP_EVENTS: MapEventCard[] = [
   },
   {
     id: 'me9',
-    title: 'Spa Day at Sofitel Paris',
+    title: 'Sofitel x Devialet Candle Experience',
     date: 'May 15, 2026',
-    image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop',
+    image: 'https://limitlessexperiences.accor.com/media/.renditions/wysiwyg/2025/ALL/December2025/SofitelxDevialet/Sofitel_Candle_Experience_Banner_355x320.png',
     paymentType: 'redeem',
     points: '7.200 Reward Points',
     eventTag: 'Hotel Experiences',
@@ -224,7 +225,7 @@ function formatTimeLeft(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${pad(days)} days ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+  return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
 function paymentLabel(type: PaymentType): string {
@@ -398,7 +399,8 @@ function MapEventHorizontalCard({
       onClick={onClick}
     >
       <div className="near-you__event-card-img">
-        <img src={event.image} alt={event.title} loading="lazy" />
+        <img src={event.image} alt={event.title} loading="lazy" style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined} />
+        {event.marketingTag && <MarketingTag type={event.marketingTag} className="near-you__event-card-marketing-tag" />}
         <button
           type="button"
           className="near-you__event-card-fav"

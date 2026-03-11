@@ -24,7 +24,8 @@
 .ny-list__card-img-wrap {
   position: relative;
   width: 164px;
-  height: 164px;
+  min-width: 164px;
+  align-self: stretch;
   flex-shrink: 0;
   border-radius: var(--wel-sem-borderradius-surface, 6px);
   overflow: hidden;
@@ -35,6 +36,13 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.ny-list__card-marketing-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
 }
 
 .ny-list__card-fav {
@@ -200,7 +208,7 @@
 
   .ny-list__card-img-wrap {
     width: 200px;
-    height: 200px;
+    min-width: 200px;
   }
 }
 
@@ -215,7 +223,7 @@
 
   .ny-list__card-img-wrap {
     width: 240px;
-    height: 200px;
+    min-width: 240px;
   }
 
   .ny-list__card-title {
@@ -223,9 +231,24 @@
     line-height: 28px;
   }
 
+  .ny-list__card-date {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .ny-list__card-payment-label {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
   .ny-list__card-points-value {
     font-size: 16px;
     line-height: 24px;
+  }
+
+  .ny-list__card-timer {
+    font-size: 14px;
+    line-height: 20px;
   }
 
   .ny-list__map-view-btn {

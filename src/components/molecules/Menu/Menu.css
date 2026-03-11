@@ -332,6 +332,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: none;
 }
 
 .menu__link-chevron {
@@ -495,7 +496,8 @@
 .menu__fav-card-img-wrap {
   position: relative;
   width: 164px;
-  height: 164px;
+  min-width: 164px;
+  align-self: stretch;
   flex-shrink: 0;
   border-radius: 6px;
   overflow: hidden;
@@ -673,7 +675,8 @@
 .menu__order-card-img-wrap {
   position: relative;
   width: 164px;
-  height: 164px;
+  min-width: 164px;
+  align-self: stretch;
   flex-shrink: 0;
   border-radius: var(--wel-sem-borderradius-surface, 6px);
   overflow: hidden;
@@ -1137,6 +1140,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ── Subscription thumbnail (badge images) ───────────────────────────── */
+.menu__subscription-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 /* ── Payment mechanism row (text only) ───────────────────────────────── */
