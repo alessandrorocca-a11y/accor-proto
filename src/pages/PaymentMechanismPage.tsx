@@ -29,13 +29,13 @@ interface PaymentEvent {
   marketingTag?: MarketingTagType;
 }
 
-const PAYMENT_MECHANISMS: { label: string; type: PaymentType }[] = [
+type MechanismOption = PaymentType | 'standard';
+
+const PAYMENT_MECHANISMS: { label: string; type: MechanismOption }[] = [
+  { label: 'Standard', type: 'standard' },
   { label: 'Auctions', type: 'auction' },
   { label: 'Prize Draws', type: 'prize-draw' },
   { label: 'Redeem now', type: 'redeem' },
-  { label: 'Flex', type: 'flex' },
-  { label: 'Cash only', type: 'cash' },
-  { label: 'Linkout', type: 'linkout' },
   { label: 'Waitlist', type: 'waitlist' },
 ];
 
@@ -281,7 +281,8 @@ function paymentLabel(type: PaymentType): string {
   }
 }
 
-function mechanismLabel(type: PaymentType): string {
+function mechanismLabel(type: MechanismOption): string {
+  if (type === 'standard' || type === 'flex' || type === 'cash') return 'Standard';
   return PAYMENT_MECHANISMS.find((m) => m.type === type)?.label ?? '';
 }
 
@@ -292,7 +293,9 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [mechanismsOpen, setMechanismsOpen] = useState(false);
-  const [selectedMechanism, setSelectedMechanism] = useState<PaymentType>(defaultMechanism);
+  const [selectedMechanism, setSelectedMechanism] = useState<MechanismOption>(
+    defaultMechanism === 'flex' || defaultMechanism === 'cash' ? 'standard' : defaultMechanism,
+  );
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
 
@@ -308,7 +311,9 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const [orderOpen, setOrderOpen] = useState(false);
 
   const filteredEvents = ALL_EVENTS.filter((e) => {
-    if (e.paymentType !== selectedMechanism) return false;
+    if (selectedMechanism === 'standard') {
+      if (e.paymentType !== 'flex' && e.paymentType !== 'cash') return false;
+    } else if (e.paymentType !== selectedMechanism) return false;
     if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
     return true;
   }).sort((a, b) => {
@@ -318,7 +323,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     return 0;
   });
 
-  const handleMechanismSelect = (type: PaymentType) => {
+  const handleMechanismSelect = (type: MechanismOption) => {
     setSelectedMechanism(type);
     setMechanismsOpen(false);
   };

@@ -63,7 +63,7 @@ const ALL_EVENTS: CategoryEvent[] = EVENT_REGISTRY.map((e) => ({
   marketingTag: e.marketingTag,
 }));
 
-const PAYMENT_OPTIONS = ['Auctions', 'Prize Draws', 'Redeem now', 'Flex', 'Cash only', 'Linkout', 'Waitlist'];
+const PAYMENT_OPTIONS = ['Standard', 'Auctions', 'Prize Draws', 'Redeem now', 'Waitlist'];
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
 const DAYS_OF_WEEK = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -328,12 +328,10 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
   const showAllCategories = !!pageTitle;
 
   const paymentTypeMap: Record<string, PaymentType[]> = {
+    'Standard': ['flex', 'cash'],
     'Auctions': ['auction'],
     'Prize Draws': ['prize-draw'],
     'Redeem now': ['redeem'],
-    'Flex': ['flex'],
-    'Cash only': ['cash'],
-    'Linkout': ['linkout'],
     'Waitlist': ['waitlist'],
   };
 

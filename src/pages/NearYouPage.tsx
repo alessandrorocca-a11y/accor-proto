@@ -129,7 +129,7 @@ const MAP_EVENTS: MapEventCard[] = [
     id: 'me7',
     title: 'Louvre After-Hours Experience',
     date: 'April 5, 2026',
-    image: 'https://images.unsplash.com/photo-1499426600726-ac29f4163469?w=400&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&h=400&fit=crop',
     paymentType: 'redeem',
     points: '15.000 Reward Points',
     eventTag: 'Limitless Experiences',
@@ -193,7 +193,7 @@ const CATEGORIES = [
   'All Accor Plus Exclusives',
 ];
 
-const PAYMENT_OPTIONS = ['Auctions', 'Prize Draws', 'Redeem now', 'Flex', 'Cash only', 'Linkout', 'Waitlist'];
+const PAYMENT_OPTIONS = ['Standard', 'Auctions', 'Prize Draws', 'Redeem now', 'Waitlist'];
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
 const DAYS_OF_WEEK = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
