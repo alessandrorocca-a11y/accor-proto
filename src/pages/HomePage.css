@@ -15,6 +15,8 @@
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  margin-top: -56px;
+  padding-top: 56px;
 }
 
 .home-page__hero-bg {
@@ -42,24 +44,6 @@
   width: 100%;
 }
 
-.home-page__hero-header .marketplace-header__bar {
-  background: transparent;
-  box-shadow: none;
-}
-
-.home-page__hero-header .marketplace-header__logo-img {
-  filter: brightness(0) invert(1);
-}
-
-.home-page__hero-header .marketplace-header__icon-btn,
-.home-page__hero-header .marketplace-header__menu-btn,
-.home-page__hero-header .marketplace-header__menu-label {
-  color: #fff;
-}
-
-.home-page__hero-header .marketplace-header__avatar {
-  border-color: #fff;
-}
 
 .home-page__hero-content {
   position: relative;

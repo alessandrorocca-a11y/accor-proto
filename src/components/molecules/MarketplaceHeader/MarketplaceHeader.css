@@ -30,6 +30,29 @@
   transform: translateY(-100%);
 }
 
+.marketplace-header--transparent .marketplace-header__bar {
+  background: transparent;
+  box-shadow: none;
+}
+
+.marketplace-header--transparent .marketplace-header__logo-img {
+  filter: brightness(0) invert(1);
+}
+
+.marketplace-header--transparent .marketplace-header__icon-btn,
+.marketplace-header--transparent .marketplace-header__menu-btn,
+.marketplace-header--transparent .marketplace-header__menu-label {
+  color: #fff;
+}
+
+.marketplace-header--transparent .marketplace-header__avatar {
+  border-color: #fff;
+}
+
+.marketplace-header--transparent .marketplace-header__points {
+  opacity: 0.9;
+}
+
 .marketplace-header--light {
   --header-bg: #fff;
   --header-fg: var(--wel-sem-color-on-surface-hi);

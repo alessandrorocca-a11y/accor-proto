@@ -806,6 +806,7 @@ export default function HomePage() {
             points={USER_POINTS}
             loyaltyTier="gold"
             hideSearch
+            transparentOnTop
             onLogoClick={() => { window.location.href = window.location.pathname; }}
             onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
             onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}

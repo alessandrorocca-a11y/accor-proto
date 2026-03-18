@@ -50,6 +50,8 @@ export interface MarketplaceHeaderProps {
   onPointsClick?: () => void;
   /** Hide the search bar & icon (e.g. when search lives in the hero) */
   hideSearch?: boolean;
+  /** When true, the header is transparent at the very top and becomes white on scroll */
+  transparentOnTop?: boolean;
   /** Optional class name */
   className?: string;
 }
@@ -138,12 +140,14 @@ export function MarketplaceHeader({
   onLogoClick,
   onPointsClick,
   hideSearch = false,
+  transparentOnTop = false,
   className = '',
 }: MarketplaceHeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [desktopSearchActive, setDesktopSearchActive] = useState(false);
   const [desktopQuery, setDesktopQuery] = useState('');
   const [hidden, setHidden] = useState(false);
+  const [atTop, setAtTop] = useState(true);
   const lastScrollY = useRef(0);
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchWrapRef = useRef<HTMLDivElement>(null);
@@ -152,6 +156,7 @@ export function MarketplaceHeader({
     const THRESHOLD = 8;
     const handleScroll = () => {
       const currentY = window.scrollY;
+      setAtTop(currentY < THRESHOLD);
       if (currentY < THRESHOLD) {
         setHidden(false);
       } else if (currentY > lastScrollY.current + THRESHOLD) {
@@ -212,7 +217,7 @@ export function MarketplaceHeader({
 
   return (
     <header
-      className={`marketplace-header marketplace-header--${theme}${hidden ? ' marketplace-header--hidden' : ''} ${className}`.trim()}
+      className={`marketplace-header marketplace-header--${theme}${hidden ? ' marketplace-header--hidden' : ''}${transparentOnTop && atTop ? ' marketplace-header--transparent' : ''} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
       <div className="marketplace-header__bar">
