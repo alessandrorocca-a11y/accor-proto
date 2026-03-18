@@ -935,7 +935,7 @@
 .home-page__banner-visual {
   position: relative;
   width: 100%;
-  aspect-ratio: 394 / 146;
+  height: 160px;
   flex-shrink: 0;
   overflow: visible;
 }

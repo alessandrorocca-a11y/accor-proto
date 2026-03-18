@@ -194,7 +194,7 @@ const ALL_CITIES = [
   { name: 'Nice', country: 'France', hash: '#city/nice' },
 ];
 
-const BANNER_IMAGE = '/banner-lifestyle.png';
+const BANNER_IMAGE = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=320&fit=crop&q=80';
 const BANNER_LOYALTY_CARD_IMAGE = '/banner-loyalty-card.svg';
 
 
