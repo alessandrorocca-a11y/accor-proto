@@ -113,7 +113,7 @@ function IconGallery() {
 
 export default function AuctionPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
-  const { points: userPoints, deductPoints, addOrder } = useUser();
+  const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
   useFavourites();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
@@ -150,8 +150,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   const isVoyagerExclusive = isVoyagerExclusiveEvent(eventData);
-  const isSubscribed = false;
-  const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(isVoyagerExclusive, isSubscribed);
+  const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(isVoyagerExclusive, isVoyagerSubscriber);
   const [termsOpen, setTermsOpen] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const placeBidRef = useRef<HTMLDivElement>(null);
@@ -255,7 +254,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -272,8 +271,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="classic"
-        points={0}
+        loyaltyTier={userLoyaltyTier}
+        points={USER_POINTS}
         avatarSrc="/avatar.png"
       />
 

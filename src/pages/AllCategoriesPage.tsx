@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { MarketplaceHeader, Menu } from '@/components';
 import { Search } from '@/components/molecules/Search/Search';
+import { useUser } from '@/context/UserContext';
 import './AllCategoriesPage.css';
-
-const USER_POINTS = 42430;
 
 interface Category {
   label: string;
@@ -22,6 +21,7 @@ const CATEGORIES: Category[] = [
 ];
 
 export default function AllCategoriesPage() {
+  const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -32,8 +32,8 @@ export default function AllCategoriesPage() {
         theme="light"
         isLoggedIn
         avatarSrc="/avatar.png"
-        points={USER_POINTS}
-        loyaltyTier="gold"
+        points={userPoints}
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.hash = ''; }}
         onMenu={() => setMenuOpen(true)}
         onPointsClick={() => setLoyaltyOpen(true)}

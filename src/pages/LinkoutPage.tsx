@@ -6,10 +6,9 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
+import { useUser } from '@/context/UserContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './LinkoutPage.css';
-
-const USER_POINTS = 42430;
 const EXTERNAL_URL = 'https://www.allaccorhotels.com';
 const EXTERNAL_PROVIDER_NAME = 'Paris Saint-Germain';
 const REDIRECT_DELAY_MS = 2500;
@@ -135,6 +134,7 @@ function IconStar() {
 }
 
 export default function LinkoutPage() {
+  const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
   const [isFavourite, setFavourite] = useState(false);
   const [showFavSnack, setShowFavSnack] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -188,8 +188,8 @@ export default function LinkoutPage() {
         theme="light"
         isLoggedIn
         avatarSrc="/avatar.png"
-        points={USER_POINTS}
-        loyaltyTier="gold"
+        points={userPoints}
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -206,8 +206,8 @@ export default function LinkoutPage() {
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
-        points={3000}
+        loyaltyTier={userLoyaltyTier}
+        points={userPoints}
         avatarSrc="/avatar.png"
         favouriteEvents={favouritesList}
         onToggleFavourite={removeFavourite}

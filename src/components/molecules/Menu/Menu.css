@@ -355,6 +355,40 @@
   color: var(--wel-sem-color-on-surface-mid, #38364d);
 }
 
+/* Test account view */
+.menu__test-account-desc {
+  margin: 0;
+  font: var(--wel-typography-body-02);
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+  line-height: 1.4;
+}
+
+.menu__link--selectable {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  appearance: none;
+}
+
+.menu__link--selectable .menu__link-label {
+  margin-left: 0;
+}
+
+.menu__link--selected {
+  font-weight: 600;
+}
+
+.menu__link-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: var(--wel-sem-color-primary, #050033);
+}
+
 /* ── Back button (account detail view) ───────────────────────────────── */
 .menu__back {
   display: flex;

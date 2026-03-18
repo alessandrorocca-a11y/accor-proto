@@ -295,7 +295,7 @@ interface CategoryPageProps {
 }
 
 export default function CategoryPage({ defaultCategory = 'Sport and leisure', breadcrumbs = [{ label: 'Homepage', href: '#' }], pageTitle, defaultLocation }: CategoryPageProps) {
-  const { points: USER_POINTS } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier } = useUser();
   useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -499,7 +499,7 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -516,8 +516,8 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
-        points={3000}
+        loyaltyTier={userLoyaltyTier}
+        points={USER_POINTS}
         avatarSrc="/avatar.png"
         favouriteEvents={menuFavourites}
         onToggleFavourite={toggleFavourite}

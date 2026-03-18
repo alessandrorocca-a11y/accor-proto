@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import { useUser, type OrderItem } from '@/context/UserContext';
+import { useUser, type OrderItem, type TestProfileId, TEST_PROFILES } from '@/context/UserContext';
 import { searchCities, type City } from '@/data/europeanCities';
 
 export interface MenuFavouriteEvent {
@@ -31,7 +31,7 @@ export interface MenuProps {
   selectedCity?: string;
 }
 
-export type MenuView = 'navigation' | 'profile' | 'account' | 'favourites' | 'orders' | 'communications';
+export type MenuView = 'navigation' | 'profile' | 'account' | 'favourites' | 'orders' | 'communications' | 'test-account';
 
 const TIER_LABELS: Record<string, string> = {
   classic: 'Classic',
@@ -54,6 +54,7 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Orders', icon: 'orders', action: 'orders' },
   { label: 'Auctions history', icon: 'auctions', href: '#' },
   { label: 'Communications preferences', icon: 'communications', action: 'communications' },
+  { label: 'Test account', icon: 'test-account', action: 'test-account' },
   { label: 'Logout', icon: 'logout', href: '#' },
 ];
 
@@ -215,6 +216,13 @@ function MenuItemIcon({ name }: { name: string }) {
             <path fillRule="evenodd" clipRule="evenodd" d="M5.25 7C5.25 4.92893 6.92893 3.25 9 3.25C11.0711 3.25 12.75 4.92893 12.75 7C12.75 9.07107 11.0711 10.75 9 10.75C6.92893 10.75 5.25 9.07107 5.25 7ZM9 4.75C7.75736 4.75 6.75 5.75736 6.75 7C6.75 8.24264 7.75736 9.25 9 9.25C10.2426 9.25 11.25 8.24264 11.25 7C11.25 5.75736 10.2426 4.75 9 4.75Z" fill="currentColor" />
             <path fillRule="evenodd" clipRule="evenodd" d="M13.9414 15.002L12.3504 13.411C12.0575 13.1181 12.0575 12.6432 12.3504 12.3503C12.6433 12.0574 13.1182 12.0574 13.4111 12.3503L15.002 13.9413L16.593 12.3503C16.8859 12.0574 17.3608 12.0574 17.6537 12.3503C17.9466 12.6432 17.9466 13.1181 17.6537 13.411L16.0627 15.002L17.6537 16.593C17.9466 16.8859 17.9466 17.3607 17.6537 17.6536C17.3608 17.9465 16.8859 17.9465 16.593 17.6536L15.002 16.0626L13.4111 17.6536C13.1182 17.9465 12.6433 17.9465 12.3504 17.6536C12.0575 17.3607 12.0575 16.8859 12.3504 16.593L13.9414 15.002Z" fill="currentColor" />
           </g>
+        </svg>
+      );
+    case 'test-account':
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M9 3v2H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2V3h-2zm2 0h2v2h-2V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M12 10v4M10 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       );
     default:
@@ -470,7 +478,8 @@ export function Menu({
           view === 'navigation' ? 'Menu' :
           view === 'profile' ? 'Profile menu' :
           view === 'account' ? 'My account' :
-          view === 'favourites' ? 'Favourites' : 'Orders'
+          view === 'favourites' ? 'Favourites' :
+          view === 'test-account' ? 'Test account' : 'Orders'
         }
       >
         {/* ── Navigation view (Figma sidebar) ────────────────────── */}
@@ -694,18 +703,18 @@ export function Menu({
                   </div>
                 </div>
 
-                <div className={`menu__status menu__status--${loyaltyTier}`}>
+                <div className={`menu__status menu__status--${userCtx?.loyaltyTier ?? loyaltyTier}`}>
                   <div className="menu__status-icon">
                     <IconAllStatus />
                   </div>
                   <div className="menu__status-info">
                     <span className="menu__status-label">Status</span>
                     <span className="menu__status-tier">
-                      {TIER_LABELS[loyaltyTier] ?? loyaltyTier}
+                      {TIER_LABELS[userCtx?.loyaltyTier ?? loyaltyTier] ?? (userCtx?.loyaltyTier ?? loyaltyTier)}
                     </span>
                   </div>
                   <span className="menu__status-points">
-                    {points.toLocaleString()} Reward Points
+                    {(userCtx?.points ?? points).toLocaleString()} Reward Points
                   </span>
                 </div>
 
@@ -1042,6 +1051,73 @@ export function Menu({
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ── Test account view (prototype: switch user type) ───────────────── */}
+        {view === 'test-account' && (
+          <>
+            <div className={`menu__nav${navHidden ? ' menu__nav--hidden' : ''}`}>
+              <button
+                type="button"
+                className="menu__back"
+                onClick={() => setView('profile')}
+                aria-label="Back to profile"
+              >
+                <IconChevronLeft />
+              </button>
+              <h2 className="menu__nav-title">Test account</h2>
+              <button
+                type="button"
+                className="menu__close"
+                onClick={onClose}
+                aria-label="Close menu"
+              >
+                <IconClose />
+              </button>
+            </div>
+
+            <div className="menu__content" onScroll={handleContentScroll}>
+              <div className="menu__account">
+                <p className="menu__test-account-desc">
+                  Switch user type for prototype testing. Selection is saved for this session.
+                </p>
+                <ul className="menu__list" role="radiogroup" aria-label="Test account type">
+                  {(['silver', 'gold', 'goldVoyager'] as TestProfileId[]).map((id) => {
+                    const p = TEST_PROFILES[id];
+                    const isSelected = userCtx?.testProfileId === id;
+                    const label =
+                      id === 'silver'
+                        ? 'Silver — 3,000 points, no subscription'
+                        : id === 'gold'
+                          ? 'Gold — 20,000 points, no subscription'
+                          : 'Gold + Voyager — 20,000 points, Voyager subscriber';
+                    return (
+                      <li key={id} className="menu__item menu__item--bordered">
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`menu__link menu__link--selectable${isSelected ? ' menu__link--selected' : ''}`}
+                          onClick={() => {
+                            userCtx?.setTestProfile(id);
+                          }}
+                        >
+                          <span className="menu__link-label">{label}</span>
+                          {isSelected && (
+                            <span className="menu__link-check" aria-hidden>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                                <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             </div>
           </>

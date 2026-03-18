@@ -5,6 +5,7 @@ import {
   MarketingTag,
 } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
+import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import './NearYouListPage.css';
 import './CategoryPage.css';
@@ -27,8 +28,6 @@ interface NearYouEvent {
   route?: string;
   marketingTag?: 'presale' | 'exclusivity' | 'sold-out' | 'discount';
 }
-
-const USER_POINTS = 42430;
 
 const NEAR_YOU_EVENTS: NearYouEvent[] = [
   {
@@ -397,6 +396,7 @@ export interface NearYouListPageProps {
 }
 
 export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageProps) {
+  const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
@@ -539,8 +539,8 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
         theme="light"
         isLoggedIn
         avatarSrc="/avatar.png"
-        points={USER_POINTS}
-        loyaltyTier="gold"
+        points={userPoints}
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -557,8 +557,8 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
-        points={3000}
+        loyaltyTier={userLoyaltyTier}
+        points={userPoints}
         avatarSrc="/avatar.png"
         favouriteEvents={menuFavourites}
         onToggleFavourite={toggleFavourite}

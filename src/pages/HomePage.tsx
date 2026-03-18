@@ -592,7 +592,7 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 /* ── Main component ───────────────────────────────────────────────────── */
 
 export default function HomePage() {
-  const { points: USER_POINTS } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier } = useUser();
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -743,7 +743,7 @@ export default function HomePage() {
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         hideSearch
         transparentOnTop
         className="home-page__mobile-header"
@@ -819,7 +819,7 @@ export default function HomePage() {
           isLoggedIn
           avatarSrc="/avatar.png"
           points={USER_POINTS}
-          loyaltyTier="gold"
+          loyaltyTier={userLoyaltyTier}
           hideSearch
           transparentOnTop
           className="home-page__mobile-header"
@@ -1206,7 +1206,7 @@ export default function HomePage() {
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         points={USER_POINTS}
         avatarSrc="/avatar.png"
         favouriteEvents={menuFavourites}

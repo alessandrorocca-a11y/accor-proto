@@ -193,7 +193,7 @@ function getCalendarDays(year: number, month: number) {
 
 export default function StandardPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
-  const { points: userPoints, deductPoints, addOrder } = useUser();
+  const { points: userPoints, loyaltyTier: userLoyaltyTier, deductPoints, addOrder } = useUser();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const USER_POINTS = userPoints;
@@ -625,14 +625,14 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
         onPointsClick={() => setLoyaltyOpen(true)}
       />
 
-      <Menu open={menuOpen} initialView={menuInitialView} onClose={() => setMenuOpen(false)} userName="Alessandro" userSurname="Rocca" userEmail="alessandro.rocca@email.com" userPhone="+33 661458723" userBirthday="29/10/1993" userCountry="Spain" loyaltyTier="gold" points={3000} avatarSrc="/avatar.png" favouriteEvents={favouritesList} onToggleFavourite={removeFavourite} />
+      <Menu open={menuOpen} initialView={menuInitialView} onClose={() => setMenuOpen(false)} userName="Alessandro" userSurname="Rocca" userEmail="alessandro.rocca@email.com" userPhone="+33 661458723" userBirthday="29/10/1993" userCountry="Spain" loyaltyTier={userLoyaltyTier} points={USER_POINTS} avatarSrc="/avatar.png" favouriteEvents={favouritesList} onToggleFavourite={removeFavourite} />
 
       {loyaltyOpen && (
         <div className="loyalty-sheet__backdrop" onClick={() => setLoyaltyOpen(false)}>
@@ -826,7 +826,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
       {showRecap && (
         <div className="recap-page">
-          <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier="gold" onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
+          <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
           {showVoucherSnack && (
             <div className="auction-page__notify-snack" role="status">
               <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -1220,7 +1220,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
       {showConfirmation && (
         <div className="recap-page">
-          <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier="gold" onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
+          <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
           <div className="recap-page__content">
             {showSuccessBanner && (
               <div className="confirmation__success-banner">

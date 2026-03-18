@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
+import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import './NearYouPage.css';
 import './CategoryPage.css';
@@ -436,6 +437,7 @@ function MapEventHorizontalCard({
 /* ── Main Component ─────────────────────────────────────────────────── */
 
 export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
+  const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
@@ -629,8 +631,8 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
         theme="light"
         isLoggedIn
         avatarSrc="/avatar.png"
-        points={3000}
-        loyaltyTier="gold"
+        points={userPoints}
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => navigateTo('')}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -793,8 +795,8 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
-        points={3000}
+        loyaltyTier={userLoyaltyTier}
+        points={userPoints}
         avatarSrc="/avatar.png"
         favouriteEvents={menuFavourites}
         onToggleFavourite={toggleFav}

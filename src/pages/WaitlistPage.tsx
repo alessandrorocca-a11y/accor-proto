@@ -128,7 +128,7 @@ function IconStar() {
 
 export default function WaitlistPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
-  const { points: userPoints } = useUser();
+  const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const USER_POINTS = userPoints;
@@ -188,7 +188,7 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -205,8 +205,8 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
-        points={3000}
+        loyaltyTier={userLoyaltyTier}
+        points={USER_POINTS}
         avatarSrc="/avatar.png"
         favouriteEvents={favouritesList}
         onToggleFavourite={removeFavourite}

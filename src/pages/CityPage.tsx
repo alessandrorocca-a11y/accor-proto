@@ -439,7 +439,7 @@ function EventSection({ title, events, favourites, onToggleFav, page, totalPages
 export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPageProps) {
   useEffect(() => { window.scrollTo(0, 0); }, [cityName]);
 
-  const { points: USER_POINTS } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier } = useUser();
   const { toggleFavourite: toggleFavCtx } = useFavourites();
 
   const config = CITY_CONFIGS[cityName] ?? DEFAULT_CONFIG;
@@ -567,7 +567,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => navigateTo('')}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -772,7 +772,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         points={USER_POINTS}
         avatarSrc="/avatar.png"
         favouriteEvents={menuFavourites}

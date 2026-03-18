@@ -10,6 +10,7 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
+import { useUser } from '@/context/UserContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import {
   PLANS,
@@ -32,7 +33,6 @@ interface PlanPageProps {
   planSlug: string;
 }
 
-const USER_POINTS = 42430;
 const REDIRECT_DELAY_MS = 2500;
 
 function formatPoints(n: number): string {
@@ -163,7 +163,9 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
   const [termsOpen, setTermsOpen] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const favTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
   const { favouritesList, removeFavourite } = useFavourites();
+  const USER_POINTS = userPoints;
 
   // --- Auction state ---
   const [bidValue, setBidValue] = useState('');
@@ -237,7 +239,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
           isLoggedIn
           avatarSrc="/avatar.png"
           points={USER_POINTS}
-          loyaltyTier="gold"
+          loyaltyTier={userLoyaltyTier}
           onLogoClick={() => { window.location.href = window.location.pathname; }}
           onMenu={() => {}}
           onPointsClick={() => {}}
@@ -625,7 +627,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
         isLoggedIn
         avatarSrc="/avatar.png"
         points={USER_POINTS}
-        loyaltyTier="gold"
+        loyaltyTier={userLoyaltyTier}
         onLogoClick={() => { window.location.href = window.location.pathname; }}
         onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
         onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
@@ -643,8 +645,8 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
         userPhone="+33 661458723"
         userBirthday="29/10/1993"
         userCountry="Spain"
-        loyaltyTier="gold"
-        points={3000}
+        loyaltyTier={userLoyaltyTier}
+        points={USER_POINTS}
         avatarSrc="/avatar.png"
         favouriteEvents={favouritesList}
         onToggleFavourite={removeFavourite}
