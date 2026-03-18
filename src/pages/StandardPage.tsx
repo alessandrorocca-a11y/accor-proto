@@ -232,7 +232,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [termsOpen, setTermsOpen] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple-pay' | 'google-pay'>('card');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple-pay' | 'google-pay' | null>(null);
   const [showRewardsSheet, setShowRewardsSheet] = useState(false);
   const { isFavourite: isGlobalFav, toggleFavourite: toggleGlobalFav, favouritesList, removeFavourite } = useFavourites();
   const [rewardsPointsUsed, setRewardsPointsUsed] = useState(0);
@@ -334,6 +334,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const handleBuyTicket = () => {
     if (totalTickets === 0) return;
     setShowRecap(true);
+    window.scrollTo(0, 0);
   };
 
   const handlePayNow = () => {
@@ -343,6 +344,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
     setShowRecap(false);
     setShowConfirmation(true);
     setShowSuccessBanner(true);
+    window.scrollTo(0, 0);
     if (eventData) {
       const cost = eventData.points;
       deductPoints(cost);
@@ -351,8 +353,15 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   };
 
   const handleBackToEvent = () => {
+    const citySlug = EVENT_CITY.toLowerCase().replace(/\s+/g, '-');
+    window.location.hash = `#city/${citySlug}`;
+  };
+
+  const handleViewOrders = () => {
     setShowConfirmation(false);
     setShowSuccessBanner(false);
+    setMenuInitialView('orders');
+    setMenuOpen(true);
   };
 
   const handleDateSelect = (d: number) => {
@@ -600,10 +609,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           disabled={totalTickets === 0}
           onClick={handleBuyTicket}
         >
-          Get it - {formatEur(totalPriceEur)}
+          Get it - {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
         </Button>
         <p className="standard__reward-points-alt">
-          or {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
+          or {formatEur(totalPriceEur)}
         </p>
       </div>
     </section>
@@ -810,7 +819,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
       {showStickyBar && !showRecap && !showConfirmation && !isEventSoldOut && totalTickets > 0 && (
         <div className="standard__sticky-bar">
           <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handleBuyTicket}>
-            Get it - {formatEur(totalPriceEur)}
+            Get it - {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
           </Button>
         </div>
       )}
@@ -831,15 +840,15 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
             </div>
           )}
           <div className="recap-page__content">
-            <button type="button" className="recap-page__back" onClick={() => setShowRecap(false)} aria-label="Go back">
+            <button type="button" className="recap-page__back" onClick={() => { setShowRecap(false); window.scrollTo(0, 0); }} aria-label="Go back">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> Back
             </button>
             <h1 className="recap-page__title">Confirm and pay</h1>
             <div className="recap-page__event-card">
-              <img src="/carnival-hero.png" alt="Rio de Janeiro Carnival 2026" className="recap-page__event-thumb" />
+              <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
               <div className="recap-page__event-info">
-                <p className="recap-page__event-name">Rio de Janeiro Carnival 2026  - ALL Accor Lounge at the Alma Rio Box - {totalTickets} ticket{totalTickets > 1 ? 's' : ''}</p>
-                <span className="recap-page__event-label">Limitless Experience</span>
+                <p className="recap-page__event-name">{EVENT_TITLE} – {totalTickets} ticket{totalTickets > 1 ? 's' : ''}</p>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
               </div>
             </div>
             <hr className="recap-page__divider" aria-hidden />
@@ -856,7 +865,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg>
                   <span className="recap-page__detail-label">Location</span>
                 </div>
-                <p className="recap-page__detail-value">Rio de Janeiro, Brasil</p>
+                <p className="recap-page__detail-value">{venueInfo.address}</p>
               </div>
               <div className="recap-page__detail-group">
                 <div className="recap-page__detail-header">
@@ -895,7 +904,8 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                 <div className="recap-page__rewards-applied">
                   <div className="recap-page__rewards-applied-header">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M12 2l2.47 5.01L20 7.94l-4 3.9.94 5.5L12 14.77l-4.94 2.6.94-5.5-4-3.9 5.53-.93L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
                     </svg>
                     <span className="recap-page__rewards-applied-title">ALL Rewards Points</span>
                   </div>
@@ -916,7 +926,8 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               ) : (
                 <button type="button" className="recap-page__rewards-link" onClick={() => { setRewardsStepperValue(1000); setShowRewardsSheet(true); }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M12 2l2.47 5.01L20 7.94l-4 3.9.94 5.5L12 14.77l-4.94 2.6.94-5.5-4-3.9 5.53-.93L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
                   </svg>
                   <span>ALL Rewards Points</span>
                 </button>
@@ -925,8 +936,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               {!showVoucher ? (
                 <button type="button" className="recap-page__voucher-link" onClick={() => setShowVoucher(true)}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M12 2l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 16.8l-5.8 3.1 1.1-6.5L2.6 8.8l6.5-.9L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                    <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                    <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
                   </svg>
                   <span>Voucher or gift card</span>
                 </button>
@@ -934,8 +947,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                 <div className="recap-page__voucher-section">
                   <div className="recap-page__voucher-header">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M12 2l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 16.8l-5.8 3.1 1.1-6.5L2.6 8.8l6.5-.9L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="12" cy="12" r="2" fill="currentColor" />
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                      <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                      <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
                     </svg>
                     <p className="recap-page__voucher-title">Voucher or gift card</p>
                   </div>
@@ -1049,7 +1064,11 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                     <span className="recap-page__payment-radio-circle" />
                     <span className="recap-page__payment-option-label">Apple Pay</span>
                     <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
-                      <path d="M9.2 7.4c-.6.7-1.5 1.2-2.4 1.1-.1-1 .4-2 .9-2.6.6-.7 1.6-1.2 2.3-1.2.1 1-.3 2-.8 2.7Zm.8 1.4c-1.3-.1-2.5.8-3.1.8-.6 0-1.7-.7-2.8-.7-1.4 0-2.8.8-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 2-1 2.7-2.1.9-1.2 1.2-2.4 1.2-2.5-.1 0-2.4-.9-2.4-3.6 0-2.3 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7l-.2.3Zm10.4-2.5v15.5h2.3v-5.3h3.2c2.9 0 5-2 5-5.1s-2-5.1-4.9-5.1h-5.6Zm2.3 2h2.6c2 0 3.1 1.1 3.1 3.1 0 2-1.1 3.1-3.1 3.1h-2.6V8.3Zm12.6 13.7c1.5 0 2.8-.7 3.4-1.9h.1v1.7h2.1V14c0-2.2-1.7-3.5-4.3-3.5-2.4 0-4.2 1.4-4.2 3.3h2c.2-.9 1-1.5 2.1-1.5 1.4 0 2.1.6 2.1 1.8v.8l-2.8.2c-2.6.2-4 1.2-4 3.1 0 2 1.5 3.3 3.5 3.3Zm.6-1.8c-1.2 0-2-.6-2-1.5 0-1 .7-1.5 2.2-1.6l2.5-.2v.8c0 1.4-1.2 2.5-2.7 2.5Zm7 5.8c2.2 0 3.3-.9 4.2-3.4l4-11.4H45l-2.7 8.7h-.1l-2.7-8.7h-2.4l3.9 10.8-.2.7c-.4 1.2-1 1.6-2 1.6-.2 0-.5 0-.7-.1v1.8c.2 0 .6.1.8 0Z" fill="#000" />
+                      <path d="M21.7277 4.375C24.4989 4.375 26.4286 6.21123 26.4286 8.88464C26.4286 11.5676 24.4592 13.4134 21.6582 13.4134H18.5899V18.1038H16.373V4.375L21.7277 4.375ZM18.5899 11.6247H21.1336C23.0637 11.6247 24.1622 10.6258 24.1622 8.89418C24.1622 7.16274 23.0637 6.17324 21.1435 6.17324H18.5899V11.6247Z" fill="black"/>
+                      <path d="M27.0078 15.259C27.0078 13.5083 28.4034 12.4332 30.8779 12.3L33.7282 12.1383V11.3678C33.7282 10.2546 32.9462 9.58862 31.64 9.58862C30.4026 9.58862 29.6305 10.1593 29.4427 11.0538H27.4236C27.5424 9.246 29.1456 7.91406 31.7191 7.91406C34.2429 7.91406 35.8561 9.19847 35.8561 11.2059V18.1036H33.8073V16.4577H33.758C33.1543 17.5709 31.8378 18.2748 30.4721 18.2748C28.4331 18.2748 27.0078 17.057 27.0078 15.259ZM33.7282 14.3552V13.5655L31.1647 13.7176C29.8879 13.8033 29.1655 14.3456 29.1655 15.2019C29.1655 16.0771 29.9177 16.648 31.0658 16.648C32.5602 16.648 33.7282 15.6585 33.7282 14.3552Z" fill="black"/>
+                      <path d="M37.7911 21.7845V20.1195C37.9492 20.1575 38.3054 20.1575 38.4837 20.1575C39.4734 20.1575 40.0079 19.758 40.3344 18.7305C40.3344 18.7114 40.5226 18.1216 40.5226 18.1121L36.7617 8.09375H39.0775L41.7105 16.2378H41.7498L44.3828 8.09375H46.6394L42.7395 18.6257C41.8491 21.0519 40.8197 21.832 38.662 21.832C38.4837 21.832 37.9492 21.813 37.7911 21.7845Z" fill="black"/>
+                      <path d="M9.83386 5.71444C10.3682 5.07206 10.7307 4.20953 10.6351 3.32812C9.85297 3.36551 8.89854 3.82412 8.34598 4.46701C7.84983 5.01754 7.4107 5.91619 7.52518 6.76064C8.40315 6.83385 9.28031 6.3388 9.83386 5.71444Z" fill="black"/>
+                      <path d="M10.6259 6.92676C9.35087 6.85376 8.26679 7.62236 7.6579 7.62236C7.04868 7.62236 6.11627 6.96355 5.10779 6.98131C3.7952 6.99984 2.57726 7.71324 1.91118 8.84787C0.54115 11.1177 1.54963 14.4846 2.8819 16.3333C3.52889 17.2479 4.30861 18.2549 5.33602 18.2187C6.30675 18.1821 6.68724 17.6145 7.8672 17.6145C9.04629 17.6145 9.38903 18.2187 10.4166 18.2004C11.4822 18.1821 12.1484 17.2854 12.7954 16.3699C13.5376 15.3273 13.8414 14.3206 13.8606 14.2654C13.8414 14.2471 11.8057 13.4964 11.7869 11.2454C11.7676 9.36066 13.3851 8.46416 13.4612 8.40856C12.5478 7.10998 11.1207 6.96355 10.6259 6.92676Z" fill="black"/>
                     </svg>
                   </label>
                 </div>
@@ -1099,7 +1118,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                 </svg>
               </button>
             ) : (
-              <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handlePayNow}>Pay now</Button>
+              <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handlePayNow} disabled={!paymentMethod}>Pay now</Button>
             )}
           </div>
 
@@ -1119,49 +1138,61 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                 <div className="recap-page__rewards-sheet-body">
                   <div className="recap-page__rewards-badge-row">
                     <span className="recap-page__rewards-badge-icon">
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden>
-                        <path d="M7.64903 4.06886C7.7899 3.77365 8.21012 3.77365 8.35099 4.06886L9.25318 5.95956C9.30987 6.07836 9.42282 6.16043 9.55334 6.17763L11.6303 6.45141C11.9546 6.49416 12.0844 6.89381 11.8472 7.11901L10.3278 8.5613C10.2324 8.65194 10.1892 8.78472 10.2132 8.91416L10.5946 10.9741C10.6542 11.2957 10.3142 11.5427 10.0267 11.3867L8.18552 10.3873C8.06982 10.3246 7.9302 10.3246 7.8145 10.3873L5.97329 11.3867C5.68581 11.5427 5.34584 11.2957 5.4054 10.9741L5.78683 8.91416C5.8108 8.78472 5.76766 8.65194 5.67218 8.5613L4.15282 7.11901C3.91559 6.89381 4.04544 6.49416 4.36974 6.45141L6.44668 6.17763C6.5772 6.16043 6.69015 6.07836 6.74684 5.95956L7.64903 4.06886Z" stroke="#fff" />
-                        <circle cx="8" cy="8" r="6" stroke="#fff" strokeLinejoin="round" />
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="#fff" />
+                        <circle cx="12" cy="12" r="9" stroke="#fff" strokeLinejoin="round" />
                       </svg>
                     </span>
                     <span className="recap-page__rewards-badge-text">You have {USER_POINTS.toLocaleString('de-DE')} Reward points available</span>
                   </div>
 
-                  <p className="recap-page__rewards-sheet-desc">Select the number of Reward Points you'd like to redeem for a discount on this purchase</p>
+                  <p className="recap-page__rewards-sheet-desc">Choose the number of Reward Points you'd like to redeem for a discount on this purchase</p>
 
-                  <div className="recap-page__rewards-stepper">
-                    <button
-                      type="button"
-                      className="recap-page__rewards-stepper-btn"
-                      disabled={rewardsStepperValue <= 0}
-                      onClick={() => setRewardsStepperValue(Math.max(0, rewardsStepperValue - 500))}
-                      aria-label="Decrease points"
-                    >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="M5 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
-                    </button>
+                  <div className="recap-page__rewards-inputs">
+                    <div className="recap-page__rewards-input-group">
+                      <label className="recap-page__rewards-input-label">Reward points</label>
+                      <input
+                        type="text"
+                        className="recap-page__rewards-input-field"
+                        value={rewardsStepperValue === 0 ? '0' : rewardsStepperValue.toLocaleString('de-DE')}
+                        onChange={(e) => {
+                          const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
+                          setRewardsStepperValue(Math.min(num, USER_POINTS));
+                        }}
+                        inputMode="numeric"
+                      />
+                    </div>
+                    <div className="recap-page__rewards-input-group">
+                      <label className="recap-page__rewards-input-label">Euros</label>
+                      <input
+                        type="text"
+                        className="recap-page__rewards-input-field"
+                        value={`€${(rewardsStepperValue / POINTS_PER_EUR).toFixed(2).replace('.', ',')}`}
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
+                          const euros = parseFloat(raw) || 0;
+                          const pts = Math.round(euros * POINTS_PER_EUR);
+                          setRewardsStepperValue(Math.min(pts, USER_POINTS));
+                        }}
+                        inputMode="decimal"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="recap-page__rewards-slider-group">
                     <input
-                      type="text"
-                      className="recap-page__rewards-stepper-input"
-                      value={rewardsStepperValue.toLocaleString('de-DE')}
-                      onChange={(e) => {
-                        const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
-                        setRewardsStepperValue(Math.min(num, USER_POINTS));
+                      type="range"
+                      className="recap-page__rewards-slider"
+                      min={0}
+                      max={USER_POINTS}
+                      step={10}
+                      value={rewardsStepperValue}
+                      onChange={(e) => setRewardsStepperValue(Number(e.target.value))}
+                      style={{
+                        background: `linear-gradient(to right, #050033 0%, #050033 ${(rewardsStepperValue / USER_POINTS) * 100}%, #d9dadc ${(rewardsStepperValue / USER_POINTS) * 100}%, #d9dadc 100%)`
                       }}
-                      inputMode="numeric"
                     />
-                    <button
-                      type="button"
-                      className="recap-page__rewards-stepper-btn"
-                      disabled={rewardsStepperValue >= USER_POINTS}
-                      onClick={() => setRewardsStepperValue(Math.min(USER_POINTS, rewardsStepperValue + 500))}
-                      aria-label="Increase points"
-                    >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
-                    </button>
+                    <p className="recap-page__rewards-slider-caption">You have earned {USER_POINTS.toLocaleString('de-DE')} Points</p>
                   </div>
 
                   <p className="recap-page__rewards-sheet-discount">
@@ -1205,10 +1236,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <span className="confirmation__order-id">Order ID: R{Math.floor(1000000 + Math.random() * 9000000)}</span>
             </div>
             <div className="recap-page__event-card">
-              <img src="/carnival-hero.png" alt="Rio de Janeiro Carnival 2026" className="recap-page__event-thumb" />
+              <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
               <div className="recap-page__event-info">
-                <p className="recap-page__event-name">Rio de Janeiro Carnival 2026  - ALL Accor Lounge at the Alma Rio Box - {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}</p>
-                <span className="recap-page__event-label">Limitless Experience</span>
+                <p className="recap-page__event-name">{EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}</p>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
               </div>
             </div>
             <hr className="recap-page__divider" aria-hidden />
@@ -1219,7 +1250,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               </div>
               <div className="recap-page__detail-group">
                 <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg><span className="recap-page__detail-label">Location</span></div>
-                <p className="recap-page__detail-value">Rio de Janeiro, Brasil</p>
+                <p className="recap-page__detail-value">{venueInfo.address}</p>
               </div>
               <div className="recap-page__detail-group">
                 <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Tickets and Add-ons</span></div>
@@ -1238,7 +1269,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
             </div>
             <div className="confirmation__actions">
               <Button variant="tertiary" size="md" fullWidth onClick={handleBackToEvent}>Continue exploring</Button>
-              <button type="button" className="confirmation__orders-btn">View all my orders</button>
+              <button type="button" className="confirmation__orders-btn" onClick={handleViewOrders}>View all my orders</button>
             </div>
           </div>
         </div>

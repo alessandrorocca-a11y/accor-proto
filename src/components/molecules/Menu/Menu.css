@@ -45,6 +45,16 @@
   }
 }
 
+/* No underlines in any profile / menu section */
+.menu a,
+.menu .menu__link-label,
+.menu .menu__city-label,
+.menu .menu__lang-label,
+.menu .menu__accordion-label,
+.menu .menu__category-name {
+  text-decoration: none;
+}
+
 @keyframes menu-slide-up {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
@@ -939,7 +949,7 @@
 .menu__city-label {
   font: var(--wel-typography-link-default-01, 400 16px/24px 'Roboto', sans-serif);
   color: var(--wel-sem-color-on-surface-mid, #38364d);
-  text-decoration: underline;
+  text-decoration: none;
   white-space: nowrap;
 }
 
@@ -955,7 +965,7 @@
 .menu__lang-label {
   font: var(--wel-typography-link-default-01, 400 16px/24px 'Roboto', sans-serif);
   color: var(--wel-sem-color-on-surface-mid, #38364d);
-  text-decoration: underline;
+  text-decoration: none;
   white-space: nowrap;
   cursor: default;
 }

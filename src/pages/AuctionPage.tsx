@@ -14,7 +14,7 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
-import { getEventById } from '@/data/events/eventRegistry';
+import { getEventById, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './AuctionPage.css';
@@ -149,7 +149,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
-  const isVoyagerExclusive = eventData?.isVoyagerExclusive ?? false;
+  const isVoyagerExclusive = isVoyagerExclusiveEvent(eventData);
   const isSubscribed = false;
   const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(isVoyagerExclusive, isSubscribed);
   const [termsOpen, setTermsOpen] = useState(false);

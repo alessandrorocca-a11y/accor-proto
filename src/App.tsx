@@ -79,6 +79,7 @@ const CITY_ROUTES: Record<string, CityRouteConfig> = {
   '#city/bordeaux': { cityName: 'Bordeaux', country: 'France' },
   '#city/toulouse': { cityName: 'Toulouse', country: 'France' },
   '#city/strasbourg': { cityName: 'Strasbourg', country: 'France' },
+  '#city/rio-de-janeiro': { cityName: 'Rio de Janeiro', country: 'Brazil' },
 };
 
 type PaymentType = 'prize-draw' | 'redeem' | 'auction' | 'cash' | 'flex' | 'linkout' | 'waitlist';

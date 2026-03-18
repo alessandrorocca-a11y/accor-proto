@@ -153,11 +153,16 @@
     var(--wel-comp-btn-primary-bg-gradient-end, rgb(82, 79, 129)) 5.7%,
     var(--wel-comp-btn-primary-bg-gradient-start, rgb(5, 0, 51)) 92.5%);
   border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
-  color: #fff;
+  color: #ffffff;
   font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
   text-decoration: none;
   cursor: pointer;
   text-align: center;
+}
+
+.voyager-dialog__cta:link,
+.voyager-dialog__cta:visited {
+  color: #ffffff;
 }
 
 .voyager-dialog__cta:hover {

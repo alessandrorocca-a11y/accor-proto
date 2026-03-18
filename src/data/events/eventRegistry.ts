@@ -37,9 +37,16 @@ export interface EventData {
   bidChips?: number[];
   ticketPrice?: number;
   maxTickets?: number;
-  isVoyagerExclusive?: boolean;
+  /** Prize draw end date (ISO string). When set, used instead of msLeft for draw end. */
+  drawEndDate?: string;
   imagePosition?: string;
   marketingTag?: MarketingTagType;
+}
+
+/** Event is Voyager-exclusive when it has Presale or Exclusivity marketing tag. */
+export function isVoyagerExclusiveEvent(event: EventData | null | undefined): boolean {
+  if (!event?.marketingTag) return false;
+  return event.marketingTag === 'presale' || event.marketingTag === 'exclusivity';
 }
 
 const ROUTE_MAP: Record<PageType, string> = {
@@ -181,7 +188,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg', 'Andrea Bocelli', 'Concerts and festivals'),
     includedItems: ['2 premium seated tickets', 'Access to the ALL Member lounge', 'Pre-show cocktail reception', 'Official programme'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
     marketingTag: 'presale',
   },
   {
@@ -246,7 +252,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://limitlessexperiences.accor.com/media/catalog/product/R/o/Rosalia_2026_Affiche_01_032b.jpg', 'Rosalía', 'Concerts and festivals'),
     includedItems: ['2 La Suite VIP box tickets', '1 night at Pullman Paris Centre Bercy', 'Pre-show champagne reception', 'VIP entrance and lounge access'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
     marketingTag: 'exclusivity',
   },
   {
@@ -431,7 +436,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://limitlessexperiences.accor.com/media/catalog/product/W/u/Wu_Tang_Clan_500x500_510c.jpg', 'Wu-Tang Clan', 'Concerts and festivals'),
     includedItems: ['2 Suite tickets with private balcony', 'VIP lounge and hospitality', 'Complimentary drinks and catering', 'Exclusive merchandise'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
     marketingTag: 'exclusivity',
   },
   {
@@ -451,7 +455,7 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://limitlessexperiences.accor.com/media/catalog/product/M/u/Mumford_500x500_cb3b.jpg', 'Mumford & Sons', 'Concerts and festivals'),
     includedItems: ['2 Suite tickets with private balcony', 'ALL Member VIP lounge access', 'Premium drinks and catering', 'Official merchandise'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
+    marketingTag: 'exclusivity',
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -469,6 +473,7 @@ export const EVENT_REGISTRY: EventData[] = [
     points: 40,
     ticketPrice: 40,
     maxTickets: 20,
+    drawEndDate: '2026-06-06T12:06:00',
     msLeft: 80 * 24 * 60 * 60 * 1000,
     image: '/roland-garros-1.png',
     heroImages: [
@@ -513,7 +518,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('/tour-de-france.jpg', 'Tour de France', 'Sport and leisure'),
     includedItems: ['2 VIP terrace passes', 'Gourmet lunch', 'Open champagne bar', 'Official merchandise'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
     marketingTag: 'presale',
   },
   {
@@ -533,7 +537,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('/f1-monaco.jpg', 'Monaco GP', 'Sport and leisure'),
     includedItems: ['2 Fairmont Hairpin passes', 'Brunch & lunch', 'Open bar', 'Paddock access', 'Driver autograph session'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
     marketingTag: 'exclusivity',
   },
   {
@@ -598,6 +601,7 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('/psg-ac-milan-vip.jpg', 'PSG UCL Night', 'Sport and leisure'),
     includedItems: ['2 VIP box seats', 'Champions League match experience', 'Pre-match gourmet dining', 'Open bar', 'VIP entrance and lounge access'],
     eventTag: 'Limitless Experiences',
+    marketingTag: 'presale',
   },
   {
     id: 'evt-029',
@@ -632,6 +636,7 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('/psg-real-madrid-vip.jpg', 'PSG vs Real Madrid', 'Sport and leisure'),
     includedItems: ['2 VIP box seats', 'Champions League night experience', 'Pre-match gala dinner', 'Open bar', 'VIP entrance and private lounge'],
     eventTag: 'Limitless Experiences',
+    marketingTag: 'exclusivity',
   },
   {
     id: 'evt-031',
@@ -815,7 +820,6 @@ export const EVENT_REGISTRY: EventData[] = [
     image: 'https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=400&h=400&fit=crop',
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=1200&h=800&fit=crop', 'Fondation LV', 'Shows and culture'),
     includedItems: ['2 curator tour passes', 'Cocktail reception', 'Exhibition catalogue'],
-    isVoyagerExclusive: true,
   },
   {
     id: 'evt-042',
@@ -1005,7 +1009,7 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=800&fit=crop', 'Chef Table', 'Food and drinks'),
     includedItems: ['Intimate 12-course tasting menu', 'Wine pairing by sommelier', 'Meet the chef experience', 'Signed cookbook', 'Exclusive for 12 guests only'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
+    marketingTag: 'exclusivity',
   },
   {
     id: 'evt-054',
@@ -1099,7 +1103,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&h=800&fit=crop', 'Raffles Dinner', 'Food and drinks'),
     includedItems: ['Dinner for 2', '6-course tasting menu', 'Premium wine pairing', 'Digestif', 'Valet parking'],
     eventTag: 'Hotel Experience',
-    isVoyagerExclusive: true,
   },
   {
     id: 'evt-060',
@@ -1319,7 +1322,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1200&h=800&fit=crop', 'Ritz Spa', 'Wellness'),
     includedItems: ['Half-day spa for 2', 'Signature treatment', 'Pool & fitness access', 'Champagne & macarons'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
     marketingTag: 'exclusivity',
   },
   {
@@ -1349,7 +1351,6 @@ export const EVENT_REGISTRY: EventData[] = [
     image: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=400&h=400&fit=crop',
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1200&h=800&fit=crop', 'Aromatherapy', 'Wellness'),
     includedItems: ['2-hour workshop for 2', 'Essential oils kit to take home', 'Certificate'],
-    isVoyagerExclusive: true,
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -1387,6 +1388,7 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop', 'Raffles Weekend', 'Hotel experiences'),
     includedItems: ['2-night stay in a luxury suite', 'Full English breakfast daily', 'Michelin-starred dinner for two', 'Spa treatment', 'Equestrian experience'],
     eventTag: 'Limitless Experiences',
+    marketingTag: 'presale',
   },
   {
     id: 'evt-078',
@@ -1510,7 +1512,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1200&h=800&fit=crop', 'Cooking Class Lyon', 'Hotel experiences'),
     includedItems: ['3-hour cooking class for 2', 'Lunch from your creations', 'Wine pairing', 'Recipe cards'],
     eventTag: 'Hotel Experience',
-    isVoyagerExclusive: true,
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -1766,7 +1767,6 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', 'Rio Carnaval', 'Concerts and festivals'),
     includedItems: ['2 VIP Sambadrome box seats', 'Open bar with caipirinhas and champagne', 'Traditional Brazilian buffet', 'Exclusive parade programme', 'Return transfer from Fairmont Copacabana'],
     eventTag: 'Limitless Experiences',
-    isVoyagerExclusive: true,
   },
 ];
 

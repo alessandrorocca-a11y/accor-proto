@@ -12,7 +12,7 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
-import { getEventById } from '@/data/events/eventRegistry';
+import { getEventById, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { getVenueInfo } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
@@ -142,10 +142,12 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const _EVENT_DATE = eventData?.date ?? 'February 16, 2026';
   const venueInfo = getVenueInfo(EVENT_LOCATION, EVENT_CITY);
 
-  const endDate = useMemo(
-    () => new Date(Date.now() + DRAW_MS_LEFT),
-    []
-  );
+  const endDate = useMemo(() => {
+    if (eventData?.drawEndDate) {
+      return new Date(eventData.drawEndDate);
+    }
+    return new Date(Date.now() + DRAW_MS_LEFT);
+  }, [eventData?.drawEndDate, DRAW_MS_LEFT]);
 
   const [ticketCount, setTicketCount] = useState(1);
   const [isFavourite, setFavourite] = useState(false);
@@ -166,7 +168,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const [termsOpen, setTermsOpen] = useState(false);
 
-  const isVoyagerExclusive = eventData?.isVoyagerExclusive ?? false;
+  const isVoyagerExclusive = isVoyagerExclusiveEvent(eventData);
   const isSubscribed = false;
   const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(isVoyagerExclusive, isSubscribed);
 
@@ -179,13 +181,14 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const totalPrice = ticketCount * TICKET_PRICE;
 
   useEffect(() => {
-    const msLeft = endDate.getTime() - Date.now();
-    if (msLeft <= 0) {
-      setDrawEnded(true);
-      return;
-    }
-    const timer = setTimeout(() => setDrawEnded(true), msLeft);
-    return () => clearTimeout(timer);
+    const check = () => {
+      if (endDate.getTime() - Date.now() <= 0) {
+        setDrawEnded(true);
+      }
+    };
+    check();
+    const id = setInterval(check, 60_000);
+    return () => clearInterval(id);
   }, [endDate]);
 
   useEffect(() => {
@@ -266,8 +269,8 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   };
 
   const handleBackToEvent = () => {
-    setShowConfirmation(false);
-    setShowSuccessBanner(false);
+    const citySlug = EVENT_CITY.toLowerCase().replace(/\s+/g, '-');
+    window.location.hash = `#city/${citySlug}`;
   };
 
   const handleViewOrders = () => {
@@ -738,16 +741,16 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
 
             <div className="recap-page__event-card">
               <img
-                src="/carnival-hero.png"
-                alt="Rio de Janeiro Carnival 2026"
+                src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'}
+                alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE}
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
                 <span className="recap-page__redeem-badge">Prize Draw</span>
                 <p className="recap-page__event-name">
-                  Rio de Janeiro Carnival 2026  - ALL Accor Lounge at the Alma Rio Box - {ticketCount} ticket{ticketCount > 1 ? 's' : ''}
+                  {EVENT_TITLE} – {ticketCount} ticket{ticketCount > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">Limitless Experience</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
               </div>
             </div>
 
@@ -762,7 +765,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Date</span>
                 </div>
-                <p className="recap-page__detail-value">Monday, 16 February</p>
+                <p className="recap-page__detail-value">{_EVENT_DATE}</p>
               </div>
 
               <div className="recap-page__detail-group">
@@ -773,7 +776,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Location</span>
                 </div>
-                <p className="recap-page__detail-value">Rio de Janeiro, Brasil</p>
+                <p className="recap-page__detail-value">{venueInfo.address}</p>
               </div>
 
               <div className="recap-page__detail-group">
@@ -866,16 +869,16 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
 
             <div className="recap-page__event-card">
               <img
-                src="/carnival-hero.png"
-                alt="Rio de Janeiro Carnival 2026"
+                src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'}
+                alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE}
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
                 <span className="recap-page__redeem-badge">Prize Draw</span>
                 <p className="recap-page__event-name">
-                  Rio de Janeiro Carnival 2026  - ALL Accor Lounge at the Alma Rio Box - 2 tickets
+                  {EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">Limitless Experience</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
               </div>
             </div>
 
@@ -890,7 +893,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Date</span>
                 </div>
-                <p className="recap-page__detail-value">Monday, 16 February</p>
+                <p className="recap-page__detail-value">{_EVENT_DATE}</p>
               </div>
 
               <div className="recap-page__detail-group">
@@ -901,7 +904,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Location</span>
                 </div>
-                <p className="recap-page__detail-value">Rio de Janeiro, Brasil</p>
+                <p className="recap-page__detail-value">{venueInfo.address}</p>
               </div>
 
               <div className="recap-page__detail-group">

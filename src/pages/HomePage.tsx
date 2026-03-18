@@ -134,7 +134,7 @@ const TOP_EXPERIENCES: TopExperience[] = [
   {
     id: 'te4',
     title: 'Monaco Grand Prix 2026',
-    image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&h=700&fit=crop',
+    image: 'https://images.unsplash.com/photo-1752884991193-f40e0018e483?w=400&h=700&fit=crop',
     video: 'https://cdn.pixabay.com/video/2017/08/05/11080-228267789_tiny.mp4',
     hash: '#auction/evt-024',
   },

@@ -232,8 +232,8 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
   };
 
   const handleBackToEvent = () => {
-    setShowConfirmation(false);
-    setShowSuccessBanner(false);
+    const citySlug = EVENT_CITY.toLowerCase().replace(/\s+/g, '-');
+    window.location.hash = `#city/${citySlug}`;
   };
 
   const handleViewOrders = () => {
@@ -666,16 +666,16 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
 
             <div className="recap-page__event-card">
               <img
-                src="/carnival-hero.png"
-                alt="Rio de Janeiro Carnival 2026"
+                src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'}
+                alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE}
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
                 <span className="recap-page__redeem-badge redeem__recap-badge">Redeem</span>
                 <p className="recap-page__event-name">
-                  Rio de Janeiro Carnival 2026  - ALL Accor Lounge at the Alma Rio Box - {ticketCount} ticket{ticketCount > 1 ? 's' : ''}
+                  {EVENT_TITLE} – {ticketCount} ticket{ticketCount > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">Limitless Experience</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
               </div>
             </div>
 
@@ -690,7 +690,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Date</span>
                 </div>
-                <p className="recap-page__detail-value">Monday, 16 February</p>
+                <p className="recap-page__detail-value">{_EVENT_DATE}</p>
               </div>
 
               <div className="recap-page__detail-group">
@@ -701,7 +701,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Location</span>
                 </div>
-                <p className="recap-page__detail-value">Rio de Janeiro, Brasil</p>
+                <p className="recap-page__detail-value">{venueInfo.address}</p>
               </div>
 
               <div className="recap-page__detail-group">
@@ -794,16 +794,16 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
 
             <div className="recap-page__event-card">
               <img
-                src="/carnival-hero.png"
-                alt="Rio de Janeiro Carnival 2026"
+                src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'}
+                alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE}
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
                 <span className="recap-page__redeem-badge redeem__recap-badge">Redeem</span>
                 <p className="recap-page__event-name">
-                  Rio de Janeiro Carnival 2026  - ALL Accor Lounge at the Alma Rio Box - {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
+                  {EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">Limitless Experience</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
               </div>
             </div>
 
@@ -818,7 +818,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Date</span>
                 </div>
-                <p className="recap-page__detail-value">Monday, 16 February</p>
+                <p className="recap-page__detail-value">{_EVENT_DATE}</p>
               </div>
 
               <div className="recap-page__detail-group">
@@ -829,7 +829,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                   </svg>
                   <span className="recap-page__detail-label">Location</span>
                 </div>
-                <p className="recap-page__detail-value">Rio de Janeiro, Brasil</p>
+                <p className="recap-page__detail-value">{venueInfo.address}</p>
               </div>
 
               <div className="recap-page__detail-group">

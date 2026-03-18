@@ -131,7 +131,7 @@
 
 .marketplace-header__points-icon {
   flex-shrink: 0;
-  color: inherit;
+  color: #fff;
 }
 
 .marketplace-header__points-value {
@@ -239,6 +239,10 @@
 
   .marketplace-header__center {
     display: flex;
+  }
+
+  .marketplace-header__points-icon {
+    color: #fff;
   }
 }
 
