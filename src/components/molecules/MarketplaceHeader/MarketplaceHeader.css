@@ -13,10 +13,21 @@
 }
 
 .marketplace-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
   width: 100%;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
   --header-bg: var(--wel-web-bsem-color-light-family-container-low);
   --header-fg: var(--wel-sem-color-on-family);
   --header-shadow: 0 var(--wel-sem-number-shadow-down-y) var(--wel-sem-number-shadow-blur) var(--wel-sem-color-shadow-default);
+}
+
+.marketplace-header--hidden {
+  transform: translateY(-100%);
 }
 
 .marketplace-header--light {

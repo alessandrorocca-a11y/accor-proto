@@ -143,8 +143,27 @@ export function MarketplaceHeader({
   const [searchOpen, setSearchOpen] = useState(false);
   const [desktopSearchActive, setDesktopSearchActive] = useState(false);
   const [desktopQuery, setDesktopQuery] = useState('');
+  const [hidden, setHidden] = useState(false);
+  const lastScrollY = useRef(0);
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchWrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const THRESHOLD = 8;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < THRESHOLD) {
+        setHidden(false);
+      } else if (currentY > lastScrollY.current + THRESHOLD) {
+        setHidden(true);
+      } else if (currentY < lastScrollY.current - THRESHOLD) {
+        setHidden(false);
+      }
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const closeDesktopSearch = () => {
     setDesktopSearchActive(false);
@@ -193,7 +212,7 @@ export function MarketplaceHeader({
 
   return (
     <header
-      className={`marketplace-header marketplace-header--${theme} ${className}`.trim()}
+      className={`marketplace-header marketplace-header--${theme}${hidden ? ' marketplace-header--hidden' : ''} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
       <div className="marketplace-header__bar">
