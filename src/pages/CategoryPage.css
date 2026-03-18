@@ -552,6 +552,10 @@
   align-items: flex-end;
 }
 
+.category-page .loyalty-sheet__card--classic {
+  background: linear-gradient(135deg, #1a1844 0%, #050033 60%, #2d2b6b 100%);
+}
+
 .category-page .loyalty-sheet__card--gold {
   background: linear-gradient(135deg, #c69b2b 0%, #a07800 100%);
 }

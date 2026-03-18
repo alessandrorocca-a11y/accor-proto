@@ -1139,7 +1139,7 @@
 
 .loyalty-sheet__card {
   width: 270px;
-  height: 180px;
+  height: 130px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -1147,6 +1147,10 @@
   align-items: center;
   position: relative;
   overflow: hidden;
+}
+
+.loyalty-sheet__card--classic {
+  background: linear-gradient(135deg, #1a1844 0%, #050033 60%, #2d2b6b 100%);
 }
 
 .loyalty-sheet__card--gold {
