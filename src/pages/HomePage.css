@@ -1295,9 +1295,18 @@
     line-height: 16px;
   }
 
-  /* hide the mobile hero header on desktop */
-  .home-page__hero-header,
+  /* hide the in-hero header on desktop (the MarketplaceHeader handles it) */
+  .home-page__hero-header {
+    display: none !important;
+  }
+
+  /* show the MarketplaceHeader on desktop too */
   .home-page__mobile-header {
+    display: block !important;
+  }
+
+  /* hide the custom desktop nav (replaced by MarketplaceHeader) */
+  .home-page__desktop-nav {
     display: none !important;
   }
 
