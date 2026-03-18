@@ -194,7 +194,8 @@ const ALL_CITIES = [
   { name: 'Nice', country: 'France', hash: '#city/nice' },
 ];
 
-const BANNER_IMAGE = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=500&fit=crop';
+const BANNER_IMAGE = '/banner-lifestyle.png';
+const BANNER_LOYALTY_CARD_IMAGE = '/banner-loyalty-card.svg';
 
 
 
@@ -317,9 +318,9 @@ function IconStar() {
 
 function IconCheck() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path fillRule="evenodd" clipRule="evenodd" d="M12.798 3.72C11.444 3.117 9.93 2.967 8.485 3.294 7.039 3.62 5.737 4.406 4.774 5.533 3.81 6.66 3.237 8.068 3.14 9.548 3.042 11.027 3.426 12.498 4.233 13.742 5.04 14.986 6.227 15.935 7.617 16.449 9.008 16.963 10.528 17.013 11.949 16.593 13.371 16.173 14.619 15.304 15.506 14.116 16.394 12.929 16.874 11.487 16.875 10.004V8.689H18.125V10.004C18.124 11.756 17.557 13.462 16.508 14.865 15.459 16.268 13.984 17.295 12.304 17.792 10.624 18.288 8.828 18.229 7.184 17.622 5.541 17.014 4.138 15.892 3.184 14.422 2.23 12.952 1.777 11.214 1.893 9.465 2.008 7.717 2.685 6.053 3.824 4.721 4.962 3.389 6.5 2.461 8.21 2.075 9.918 1.689 11.707 1.865 13.307 2.578L13.878 2.833 13.369 3.975 12.798 3.72Z" fill="currentColor"/>
+      <path fillRule="evenodd" clipRule="evenodd" d="M18.384 4.178L9.808 12.54 6.616 9.43 7.488 8.535 9.807 10.794 17.511 3.283 18.384 4.178Z" fill="currentColor"/>
     </svg>
   );
 }
@@ -1157,31 +1158,41 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ── ALL Accor Banner ─────────────────────────────────────────── */}
+      {/* ── ALL Accor Banner (Figma 6905-44832) ───────────────────────── */}
       <div className="home-page__banner">
-        <div className="home-page__banner-bg">
+        <div className="home-page__banner-visual">
           <img src={BANNER_IMAGE} alt="" />
+          <div className="home-page__banner-loyalty-card" aria-hidden>
+            <img src={BANNER_LOYALTY_CARD_IMAGE} alt="" className="home-page__banner-loyalty-card-img" />
+          </div>
         </div>
-        <h2 className="home-page__banner-title">
-          ALL Accor, the world's most awarded travel programme.
-        </h2>
-        <div className="home-page__banner-checks">
-          <div className="home-page__banner-check">
-            <IconCheck />
-            <span>Best rates guaranteed</span>
+        <div className="home-page__banner-content">
+          <div className="home-page__banner-text">
+            <h2 className="home-page__banner-title">
+              ALL Accor, the world's most awarded travel programme.
+            </h2>
+            <ul className="home-page__banner-checks">
+              <li className="home-page__banner-check">
+                <IconCheck />
+                <span>Best rates guaranteed</span>
+              </li>
+              <li className="home-page__banner-check">
+                <IconCheck />
+                <span>Earn &amp; redeem points in 100+ ways</span>
+              </li>
+              <li className="home-page__banner-check">
+                <IconCheck />
+                <span>Exclusive perks on every stay</span>
+              </li>
+              <li className="home-page__banner-check">
+                <IconCheck />
+                <span>Access 2000+ unique global events</span>
+              </li>
+            </ul>
           </div>
-          <div className="home-page__banner-check">
-            <IconCheck />
-            <span>Earn &amp; redeem points in 100+ ways</span>
-          </div>
-          <div className="home-page__banner-check">
-            <IconCheck />
-            <span>Exclusive perks on every stay</span>
-          </div>
-          <div className="home-page__banner-check">
-            <IconCheck />
-            <span>Access 2000+ unique global events</span>
-          </div>
+          <button type="button" className="home-page__banner-cta">
+            Join ALL Accor for free
+          </button>
         </div>
       </div>
 

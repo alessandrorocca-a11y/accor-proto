@@ -922,49 +922,77 @@
   margin: 0;
 }
 
-/* ── Banner ───────────────────────────────────────────────────────────── */
+/* ── Banner (Figma 6905-44832) ────────────────────────────────────────── */
 .home-page__banner {
-  margin: 32px 16px;
-  border-radius: var(--wel-sem-borderradius-surface, 6px);
+  margin: 20px 0 0;
   overflow: hidden;
   position: relative;
-  padding: 36px 28px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  background: var(--ads-colors-loyalty-container-low, #f3efff);
 }
 
-.home-page__banner-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+.home-page__banner-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 394 / 146;
+  flex-shrink: 0;
+  overflow: visible;
 }
 
-.home-page__banner-bg img {
+.home-page__banner-visual > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.home-page__banner-bg::after {
-  content: '';
+.home-page__banner-loyalty-card {
   position: absolute;
-  inset: 0;
-  background: rgba(5, 0, 51, 0.7);
+  left: 28px;
+  bottom: 0;
+  transform: translateY(-10%);
+  width: 107px;
+  height: 71px;
+  border-radius: 6px;
+  overflow: hidden;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+  z-index: 2;
+}
+
+.home-page__banner-loyalty-card-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.home-page__banner-content {
+  position: relative;
+  padding: 44px 56px 56px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--ads-colors-loyalty-container-low, #f3efff);
+  border-bottom-right-radius: 48px;
+}
+
+.home-page__banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .home-page__banner-title {
-  position: relative;
-  z-index: 1;
-  font: var(--wel-typography-display-06);
-  color: #fff;
+  font: 700 26px/32px 'Montserrat', sans-serif;
+  letter-spacing: 0.5px;
+  color: var(--wel-sem-color-on-surface-hi, #232136);
   margin: 0;
-  letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px);
 }
 
 .home-page__banner-checks {
-  position: relative;
-  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -972,19 +1000,31 @@
 
 .home-page__banner-check {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-  line-height: 24px;
+  align-items: flex-start;
+  gap: 8px;
+  font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
 }
 
 .home-page__banner-check svg {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  color: #4ade80;
+  margin-top: 2px;
+  color: var(--wel-sem-color-primary, #1f1b4b);
+}
+
+.home-page__banner-cta {
+  display: none;
+  padding: 12px 20px;
+  font: 400 16px/24px 'Roboto', sans-serif;
+  color: #f9f9ff;
+  background: linear-gradient(246deg, rgb(82, 79, 129) 5.7%, rgb(5, 0, 51) 92.5%);
+  border: 1px solid #b7b3ec;
+  border-radius: 100px;
+  cursor: pointer;
+  white-space: nowrap;
+  align-self: flex-start;
 }
 
 /* ── Signature section (dark bg) ──────────────────────────────────────── */
@@ -1048,6 +1088,31 @@
   .home-page__hero-content {
     align-items: flex-start;
     text-align: left;
+  }
+
+  /* ── Banner tablet ──────────────────────────────────────────────── */
+  .home-page__banner {
+    margin: 20px 32px;
+  }
+
+  .home-page__banner-visual {
+    aspect-ratio: unset;
+    height: 100px;
+  }
+
+  .home-page__banner-loyalty-card {
+    left: 24px;
+    bottom: -15px;
+    transform: none;
+  }
+
+  .home-page__banner-content {
+    padding: 40px 32px 32px;
+    gap: 32px;
+  }
+
+  .home-page__banner-cta {
+    display: inline-flex;
   }
 }
 
@@ -1130,8 +1195,60 @@
     margin: 0 40px;
   }
 
+  /* ── Banner desktop (horizontal layout) ─────────────────────────── */
   .home-page__banner {
-    margin: 32px 40px;
+    flex-direction: row;
+    align-items: stretch;
+    height: 416px;
+    margin: 32px 0 0;
+    background: none;
+    overflow: hidden;
+  }
+
+  .home-page__banner-visual {
+    flex: 1 1 0%;
+    order: 2;
+    width: auto;
+    min-width: 0;
+    height: 416px;
+    aspect-ratio: unset;
+    position: relative;
+    overflow: visible;
+  }
+
+  .home-page__banner-visual > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-bottom-left-radius: 48px;
+  }
+
+  .home-page__banner-loyalty-card {
+    left: -80px;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    width: 213px;
+    height: 142px;
+  }
+
+  .home-page__banner-content {
+    flex: 1;
+    order: 1;
+    max-width: 533px;
+    padding: 56px;
+    gap: 28px;
+    justify-content: center;
+    border-bottom-right-radius: 0;
+  }
+
+  .home-page__banner-text {
+    gap: 20px;
+  }
+
+  .home-page__banner-title {
+    font: 700 26px/32px 'Montserrat', sans-serif;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -1647,23 +1764,6 @@
 
   .home-page__city-card-ratio {
     aspect-ratio: 3 / 4;
-  }
-
-  /* ── Banner desktop ──────────────────────────────────────────────── */
-  .home-page__banner {
-    margin: 32px 64px;
-    padding: 32px 24px;
-    align-items: center;
-    text-align: center;
-  }
-
-  .home-page__banner-title {
-    font: var(--wel-typography-display-06);
-    letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px);
-  }
-
-  .home-page__banner-checks {
-    align-items: center;
   }
 
   /* ── Next trip section desktop ───────────────────────────────────── */
