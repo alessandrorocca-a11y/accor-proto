@@ -950,8 +950,8 @@
 .home-page__banner-loyalty-card {
   position: absolute;
   left: 28px;
-  bottom: 0;
-  transform: translateY(-10%);
+  bottom: -30px;
+  transform: none;
   width: 107px;
   height: 71px;
   border-radius: 6px;
@@ -968,7 +968,7 @@
 
 .home-page__banner-content {
   position: relative;
-  padding: 44px 56px 56px 28px;
+  padding: 56px 56px 56px 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
