@@ -528,6 +528,10 @@
   color: #c69b2b;
 }
 
+.category-page .loyalty-sheet__value--silver {
+  color: #6b7280;
+}
+
 .category-page .loyalty-sheet__expire {
   font-family: 'Roboto', sans-serif;
   font-size: 12px;
@@ -550,6 +554,10 @@
 
 .category-page .loyalty-sheet__card--gold {
   background: linear-gradient(135deg, #c69b2b 0%, #a07800 100%);
+}
+
+.category-page .loyalty-sheet__card--silver {
+  background: linear-gradient(135deg, #d4d4d4 0%, #9ca3af 50%, #d4d4d4 100%);
 }
 
 .category-page .loyalty-sheet__card-tier {

@@ -411,19 +411,19 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               <div className="loyalty-sheet__info">
                 <div className="loyalty-sheet__info-col">
                   <span className="loyalty-sheet__label">Status</span>
-                  <span className="loyalty-sheet__value loyalty-sheet__value--gold">Gold</span>
+                  <span className={`loyalty-sheet__value loyalty-sheet__value--${userLoyaltyTier}`}>{userLoyaltyTier.charAt(0).toUpperCase() + userLoyaltyTier.slice(1)}</span>
                   <span className="loyalty-sheet__expire">Expire on December 31, 2026</span>
                 </div>
                 <div className="loyalty-sheet__divider" />
                 <div className="loyalty-sheet__info-col">
                   <span className="loyalty-sheet__label">Reward Points</span>
-                  <span className="loyalty-sheet__value">42.430</span>
+                  <span className="loyalty-sheet__value">{USER_POINTS.toLocaleString('de-DE')}</span>
                   <span className="loyalty-sheet__expire">Expire on February 12, 2027</span>
                 </div>
               </div>
 
-              <div className="loyalty-sheet__card loyalty-sheet__card--gold">
-                <span className="loyalty-sheet__card-tier">GOLD</span>
+              <div className={`loyalty-sheet__card loyalty-sheet__card--${userLoyaltyTier}`}>
+                <span className="loyalty-sheet__card-tier">{userLoyaltyTier.toUpperCase()}</span>
                 <svg className="loyalty-sheet__card-logo" width="76" height="64" viewBox="0 0 38 32" fill="none" aria-hidden>
                   <path d="M37.9997 31.8653L36.3392 29.8751C37.2136 29.6723 37.7471 29.1668 37.7471 28.2871C37.7471 27.2932 36.9111 26.7953 35.8521 26.7953H32.5333V31.8653H33.4133V29.947H35.3871L36.9077 31.8653H37.9997ZM33.4133 27.5822H35.8764C36.4831 27.5822 36.8453 27.8689 36.8453 28.3489C36.8453 28.8418 36.465 29.1602 35.8764 29.1602H33.4133V27.5822Z" fill="white"/>
                   <path d="M2.59991 26.7953L0.00423325 31.8653H0.999631L1.55328 30.7362H4.50927L5.06292 31.8653H6.081L3.48532 26.7953H2.59991ZM1.9392 29.9494L3.03134 27.722L4.12347 29.9494H1.9392Z" fill="white"/>

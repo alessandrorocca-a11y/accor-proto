@@ -1124,6 +1124,14 @@
   color: #af913a;
 }
 
+.loyalty-sheet__value--silver {
+  color: #6b7280;
+}
+
+.loyalty-sheet__card--silver {
+  background: linear-gradient(135deg, #d4d4d4 0%, #9ca3af 50%, #d4d4d4 100%);
+}
+
 .loyalty-sheet__expire {
   font: var(--wel-typography-label-default-03);
   color: var(--wel-sem-color-on-surface-low, #5e5b73);
