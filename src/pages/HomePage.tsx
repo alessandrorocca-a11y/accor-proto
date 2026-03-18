@@ -737,6 +737,21 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
+      <MarketplaceHeader
+        theme="light"
+        isLoggedIn
+        avatarSrc="/avatar.png"
+        points={USER_POINTS}
+        loyaltyTier="gold"
+        hideSearch
+        transparentOnTop
+        className="home-page__mobile-header"
+        onLogoClick={() => { window.location.href = window.location.pathname; }}
+        onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
+        onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
+        onPointsClick={() => setLoyaltyOpen(true)}
+      />
+
       {showFavSnack && (
         <div className="home-page__fav-snack" role="status">
           <svg className="home-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -798,21 +813,6 @@ export default function HomePage() {
           <img src={HERO_IMAGE} alt="" />
         </div>
 
-        <div className="home-page__hero-header">
-          <MarketplaceHeader
-            theme="light"
-            isLoggedIn
-            avatarSrc="/avatar.png"
-            points={USER_POINTS}
-            loyaltyTier="gold"
-            hideSearch
-            transparentOnTop
-            onLogoClick={() => { window.location.href = window.location.pathname; }}
-            onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
-            onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
-            onPointsClick={() => setLoyaltyOpen(true)}
-          />
-        </div>
 
         <div className="home-page__hero-content">
           <h1 className="home-page__hero-title">

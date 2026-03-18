@@ -1145,6 +1145,11 @@
   display: none;
 }
 
+/* Mobile-only marketplace header (hidden on desktop where custom nav takes over) */
+.home-page__mobile-header {
+  display: block;
+}
+
 /* ── You May Like grid ─────────────────────────────────────────────────── */
 .home-page__yml-grid {
   display: grid;
@@ -1206,6 +1211,11 @@
    FULL DESKTOP LAYOUT (≥ 1200px)
    ══════════════════════════════════════════════════════════════════════════ */
 @media (min-width: 1200px) {
+
+  /* hide mobile header on desktop */
+  .home-page__mobile-header {
+    display: none !important;
+  }
 
   /* ── Desktop navbar ──────────────────────────────────────────────── */
   .home-page__desktop-nav {
