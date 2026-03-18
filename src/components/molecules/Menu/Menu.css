@@ -47,12 +47,14 @@
 
 /* No underlines in any profile / menu section */
 .menu a,
+.menu button,
+.menu .menu__link,
 .menu .menu__link-label,
 .menu .menu__city-label,
 .menu .menu__lang-label,
 .menu .menu__accordion-label,
 .menu .menu__category-name {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 @keyframes menu-slide-up {
