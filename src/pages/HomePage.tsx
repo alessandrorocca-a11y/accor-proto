@@ -813,6 +813,20 @@ export default function HomePage() {
           <img src={HERO_IMAGE} alt="" />
         </div>
 
+        <MarketplaceHeader
+          theme="light"
+          isLoggedIn
+          avatarSrc="/avatar.png"
+          points={USER_POINTS}
+          loyaltyTier="gold"
+          hideSearch
+          transparentOnTop
+          className="home-page__mobile-header"
+          onLogoClick={() => { window.location.href = window.location.pathname; }}
+          onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
+          onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
+          onPointsClick={() => setLoyaltyOpen(true)}
+        />
 
         <div className="home-page__hero-content">
           <h1 className="home-page__hero-title">

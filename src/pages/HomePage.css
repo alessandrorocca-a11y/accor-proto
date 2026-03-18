@@ -3,7 +3,7 @@
   min-height: 100vh;
   background: var(--wel-sem-color-surface);
   color: var(--wel-sem-color-on-surface-hi);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ── Hero ─────────────────────────────────────────────────────────────── */
@@ -14,9 +14,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
+  overflow: clip;
   margin-top: -56px;
-  padding-top: 56px;
 }
 
 .home-page__hero-bg {
@@ -1297,8 +1296,9 @@
   }
 
   /* hide the mobile hero header on desktop */
-  .home-page__hero-header {
-    display: none;
+  .home-page__hero-header,
+  .home-page__mobile-header {
+    display: none !important;
   }
 
   /* ── Hero ─────────────────────────────────────────────────────────── */
