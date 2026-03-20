@@ -1088,12 +1088,13 @@ export function Menu({
                   {(['silver', 'gold', 'goldVoyager'] as TestProfileId[]).map((id) => {
                     const p = TEST_PROFILES[id];
                     const isSelected = userCtx?.testProfileId === id;
+                    const pts = p.points.toLocaleString('de-DE');
                     const label =
                       id === 'silver'
-                        ? 'Silver — 3,000 points, no subscription'
+                        ? `Silver — ${pts} points, no subscription`
                         : id === 'gold'
-                          ? 'Gold — 20,000 points, no subscription'
-                          : 'Gold + Voyager — 20,000 points, Voyager subscriber';
+                          ? `Gold — ${pts} points, no subscription`
+                          : `Gold + Voyager — ${pts} points, Voyager subscriber`;
                     return (
                       <li key={id} className="menu__item menu__item--bordered">
                         <button
