@@ -729,73 +729,71 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
               </div>
 
               <div className="category-page__card-body">
-                <div className="category-page__card-header">
+                <div className="category-page__card-info">
                   <div className="category-page__card-date-title">
                     <span className="category-page__card-date">{event.date}</span>
                     <h3 className="category-page__card-title">{event.title}</h3>
                   </div>
-                  {event.eventTag && (
+                  {event.eventTag ? (
                     <span className="category-page__card-event-tag">{event.eventTag}</span>
-                  )}
+                  ) : null}
                 </div>
 
                 {event.paymentType !== 'linkout' && (
-                  <div className={`category-page__card-payment${(event.paymentType === 'auction' || event.paymentType === 'prize-draw') && event.msLeft != null ? ' category-page__card-payment--with-timer' : ''}`}>
-
-                    {/* Auction / Prize Draw / Redeem: label + points badge */}
-                    {(event.paymentType === 'auction' || event.paymentType === 'prize-draw' || event.paymentType === 'redeem') && (
-                      <>
-                        <span className="category-page__card-payment-label">
-                          {paymentLabel(event.paymentType)}
-                        </span>
-                        {event.points && (
-                          <div className="category-page__card-points-badge">
-                            <IconStar />
-                            <span className="category-page__card-points-value">
-                              {event.points} Reward Points
+                  <div className="category-page__card-reward">
+                    <div className="category-page__card-payment-stack">
+                      <div className="category-page__card-payment-primary">
+                        {(event.paymentType === 'auction' || event.paymentType === 'prize-draw' || event.paymentType === 'redeem') && (
+                          <>
+                            <span className="category-page__card-payment-label">
+                              {paymentLabel(event.paymentType)}
                             </span>
-                          </div>
+                            {event.points ? (
+                              <div className="category-page__card-points-badge">
+                                <IconStar />
+                                <span className="category-page__card-points-value">
+                                  {event.points} Reward Points
+                                </span>
+                              </div>
+                            ) : null}
+                          </>
                         )}
-                      </>
-                    )}
 
-                    {/* Flex: points badge + "or" cash price */}
-                    {event.paymentType === 'flex' && (
-                      <>
-                        {event.points && (
-                          <div className="category-page__card-points-badge">
-                            <IconStar />
-                            <span className="category-page__card-points-value">
-                              {event.points} Reward Points
-                            </span>
-                          </div>
+                        {event.paymentType === 'flex' && (
+                          <>
+                            {event.points ? (
+                              <div className="category-page__card-points-badge">
+                                <IconStar />
+                                <span className="category-page__card-points-value">
+                                  {event.points} Reward Points
+                                </span>
+                              </div>
+                            ) : null}
+                            {event.cashPrice ? (
+                              <div className="category-page__card-cash">
+                                <span className="category-page__card-cash-from">or</span>
+                                <span className="category-page__card-cash-price">{event.cashPrice}</span>
+                              </div>
+                            ) : null}
+                          </>
                         )}
-                        {event.cashPrice && (
+
+                        {event.paymentType === 'cash' && event.cashPrice ? (
                           <div className="category-page__card-cash">
-                            <span className="category-page__card-cash-from">or</span>
+                            <span className="category-page__card-cash-from">from</span>
                             <span className="category-page__card-cash-price">{event.cashPrice}</span>
                           </div>
-                        )}
-                      </>
-                    )}
+                        ) : null}
 
-                    {/* Cash: "from" + price */}
-                    {event.paymentType === 'cash' && (
-                      <div className="category-page__card-cash">
-                        <span className="category-page__card-cash-from">from</span>
-                        <span className="category-page__card-cash-price">{event.cashPrice}</span>
+                        {event.paymentType === 'waitlist' ? (
+                          <span className="category-page__card-waitlist-label">Waitlist</span>
+                        ) : null}
                       </div>
-                    )}
 
-                    {/* Waitlist badge */}
-                    {event.paymentType === 'waitlist' && (
-                      <span className="category-page__card-waitlist-label">Waitlist</span>
-                    )}
-
-                    {/* Timer for Auction and Prize Draw */}
-                    {(event.paymentType === 'auction' || event.paymentType === 'prize-draw') && event.msLeft != null && (
-                      <LiveTimer initialMs={event.msLeft} />
-                    )}
+                      {(event.paymentType === 'auction' || event.paymentType === 'prize-draw') && event.msLeft != null ? (
+                        <LiveTimer initialMs={event.msLeft} />
+                      ) : null}
+                    </div>
                   </div>
                 )}
               </div>
