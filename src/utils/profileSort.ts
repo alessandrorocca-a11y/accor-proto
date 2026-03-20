@@ -1,6 +1,31 @@
 import type { TestProfileId } from '@/context/UserContext';
 import type { EventData } from '@/data/events/eventRegistry';
-import { getEffectivePointsCost, isEventAffordableWithBalance } from '@/data/events/eventRegistry';
+import { isEventAffordableWithBalance } from '@/data/events/eventRegistry';
+
+/** Deterministic seed → RNG (stable shuffle across re-renders for same inputs). */
+function mulberry32(seed: number): () => number {
+  return () => {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function hashStringToSeed(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(31, h) + s.charCodeAt(i);
+  }
+  return h >>> 0;
+}
+
+function shuffleInPlace<T>(arr: T[], rng: () => number): void {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
 
 interface SortableEvent {
   pageType?: string;
@@ -35,23 +60,40 @@ export function sortEventsForProfile<T extends SortableEvent>(
 }
 
 /**
- * Homepage / city: affordable-with-balance first, then ascending points cost,
- * then profile relevance as tiebreaker.
+ * Homepage / city: profile preference first, then affordable-with-balance.
+ * Within each tier, order is shuffled (no cost ordering) — seeded by profile,
+ * balance and `orderSeed` so lists don’t reshuffle every React render.
  */
 export function sortEventsForProfileAndPointsBalance(
   events: EventData[],
   profileId: TestProfileId,
   userPoints: number,
+  orderSeed: string,
 ): EventData[] {
-  return [...events].sort((a, b) => {
-    const affA = isEventAffordableWithBalance(a, userPoints) ? 0 : 1;
-    const affB = isEventAffordableWithBalance(b, userPoints) ? 0 : 1;
-    if (affA !== affB) return affA - affB;
+  const bucketMap = new Map<string, EventData[]>();
+  for (const e of events) {
+    const prof = profileScore(e, profileId);
+    const aff = isEventAffordableWithBalance(e, userPoints) ? 0 : 1;
+    const key = `${prof}_${aff}`;
+    const list = bucketMap.get(key);
+    if (list) list.push(e);
+    else bucketMap.set(key, [e]);
+  }
 
-    const costA = getEffectivePointsCost(a);
-    const costB = getEffectivePointsCost(b);
-    if (costA !== costB) return costA - costB;
-
-    return profileScore(b, profileId) - profileScore(a, profileId);
+  const keys = [...bucketMap.keys()].sort((ka, kb) => {
+    const [pa, aa] = ka.split('_').map(Number);
+    const [pb, ab] = kb.split('_').map(Number);
+    if (pa !== pb) return pb - pa;
+    return aa - ab;
   });
+
+  const baseSeed = `${profileId}|${userPoints}|${orderSeed}`;
+  const out: EventData[] = [];
+  for (const k of keys) {
+    const bucket = [...(bucketMap.get(k) ?? [])];
+    const rng = mulberry32(hashStringToSeed(`${baseSeed}|${k}`));
+    shuffleInPlace(bucket, rng);
+    out.push(...bucket);
+  }
+  return out;
 }

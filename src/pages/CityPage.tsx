@@ -454,6 +454,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
       : allCityEvents,
     testProfileId,
     USER_POINTS,
+    `city-${cityName}`,
   );
   const TOP_10 = cityEvents.slice(0, 10).map((e) => ({
     id: e.id,

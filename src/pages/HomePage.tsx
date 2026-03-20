@@ -582,6 +582,7 @@ export default function HomePage() {
         EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e)),
         testProfileId,
         USER_POINTS,
+        'home-next-trip',
       )
         .slice(0, 8)
         .map(registryToCard),
@@ -594,6 +595,7 @@ export default function HomePage() {
         EVENT_REGISTRY.filter((e) => e.category === 'Concerts and festivals' && isAccor(e)),
         testProfileId,
         USER_POINTS,
+        'home-concerts',
       )
         .slice(0, 8)
         .map(registryToCard),
@@ -606,6 +608,7 @@ export default function HomePage() {
         EVENT_REGISTRY.filter((e) => e.category === 'Sport and leisure' && isAccor(e)),
         testProfileId,
         USER_POINTS,
+        'home-sport',
       )
         .slice(0, 8)
         .map(registryToCard),
@@ -618,6 +621,7 @@ export default function HomePage() {
         EVENT_REGISTRY.filter((e) => e.pageType === 'prize-draw' && isAccor(e)),
         testProfileId,
         USER_POINTS,
+        'home-prize-draw',
       )
         .slice(0, 8)
         .map(registryToCard),
@@ -630,6 +634,7 @@ export default function HomePage() {
         EVENT_REGISTRY.filter((e) => e.pageType === 'auction'),
         testProfileId,
         USER_POINTS,
+        'home-auctions',
       )
         .slice(0, 8)
         .map(registryToCard),
