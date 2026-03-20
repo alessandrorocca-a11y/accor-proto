@@ -1,6 +1,10 @@
 import type { TestProfileId } from '@/context/UserContext';
-import type { EventData } from '@/data/events/eventRegistry';
+import type { EventData, MarketingTagType } from '@/data/events/eventRegistry';
 import { isEventAffordableWithBalance } from '@/data/events/eventRegistry';
+
+function isVoyagerSubscriberOnlyTag(tag?: MarketingTagType): boolean {
+  return tag === 'presale' || tag === 'exclusivity';
+}
 
 /** Deterministic seed → RNG (stable shuffle across re-renders for same inputs). */
 function mulberry32(seed: number): () => number {
@@ -31,11 +35,13 @@ interface SortableEvent {
   pageType?: string;
   paymentType?: string;
   eventTag?: string;
+  marketingTag?: MarketingTagType;
 }
 
 function profileScore(event: SortableEvent, profileId: TestProfileId): number {
   const pt = event.pageType ?? event.paymentType ?? '';
   const isLimitless = event.eventTag === 'Limitless Experiences';
+  const voyagerOnly = isVoyagerSubscriberOnlyTag(event.marketingTag);
 
   if (profileId === 'silver') {
     if (pt === 'prize-draw') return 4;
@@ -44,7 +50,12 @@ function profileScore(event: SortableEvent, profileId: TestProfileId): number {
     return 0;
   }
 
-  // gold / goldVoyager: auctions + Limitless first
+  // Gold without Voyager: never prioritise presale / exclusivity (subscriber-only) experiences
+  if (profileId === 'gold' && voyagerOnly) {
+    return -10;
+  }
+
+  // goldVoyager (+ shared gold mechanics below for both gold tiers when not subscriber-only)
   if (pt === 'auction' && isLimitless) return 5;
   if (pt === 'auction') return 4;
   if (isLimitless) return 3;
