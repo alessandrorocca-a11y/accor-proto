@@ -26,6 +26,7 @@ import PrizeDrawLoserEmail from './pages/emails/PrizeDrawLoserEmail';
 import PrizeDrawPurchaseEmail from './pages/emails/PrizeDrawPurchaseEmail';
 import { FavouritesProvider } from './context/FavouritesContext';
 import { UserProvider } from './context/UserContext';
+import { extractEventId, parseHashParams } from './utils/hashRoute';
 
 interface BreadcrumbItem {
   label: string;
@@ -94,20 +95,6 @@ const PAYMENT_ROUTES: Record<string, PaymentType> = {
   '#payment/waitlist': 'waitlist',
 };
 
-function extractEventId(hash: string, prefix: string): string | undefined {
-  if (hash.startsWith(prefix + '/')) {
-    const id = hash.slice(prefix.length + 1);
-    if (id.startsWith('evt-')) return id;
-  }
-  return undefined;
-}
-
-function parseHashParams(hash: string): { basePath: string; params: URLSearchParams } {
-  const qIdx = hash.indexOf('?');
-  if (qIdx === -1) return { basePath: hash, params: new URLSearchParams() };
-  return { basePath: hash.slice(0, qIdx), params: new URLSearchParams(hash.slice(qIdx + 1)) };
-}
-
 export default function App() {
   const [hash, setHash] = useState(window.location.hash);
 
@@ -121,17 +108,19 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, [onHashChange]);
 
-  if (hash === '#demo') return <Demo />;
-  if (hash === '#email/highest-bidder') return <HighestBidderEmail />;
-  if (hash === '#email/outbid') return <OutbidEmail />;
-  if (hash === '#email/auction-winner') return <AuctionWinnerEmail />;
-  if (hash === '#email/purchase-confirmation') return <PurchaseConfirmationEmail />;
-  if (hash === '#email/prize-draw-winner') return <PrizeDrawWinnerEmail />;
-  if (hash === '#email/expiring-auction') return <ExpiringAuctionEmail />;
-  if (hash === '#email/auction-24h-left') return <Auction24hLeftEmail />;
-  if (hash === '#email/prize-draw-24h-left') return <PrizeDraw24hLeftEmail />;
-  if (hash === '#email/prize-draw-loser') return <PrizeDrawLoserEmail />;
-  if (hash === '#email/prize-draw-purchase') return <PrizeDrawPurchaseEmail />;
+  const { basePath: hashBase } = parseHashParams(hash);
+
+  if (hashBase === '#demo') return <Demo />;
+  if (hashBase === '#email/highest-bidder') return <HighestBidderEmail />;
+  if (hashBase === '#email/outbid') return <OutbidEmail />;
+  if (hashBase === '#email/auction-winner') return <AuctionWinnerEmail />;
+  if (hashBase === '#email/purchase-confirmation') return <PurchaseConfirmationEmail />;
+  if (hashBase === '#email/prize-draw-winner') return <PrizeDrawWinnerEmail />;
+  if (hashBase === '#email/expiring-auction') return <ExpiringAuctionEmail />;
+  if (hashBase === '#email/auction-24h-left') return <Auction24hLeftEmail />;
+  if (hashBase === '#email/prize-draw-24h-left') return <PrizeDraw24hLeftEmail />;
+  if (hashBase === '#email/prize-draw-loser') return <PrizeDrawLoserEmail />;
+  if (hashBase === '#email/prize-draw-purchase') return <PrizeDrawPurchaseEmail />;
 
   let page: React.ReactNode;
 
@@ -140,45 +129,43 @@ export default function App() {
   const redeemEventId = extractEventId(hash, '#redeem');
   const standardEventId = extractEventId(hash, '#standard');
   const waitlistEventId = extractEventId(hash, '#waitlist');
+  const linkoutEventId = extractEventId(hash, '#linkout');
 
   if (auctionEventId) page = <AuctionPage eventId={auctionEventId} />;
   else if (drawEventId) page = <PrizeDrawPage eventId={drawEventId} />;
   else if (redeemEventId) page = <RedeemPage eventId={redeemEventId} />;
   else if (standardEventId) page = <StandardPage eventId={standardEventId} />;
   else if (waitlistEventId) page = <WaitlistPage eventId={waitlistEventId} />;
-  else if (hash === '#draw') page = <PrizeDrawPage />;
-  else if (hash === '#linkout') page = <LinkoutPage />;
-  else if (hash === '#redeem') page = <RedeemPage />;
-  else if (hash === '#waitlist') page = <WaitlistPage />;
-  else if (hash === '#standard') page = <StandardPage />;
-  else if (hash === '#categories') page = <AllCategoriesPage />;
-  else if (hash in CATEGORY_ROUTES) {
-    const route = CATEGORY_ROUTES[hash];
+  else if (hashBase === '#draw') page = <PrizeDrawPage />;
+  else if (linkoutEventId) page = <LinkoutPage eventId={linkoutEventId} />;
+  else if (hashBase === '#linkout') page = <LinkoutPage />;
+  else if (hashBase === '#redeem') page = <RedeemPage />;
+  else if (hashBase === '#waitlist') page = <WaitlistPage />;
+  else if (hashBase === '#standard') page = <StandardPage />;
+  else if (hashBase === '#categories') page = <AllCategoriesPage />;
+  else if (hashBase in CATEGORY_ROUTES) {
+    const route = CATEGORY_ROUTES[hashBase];
     page = <CategoryPage defaultCategory={route.category} breadcrumbs={route.breadcrumbs} pageTitle={route.pageTitle} defaultLocation={route.defaultLocation} />;
-  }   else if (hash in PAYMENT_ROUTES) page = <PaymentMechanismPage defaultMechanism={PAYMENT_ROUTES[hash]} />;
-  else if (hash in CITY_ROUTES) {
-    const route = CITY_ROUTES[hash];
-    page = <CityPage cityName={route.cityName} country={route.country} />;
-  }
-  else if ((() => { const { basePath } = parseHashParams(hash); return basePath in CITY_ROUTES; })()) {
-    const { basePath, params } = parseHashParams(hash);
-    const route = CITY_ROUTES[basePath];
+  }   else if (hashBase in PAYMENT_ROUTES) page = <PaymentMechanismPage defaultMechanism={PAYMENT_ROUTES[hashBase]} />;
+  else if (hashBase in CITY_ROUTES) {
+    const { params } = parseHashParams(hash);
+    const route = CITY_ROUTES[hashBase];
     page = <CityPage cityName={route.cityName} country={route.country} dateFrom={params.get('from') || undefined} dateTo={params.get('to') || undefined} />;
   }
-  else if (hash === '#auction') page = <AuctionPage />;
-  else if (hash.startsWith('#plan/')) {
-    const planSlug = hash.replace('#plan/', '');
+  else if (hashBase === '#auction') page = <AuctionPage />;
+  else if (hashBase.startsWith('#plan/')) {
+    const planSlug = hashBase.replace('#plan/', '');
     page = <PlanPage planSlug={planSlug} />;
   }
-  else if (hash === '#near-you-list' || hash.startsWith('#near-you-list/')) {
-    const citySlug = hash.replace('#near-you-list/', '').replace('#near-you-list', '');
+  else if (hashBase === '#near-you-list' || hashBase.startsWith('#near-you-list/')) {
+    const citySlug = hashBase.replace('#near-you-list/', '').replace('#near-you-list', '');
     const cityName = citySlug
       ? Object.keys(CITY_ROUTES).map(k => CITY_ROUTES[k].cityName).find(c => c.toLowerCase() === citySlug.toLowerCase()) || 'Paris'
       : 'Paris';
     page = <NearYouListPage cityName={cityName} />;
   }
-  else if (hash === '#near-you' || hash.startsWith('#near-you/')) {
-    const citySlug = hash.replace('#near-you/', '').replace('#near-you', '');
+  else if (hashBase === '#near-you' || hashBase.startsWith('#near-you/')) {
+    const citySlug = hashBase.replace('#near-you/', '').replace('#near-you', '');
     const cityName = citySlug
       ? Object.keys(CITY_ROUTES).map(k => CITY_ROUTES[k].cityName).find(c => c.toLowerCase() === citySlug.toLowerCase()) || 'Paris'
       : 'Paris';

@@ -137,6 +137,7 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
   const EVENT_DESCRIPTION = eventData?.description ?? 'Join the waitlist for this exclusive event.';
   const EVENT_LOCATION = eventData?.location ?? 'Fairmont Copacabana Palace, Rio de Janeiro';
   const EVENT_CITY = eventData?.city ?? 'Rio de Janeiro';
+  const EVENT_DATE = eventData?.date ?? 'February 16, 2026';
   const venueInfo = getVenueInfo(EVENT_LOCATION, EVENT_CITY);
 
   const [isFavourite, setFavourite] = useState(false);
@@ -381,7 +382,7 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
         <main className="auction-page__main">
           <section className="auction-page__hero-info">
             <div className="auction-page__date-row">
-              <span className="auction-page__date">Monday, 16 February</span>
+              <span className="auction-page__date">{EVENT_DATE}</span>
               <div className="auction-page__date-icons">
                 <button
                   type="button"

@@ -727,7 +727,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         <main className="auction-page__main">
           <section className="auction-page__hero-info">
             <div className="auction-page__date-row">
-              <span className="auction-page__date">Monday, 16 February</span>
+              <span className="auction-page__date">{_EVENT_DATE}</span>
               <div className="auction-page__date-icons">
                 <button type="button" className={`auction-page__icon-btn${isNotifyOn ? ' auction-page__icon-btn--notify-on' : ''}`} aria-label={isNotifyOn ? 'Disable notifications' : 'Enable notifications'} aria-pressed={isNotifyOn} onClick={handleBellClick}><IconBell filled={isNotifyOn} /></button>
                 <button type="button" className={`auction-page__icon-btn${isFavourite ? ' auction-page__icon-btn--fav-on' : ''}`} aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isFavourite} onClick={handleHeartClick}><IconHeart filled={isFavourite} /></button>
@@ -749,7 +749,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           <section className="auction-page__section auction-page__section--description">
             <p className="auction-page__body">{EVENT_DESCRIPTION}</p>
             <p className="auction-page__body">Get ready to samba, celebrate, and experience the greatest show in the world with all the comfort and exclusivity that only ALL Accor can offer.</p>
-            <p className="auction-page__body">On Monday, 16 February 2026, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.</p>
+            <p className="auction-page__body">On {_EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.</p>
             <img src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src} alt={EVENT_TITLE} className="auction-page__section-img" />
           </section>
 

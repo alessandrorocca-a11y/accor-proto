@@ -1,8 +1,8 @@
 import EmailTemplate, { TextBlock, EventCard, MessageBar, DetailsCard, EmailButton, EmailButtons, FooterText } from './EmailTemplate';
+import { getEmailPreviewEventDate } from './emailEventDate';
 
 const EVENT = {
   image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
-  date: 'Monday, 16 February',
   title: 'Rio de Janeiro Carnival 2026 - ALL Accor Lounge at the Alma Rio Box - 2 tickets',
   location: 'Rio de Janeiro, Brasil',
   badge: 'Sustainable Experience',
@@ -17,6 +17,7 @@ const DETAILS = {
 };
 
 export default function PrizeDrawPurchaseEmail() {
+  const eventCard = { ...EVENT, date: getEmailPreviewEventDate() };
   return (
     <EmailTemplate>
       <TextBlock name="[Name]" heading="Your purchase is confirmed!">
@@ -25,7 +26,7 @@ export default function PrizeDrawPurchaseEmail() {
         </p>
       </TextBlock>
 
-      <EventCard {...EVENT} />
+      <EventCard {...eventCard} />
 
       <MessageBar variant="success">
         <strong>Entry confirmed!</strong> You are now in the prize draw. Good luck!

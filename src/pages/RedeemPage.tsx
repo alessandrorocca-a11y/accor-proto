@@ -514,7 +514,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
         <main className="auction-page__main">
           <section className="auction-page__hero-info">
             <div className="auction-page__date-row">
-              <span className="auction-page__date">Monday, 16 February</span>
+              <span className="auction-page__date">{_EVENT_DATE}</span>
               <div className="auction-page__date-icons">
                 <button
                   type="button"

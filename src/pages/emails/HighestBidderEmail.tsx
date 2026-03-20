@@ -1,8 +1,8 @@
 import EmailTemplate, { TextBlock, EventCard, MessageBar, DetailsCard, EmailButton, FooterText } from './EmailTemplate';
+import { getEmailPreviewEventDate } from './emailEventDate';
 
 const EVENT = {
   image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
-  date: 'Monday, 16 February',
   title: 'Rio de Janeiro Carnival 2026 - ALL Accor Lounge at the Alma Rio Box - 2 tickets',
   location: 'Rio de Janeiro, Brasil',
   badge: 'Sustainable Experience',
@@ -17,6 +17,7 @@ const DETAILS = {
 };
 
 export default function HighestBidderEmail() {
+  const eventCard = { ...EVENT, date: getEmailPreviewEventDate() };
   return (
     <EmailTemplate>
       <TextBlock name="[Name]" heading="You are the highest bidder!">
@@ -25,7 +26,7 @@ export default function HighestBidderEmail() {
         </p>
       </TextBlock>
 
-      <EventCard {...EVENT} />
+      <EventCard {...eventCard} />
 
       <MessageBar variant="success">
         <strong>You are currently the highest bidder.</strong> The auction ends on Monday, April 14, 2026 — 11:59 PM.

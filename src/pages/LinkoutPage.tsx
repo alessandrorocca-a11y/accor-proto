@@ -7,9 +7,13 @@ import {
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { useUser } from '@/context/UserContext';
+import { getEventById } from '@/data/events/eventRegistry';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './LinkoutPage.css';
 const EXTERNAL_URL = 'https://www.allaccorhotels.com';
+
+/** Used when visiting `#linkout` without `/evt-xxx` (static demo). */
+const LINKOUT_FALLBACK_DATE = 'February 16, 2026';
 const EXTERNAL_PROVIDER_NAME = 'Paris Saint-Germain';
 const REDIRECT_DELAY_MS = 2500;
 
@@ -133,7 +137,15 @@ function IconStar() {
   );
 }
 
-export default function LinkoutPage() {
+export interface LinkoutPageProps {
+  /** When set (e.g. `#linkout/evt-101`), hero date matches that event’s registry `date` (same as cards). */
+  eventId?: string;
+}
+
+export default function LinkoutPage({ eventId }: LinkoutPageProps) {
+  const eventData = eventId ? getEventById(eventId) : undefined;
+  const EVENT_DATE = eventData?.date ?? LINKOUT_FALLBACK_DATE;
+
   const { points: userPoints, loyaltyTier: userLoyaltyTier } = useUser();
   const [isFavourite, setFavourite] = useState(false);
   const [showFavSnack, setShowFavSnack] = useState(false);
@@ -353,7 +365,7 @@ export default function LinkoutPage() {
         <main className="auction-page__main">
           <section className="auction-page__hero-info">
             <div className="auction-page__date-row">
-              <span className="auction-page__date">Monday, 16 February</span>
+              <span className="auction-page__date">{EVENT_DATE}</span>
               <div className="auction-page__date-icons">
                 <button
                   type="button"
@@ -391,7 +403,7 @@ export default function LinkoutPage() {
               Get ready to samba, celebrate, and experience the greatest show in the world with all the comfort and exclusivity that only ALL Accor can offer.
             </p>
             <p className="auction-page__body">
-              On Monday, 16 February 2026, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.
+              On {EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.
             </p>
             <img
               src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src}

@@ -1,8 +1,8 @@
 import EmailTemplate, { TextBlock, EventCard, MessageBar, DetailsCard, EmailButton, EmailButtons, FooterText } from './EmailTemplate';
+import { getEmailPreviewEventDate } from './emailEventDate';
 
 const EVENT = {
   image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
-  date: 'Monday, 16 February',
   title: 'Rio de Janeiro Carnival 2026 - ALL Accor Lounge at the Alma Rio Box - 2 tickets',
   location: 'Rio de Janeiro, Brasil',
   badge: 'Sustainable Experience',
@@ -18,6 +18,7 @@ const DETAILS = {
 };
 
 export default function OutbidEmail() {
+  const eventCard = { ...EVENT, date: getEmailPreviewEventDate() };
   return (
     <EmailTemplate>
       <TextBlock name="[Name]" heading="You've been outbid">
@@ -26,7 +27,7 @@ export default function OutbidEmail() {
         </p>
       </TextBlock>
 
-      <EventCard {...EVENT} />
+      <EventCard {...eventCard} />
 
       <MessageBar variant="danger">
         <strong>Your bid of 12,000 points has been surpassed.</strong> The current highest bid is now 13,500 points.
