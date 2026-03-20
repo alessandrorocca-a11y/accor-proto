@@ -5,7 +5,11 @@ import { getNearbyCities, searchCities } from '@/data/europeanCities';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
-import { sortEventsForProfileAndPointsBalance } from '@/utils/profileSort';
+import {
+  limitVoyagerExclusivePerSection,
+  sortEventsForProfileAndPointsBalance,
+  takeSortedWithVoyagerExclusiveCap,
+} from '@/utils/profileSort';
 import './CityPage.css';
 
 /* ── Types ──────────────────────────────────────────────────────────── */
@@ -430,7 +434,7 @@ function EventSection({ title, events, favourites, onToggleFav, page, totalPages
 export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPageProps) {
   useEffect(() => { window.scrollTo(0, 0); }, [cityName]);
 
-  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
   const { toggleFavourite: toggleFavCtx } = useFavourites();
 
   const config = CITY_CONFIGS[cityName] ?? DEFAULT_CONFIG;
@@ -456,19 +460,43 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
     USER_POINTS,
     `city-${cityName}`,
   );
-  const TOP_10 = cityEvents.slice(0, 10).map((e) => ({
+  const TOP_10 = takeSortedWithVoyagerExclusiveCap(cityEvents, isVoyagerSubscriber, 10, 1).map((e) => ({
     id: e.id,
     title: e.title,
     date: e.date,
     image: e.image,
     route: getEventRoute(e),
   }));
-  const ACCOR_PLUS_EVENTS = cityEvents.filter((e) => e.category === 'Hotel experiences').map(registryToCard);
-  const CONCERTS_EVENTS = cityEvents.filter((e) => e.category === 'Concerts and festivals').map(registryToCard);
-  const SPORT_EVENTS = cityEvents.filter((e) => e.category === 'Sport and leisure').map(registryToCard);
-  const PRIZE_DRAW_EVENTS = cityEvents.filter((e) => e.pageType === 'prize-draw').map(registryToCard);
-  const AUCTION_EVENTS = cityEvents.filter((e) => e.pageType === 'auction').map(registryToCard);
-  const PSG_EVENTS = cityEvents.filter((e) => e.category === 'Sport and leisure' && e.title.toLowerCase().includes('psg')).map(registryToCard);
+  const ACCOR_PLUS_EVENTS = limitVoyagerExclusivePerSection(
+    cityEvents.filter((e) => e.category === 'Hotel experiences'),
+    isVoyagerSubscriber,
+    1,
+  ).map(registryToCard);
+  const CONCERTS_EVENTS = limitVoyagerExclusivePerSection(
+    cityEvents.filter((e) => e.category === 'Concerts and festivals'),
+    isVoyagerSubscriber,
+    1,
+  ).map(registryToCard);
+  const SPORT_EVENTS = limitVoyagerExclusivePerSection(
+    cityEvents.filter((e) => e.category === 'Sport and leisure'),
+    isVoyagerSubscriber,
+    1,
+  ).map(registryToCard);
+  const PRIZE_DRAW_EVENTS = limitVoyagerExclusivePerSection(
+    cityEvents.filter((e) => e.pageType === 'prize-draw'),
+    isVoyagerSubscriber,
+    1,
+  ).map(registryToCard);
+  const AUCTION_EVENTS = limitVoyagerExclusivePerSection(
+    cityEvents.filter((e) => e.pageType === 'auction'),
+    isVoyagerSubscriber,
+    1,
+  ).map(registryToCard);
+  const PSG_EVENTS = limitVoyagerExclusivePerSection(
+    cityEvents.filter((e) => e.category === 'Sport and leisure' && e.title.toLowerCase().includes('psg')),
+    isVoyagerSubscriber,
+    1,
+  ).map(registryToCard);
 
   const perPage = 4;
   const top10PerPage = 5;

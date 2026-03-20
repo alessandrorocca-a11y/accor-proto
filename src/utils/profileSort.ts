@@ -108,3 +108,48 @@ export function sortEventsForProfileAndPointsBalance(
   }
   return out;
 }
+
+/**
+ * Non-Voyager subscribers: same order, but only the first `maxExclusive` presale/exclusivity
+ * events in this list are kept (rest of exclusives dropped). Other events unchanged.
+ */
+export function limitVoyagerExclusivePerSection<T extends { marketingTag?: MarketingTagType }>(
+  eventsInSectionOrder: T[],
+  isVoyagerSubscriber: boolean,
+  maxExclusive = 1,
+): T[] {
+  if (isVoyagerSubscriber) return eventsInSectionOrder;
+  let used = 0;
+  return eventsInSectionOrder.filter((e) => {
+    if (!isVoyagerSubscriberOnlyTag(e.marketingTag)) return true;
+    if (used < maxExclusive) {
+      used++;
+      return true;
+    }
+    return false;
+  });
+}
+
+/**
+ * Take up to `take` items from a sorted pool. For non-subscribers, at most `maxExclusive`
+ * presale/exclusivity items appear in that result (skips further exclusives while filling slots).
+ */
+export function takeSortedWithVoyagerExclusiveCap<T extends { marketingTag?: MarketingTagType }>(
+  sortedPool: T[],
+  isVoyagerSubscriber: boolean,
+  take: number,
+  maxExclusive = 1,
+): T[] {
+  if (isVoyagerSubscriber) return sortedPool.slice(0, take);
+  let exclusiveUsed = 0;
+  const out: T[] = [];
+  for (const e of sortedPool) {
+    if (out.length >= take) break;
+    if (isVoyagerSubscriberOnlyTag(e.marketingTag)) {
+      if (exclusiveUsed >= maxExclusive) continue;
+      exclusiveUsed++;
+    }
+    out.push(e);
+  }
+  return out;
+}

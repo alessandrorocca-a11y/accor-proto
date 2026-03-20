@@ -6,7 +6,10 @@ import allAccorLogo from '@/assets/all-accor-logo.svg';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
-import { sortEventsForProfileAndPointsBalance } from '@/utils/profileSort';
+import {
+  sortEventsForProfileAndPointsBalance,
+  takeSortedWithVoyagerExclusiveCap,
+} from '@/utils/profileSort';
 import './HomePage.css';
 
 /* ── Data types ──────────────────────────────────────────────────────── */
@@ -574,71 +577,86 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 /* ── Main component ───────────────────────────────────────────────────── */
 
 export default function HomePage() {
-  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
 
   const NEXT_TRIP_EVENTS = useMemo(
     () =>
-      sortEventsForProfileAndPointsBalance(
-        EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e)),
-        testProfileId,
-        USER_POINTS,
-        'home-next-trip',
-      )
-        .slice(0, 8)
-        .map(registryToCard),
-    [testProfileId, USER_POINTS],
+      takeSortedWithVoyagerExclusiveCap(
+        sortEventsForProfileAndPointsBalance(
+          EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e)),
+          testProfileId,
+          USER_POINTS,
+          'home-next-trip',
+        ),
+        isVoyagerSubscriber,
+        8,
+        1,
+      ).map(registryToCard),
+    [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
 
   const CONCERTS_EVENTS = useMemo(
     () =>
-      sortEventsForProfileAndPointsBalance(
-        EVENT_REGISTRY.filter((e) => e.category === 'Concerts and festivals' && isAccor(e)),
-        testProfileId,
-        USER_POINTS,
-        'home-concerts',
-      )
-        .slice(0, 8)
-        .map(registryToCard),
-    [testProfileId, USER_POINTS],
+      takeSortedWithVoyagerExclusiveCap(
+        sortEventsForProfileAndPointsBalance(
+          EVENT_REGISTRY.filter((e) => e.category === 'Concerts and festivals' && isAccor(e)),
+          testProfileId,
+          USER_POINTS,
+          'home-concerts',
+        ),
+        isVoyagerSubscriber,
+        8,
+        1,
+      ).map(registryToCard),
+    [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
 
   const SPORT_EVENTS = useMemo(
     () =>
-      sortEventsForProfileAndPointsBalance(
-        EVENT_REGISTRY.filter((e) => e.category === 'Sport and leisure' && isAccor(e)),
-        testProfileId,
-        USER_POINTS,
-        'home-sport',
-      )
-        .slice(0, 8)
-        .map(registryToCard),
-    [testProfileId, USER_POINTS],
+      takeSortedWithVoyagerExclusiveCap(
+        sortEventsForProfileAndPointsBalance(
+          EVENT_REGISTRY.filter((e) => e.category === 'Sport and leisure' && isAccor(e)),
+          testProfileId,
+          USER_POINTS,
+          'home-sport',
+        ),
+        isVoyagerSubscriber,
+        8,
+        1,
+      ).map(registryToCard),
+    [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
 
   const PRIZE_DRAW_EVENTS = useMemo(
     () =>
-      sortEventsForProfileAndPointsBalance(
-        EVENT_REGISTRY.filter((e) => e.pageType === 'prize-draw' && isAccor(e)),
-        testProfileId,
-        USER_POINTS,
-        'home-prize-draw',
-      )
-        .slice(0, 8)
-        .map(registryToCard),
-    [testProfileId, USER_POINTS],
+      takeSortedWithVoyagerExclusiveCap(
+        sortEventsForProfileAndPointsBalance(
+          EVENT_REGISTRY.filter((e) => e.pageType === 'prize-draw' && isAccor(e)),
+          testProfileId,
+          USER_POINTS,
+          'home-prize-draw',
+        ),
+        isVoyagerSubscriber,
+        8,
+        1,
+      ).map(registryToCard),
+    [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
 
   const AUCTION_EVENTS = useMemo(
     () =>
-      sortEventsForProfileAndPointsBalance(
-        EVENT_REGISTRY.filter((e) => e.pageType === 'auction'),
-        testProfileId,
-        USER_POINTS,
-        'home-auctions',
-      )
-        .slice(0, 8)
-        .map(registryToCard),
-    [testProfileId, USER_POINTS],
+      takeSortedWithVoyagerExclusiveCap(
+        sortEventsForProfileAndPointsBalance(
+          EVENT_REGISTRY.filter((e) => e.pageType === 'auction'),
+          testProfileId,
+          USER_POINTS,
+          'home-auctions',
+        ),
+        isVoyagerSubscriber,
+        8,
+        1,
+      ).map(registryToCard),
+    [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
