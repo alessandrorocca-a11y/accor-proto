@@ -9,6 +9,7 @@ import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanC
 import { EVENT_REGISTRY, getEventRoute, formatPoints, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
+import { sortEventsForProfile } from '@/utils/profileSort';
 import './CategoryPage.css';
 
 type PaymentType = 'prize-draw' | 'redeem' | 'auction' | 'cash' | 'flex' | 'linkout' | 'waitlist';
@@ -295,7 +296,7 @@ interface CategoryPageProps {
 }
 
 export default function CategoryPage({ defaultCategory = 'Sport and leisure', breadcrumbs = [{ label: 'Homepage', href: '#' }], pageTitle, defaultLocation }: CategoryPageProps) {
-  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
   useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -335,20 +336,21 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
     'Waitlist': ['waitlist'],
   };
 
-  const filteredEvents = ALL_EVENTS.filter((e) => {
-    if (!showAllCategories && !e.categories.includes(selectedCategory)) return false;
-    if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
-    if (filterPayments.size > 0) {
-      const allowed = [...filterPayments].flatMap((p) => paymentTypeMap[p] ?? []);
-      if (!allowed.includes(e.paymentType)) return false;
-    }
-    return true;
-  }).sort((a, b) => {
-    if (sortBy === 'price-desc') return parsePrice(b) - parsePrice(a);
-    if (sortBy === 'price-asc') return parsePrice(a) - parsePrice(b);
-    if (sortBy === 'date') return parseEventDate(a.date) - parseEventDate(b.date);
-    return 0;
-  });
+  const filteredEvents = (() => {
+    const base = ALL_EVENTS.filter((e) => {
+      if (!showAllCategories && !e.categories.includes(selectedCategory)) return false;
+      if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
+      if (filterPayments.size > 0) {
+        const allowed = [...filterPayments].flatMap((p) => paymentTypeMap[p] ?? []);
+        if (!allowed.includes(e.paymentType)) return false;
+      }
+      return true;
+    });
+    if (sortBy === 'price-desc') return [...base].sort((a, b) => parsePrice(b) - parsePrice(a));
+    if (sortBy === 'price-asc') return [...base].sort((a, b) => parsePrice(a) - parsePrice(b));
+    if (sortBy === 'date') return [...base].sort((a, b) => parseEventDate(a.date) - parseEventDate(b.date));
+    return sortEventsForProfile(base, testProfileId);
+  })();
 
   const handleCategorySelect = (category: string) => {
     setCategoriesOpen(false);

@@ -6,6 +6,7 @@ import allAccorLogo from '@/assets/all-accor-logo.svg';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
+import { sortEventsForProfile } from '@/utils/profileSort';
 import './HomePage.css';
 
 /* ── Data types ──────────────────────────────────────────────────────── */
@@ -107,6 +108,11 @@ const SPORT_EVENTS: EventCard[] = EVENT_REGISTRY
 
 const PRIZE_DRAW_EVENTS: EventCard[] = EVENT_REGISTRY
   .filter((e) => e.pageType === 'prize-draw' && isAccor(e))
+  .slice(0, 8)
+  .map(registryToCard);
+
+const AUCTION_EVENTS: EventCard[] = EVENT_REGISTRY
+  .filter((e) => e.pageType === 'auction')
   .slice(0, 8)
   .map(registryToCard);
 
@@ -592,7 +598,7 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 /* ── Main component ───────────────────────────────────────────────────── */
 
 export default function HomePage() {
-  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -683,6 +689,11 @@ export default function HomePage() {
   const [pdPage, setPdPage] = useState(1);
   const pdTotalPages = Math.ceil(PRIZE_DRAW_EVENTS.length / perPage);
   const pdVisible = PRIZE_DRAW_EVENTS.slice((pdPage - 1) * perPage, pdPage * perPage);
+
+  const sortedAuctionEvents = sortEventsForProfile(AUCTION_EVENTS, testProfileId);
+  const [auPage, setAuPage] = useState(1);
+  const auTotalPages = Math.ceil(sortedAuctionEvents.length / perPage);
+  const auVisible = sortedAuctionEvents.slice((auPage - 1) * perPage, auPage * perPage);
 
   const [citiesPage, setCitiesPage] = useState(1);
   const citiesTotalPages = Math.ceil(POPULAR_CITIES.length / perPage);
@@ -956,77 +967,38 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Concerts and festivals (category) ────────────────────────── */}
-      <section className="home-page__section">
-        <div className="home-page__section-header">
-          <h2 className="home-page__section-title">Concerts and festivals</h2>
-          <button type="button" className="home-page__section-link" onClick={() => { window.location.hash = '#category/concerts-and-festivals'; }}>See all</button>
-        </div>
-        <div className="home-page__scroll">
-          {cfVisible.map((event) => (
-            <EventCardCompact
-              key={event.id}
-              event={event}
-              isFav={favourites.has(event.id)}
-              onFavToggle={() => toggleFavourite(event.id)}
-            />
-          ))}
-        </div>
-        <Pagination
-          current={cfPage}
-          total={cfTotalPages}
-          onPrev={() => setCfPage((p) => Math.max(1, p - 1))}
-          onNext={() => setCfPage((p) => Math.min(cfTotalPages, p + 1))}
-        />
-      </section>
+      {/* ── Event sections (order varies by profile) ─────────────────── */}
+      {(() => {
+        const makeSection = (key: string, title: string, hash: string, visible: EventCard[], page: number, totalPages: number, onPrev: () => void, onNext: () => void) => (
+          <section key={key} className="home-page__section">
+            <div className="home-page__section-header">
+              <h2 className="home-page__section-title">{title}</h2>
+              <button type="button" className="home-page__section-link" onClick={() => { window.location.hash = hash; }}>See all</button>
+            </div>
+            <div className="home-page__scroll">
+              {visible.map((event) => (
+                <EventCardCompact
+                  key={event.id}
+                  event={event}
+                  isFav={favourites.has(event.id)}
+                  onFavToggle={() => toggleFavourite(event.id)}
+                />
+              ))}
+            </div>
+            <Pagination current={page} total={totalPages} onPrev={onPrev} onNext={onNext} />
+          </section>
+        );
 
-      {/* ── Sport and leisure (category) ─────────────────────────────── */}
-      <section className="home-page__section">
-        <div className="home-page__section-header">
-          <h2 className="home-page__section-title">Sport and leisure</h2>
-          <button type="button" className="home-page__section-link" onClick={() => { window.location.hash = '#category/sport-and-leisure'; }}>See all</button>
-        </div>
-        <div className="home-page__scroll">
-          {slVisible.map((event) => (
-            <EventCardCompact
-              key={event.id}
-              event={event}
-              isFav={favourites.has(event.id)}
-              onFavToggle={() => toggleFavourite(event.id)}
-            />
-          ))}
-        </div>
-        <Pagination
-          current={slPage}
-          total={slTotalPages}
-          onPrev={() => setSlPage((p) => Math.max(1, p - 1))}
-          onNext={() => setSlPage((p) => Math.min(slTotalPages, p + 1))}
-        />
-      </section>
+        const concertsSection = makeSection('concerts', 'Concerts and festivals', '#category/concerts-and-festivals', cfVisible, cfPage, cfTotalPages, () => setCfPage((p) => Math.max(1, p - 1)), () => setCfPage((p) => Math.min(cfTotalPages, p + 1)));
+        const sportSection = makeSection('sport', 'Sport and leisure', '#category/sport-and-leisure', slVisible, slPage, slTotalPages, () => setSlPage((p) => Math.max(1, p - 1)), () => setSlPage((p) => Math.min(slTotalPages, p + 1)));
+        const prizeDrawSection = makeSection('prize-draw', 'Prize Draw', '#payment/prize-draws', pdVisible, pdPage, pdTotalPages, () => setPdPage((p) => Math.max(1, p - 1)), () => setPdPage((p) => Math.min(pdTotalPages, p + 1)));
+        const auctionsSection = makeSection('auctions', 'Auctions', '#payment/auctions', auVisible, auPage, auTotalPages, () => setAuPage((p) => Math.max(1, p - 1)), () => setAuPage((p) => Math.min(auTotalPages, p + 1)));
 
-      {/* ── Prize Draw (payment mechanic) ────────────────────────────── */}
-      <section className="home-page__section">
-        <div className="home-page__section-header">
-          <h2 className="home-page__section-title">Prize Draw</h2>
-          <button type="button" className="home-page__section-link" onClick={() => { window.location.hash = '#payment/prize-draws'; }}>See all</button>
-        </div>
-        <div className="home-page__scroll">
-          {pdVisible.map((event) => (
-            <EventCardCompact
-              key={event.id}
-              event={event}
-              isFav={favourites.has(event.id)}
-              onFavToggle={() => toggleFavourite(event.id)}
-            />
-          ))}
-        </div>
-        <Pagination
-          current={pdPage}
-          total={pdTotalPages}
-          onPrev={() => setPdPage((p) => Math.max(1, p - 1))}
-          onNext={() => setPdPage((p) => Math.min(pdTotalPages, p + 1))}
-        />
-      </section>
+        if (testProfileId === 'silver') {
+          return [prizeDrawSection, concertsSection, sportSection, auctionsSection];
+        }
+        return [auctionsSection, concertsSection, sportSection, prizeDrawSection];
+      })()}
 
       {/* ── Popular cities ───────────────────────────────────────────── */}
       <section className="home-page__section home-page__cities-section">

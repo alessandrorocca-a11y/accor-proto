@@ -5,6 +5,7 @@ import { getNearbyCities, searchCities } from '@/data/europeanCities';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
+import { sortEventsForProfile } from '@/utils/profileSort';
 import './CityPage.css';
 
 /* ── Types ──────────────────────────────────────────────────────────── */
@@ -439,7 +440,7 @@ function EventSection({ title, events, favourites, onToggleFav, page, totalPages
 export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPageProps) {
   useEffect(() => { window.scrollTo(0, 0); }, [cityName]);
 
-  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
   const { toggleFavourite: toggleFavCtx } = useFavourites();
 
   const config = CITY_CONFIGS[cityName] ?? DEFAULT_CONFIG;
@@ -457,9 +458,12 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
   const matchedCities = searchCities(cityQuery.trim()).slice(0, 10);
 
   const allCityEvents = getEventsForCity(cityName);
-  const cityEvents = (dateFilterActive && dateFrom && dateTo)
-    ? allCityEvents.filter((e) => isEventInRange(e.date, dateFrom, dateTo))
-    : allCityEvents;
+  const cityEvents = sortEventsForProfile(
+    (dateFilterActive && dateFrom && dateTo)
+      ? allCityEvents.filter((e) => isEventInRange(e.date, dateFrom, dateTo))
+      : allCityEvents,
+    testProfileId,
+  );
   const TOP_10 = cityEvents.slice(0, 10).map((e) => ({
     id: e.id,
     title: e.title,
@@ -721,22 +725,29 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         </div>
       </section>
 
-      {/* ── Content sections ───────────────────────────────────────── */}
-      <EventSection title="Concerts and festivals" events={ceVisible} favourites={favourites} onToggleFav={toggleFav}
-        page={cePage} totalPages={ceTotalPages} onPrev={() => setCePage((p) => Math.max(1, p - 1))} onNext={() => setCePage((p) => Math.min(ceTotalPages, p + 1))}
-        linkHash="#category/concerts-and-festivals" />
-      <EventSection title="Sport and leisure" events={spVisible} favourites={favourites} onToggleFav={toggleFav}
-        page={spPage} totalPages={spTotalPages} onPrev={() => setSpPage((p) => Math.max(1, p - 1))} onNext={() => setSpPage((p) => Math.min(spTotalPages, p + 1))}
-        linkHash="#category/sport-and-leisure" />
-      <EventSection title="Prize Draw" events={pdVisible} favourites={favourites} onToggleFav={toggleFav}
-        page={pdPage} totalPages={pdTotalPages} onPrev={() => setPdPage((p) => Math.max(1, p - 1))} onNext={() => setPdPage((p) => Math.min(pdTotalPages, p + 1))}
-        linkHash="#payment/prize-draws" />
-      <EventSection title="Auctions" events={auVisible} favourites={favourites} onToggleFav={toggleFav}
-        page={auPage} totalPages={auTotalPages} onPrev={() => setAuPage((p) => Math.max(1, p - 1))} onNext={() => setAuPage((p) => Math.min(auTotalPages, p + 1))}
-        linkHash="#payment/auctions" />
-      <EventSection title="PSG Match Experience" events={psVisible} favourites={favourites} onToggleFav={toggleFav}
-        page={psPage} totalPages={psTotalPages} onPrev={() => setPsPage((p) => Math.max(1, p - 1))} onNext={() => setPsPage((p) => Math.min(psTotalPages, p + 1))}
-        linkHash="#category/paris-saint-germain" />
+      {/* ── Content sections (order varies by profile) ─────────────── */}
+      {(() => {
+        const concertsSection = <EventSection key="concerts" title="Concerts and festivals" events={ceVisible} favourites={favourites} onToggleFav={toggleFav}
+          page={cePage} totalPages={ceTotalPages} onPrev={() => setCePage((p) => Math.max(1, p - 1))} onNext={() => setCePage((p) => Math.min(ceTotalPages, p + 1))}
+          linkHash="#category/concerts-and-festivals" />;
+        const sportSection = <EventSection key="sport" title="Sport and leisure" events={spVisible} favourites={favourites} onToggleFav={toggleFav}
+          page={spPage} totalPages={spTotalPages} onPrev={() => setSpPage((p) => Math.max(1, p - 1))} onNext={() => setSpPage((p) => Math.min(spTotalPages, p + 1))}
+          linkHash="#category/sport-and-leisure" />;
+        const prizeDrawSection = <EventSection key="prize-draw" title="Prize Draw" events={pdVisible} favourites={favourites} onToggleFav={toggleFav}
+          page={pdPage} totalPages={pdTotalPages} onPrev={() => setPdPage((p) => Math.max(1, p - 1))} onNext={() => setPdPage((p) => Math.min(pdTotalPages, p + 1))}
+          linkHash="#payment/prize-draws" />;
+        const auctionsSection = <EventSection key="auctions" title="Auctions" events={auVisible} favourites={favourites} onToggleFav={toggleFav}
+          page={auPage} totalPages={auTotalPages} onPrev={() => setAuPage((p) => Math.max(1, p - 1))} onNext={() => setAuPage((p) => Math.min(auTotalPages, p + 1))}
+          linkHash="#payment/auctions" />;
+        const psgSection = <EventSection key="psg" title="PSG Match Experience" events={psVisible} favourites={favourites} onToggleFav={toggleFav}
+          page={psPage} totalPages={psTotalPages} onPrev={() => setPsPage((p) => Math.max(1, p - 1))} onNext={() => setPsPage((p) => Math.min(psTotalPages, p + 1))}
+          linkHash="#category/paris-saint-germain" />;
+
+        if (testProfileId === 'silver') {
+          return [prizeDrawSection, concertsSection, sportSection, psgSection, auctionsSection];
+        }
+        return [auctionsSection, concertsSection, sportSection, psgSection, prizeDrawSection];
+      })()}
 
       {/* ── Near cities ────────────────────────────────────────────── */}
       <section className="city-page__section city-page__near-cities">
