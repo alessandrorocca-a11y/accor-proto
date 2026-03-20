@@ -288,21 +288,25 @@
   display: none;
 }
 
-/* ── Event card (compact, used in Next Trip / Suggested / Signature) ─── */
+/* ── Event card — iris.horizontal-card (Figma 3377:105392) ─────────────── */
 .home-page__event-card {
   flex: 0 0 173px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--wel-sem-spacingstatic-stack-sm, 12px);
   scroll-snap-align: start;
   cursor: pointer;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(5, 0, 51, 0.08);
+  overflow: hidden;
 }
 
 .home-page__event-card-img {
   position: relative;
-  width: 173px;
+  width: 100%;
   height: 173px;
-  border-radius: var(--wel-sem-borderradius-surface, 6px);
+  border-radius: 0;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -317,46 +321,73 @@
 
 .home-page__event-card-marketing-tag {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: var(--wel-sem-spacingstatic-inset-xs, 8px);
+  left: var(--wel-sem-spacingstatic-inset-xs, 8px);
   z-index: 1;
 }
 
 .home-page__event-card-fav {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: var(--wel-sem-spacingstatic-inset-xs, 8px);
+  right: var(--wel-sem-spacingstatic-inset-xs, 8px);
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
+  background: rgba(255, 255, 255, 0.92);
   border: none;
+  border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  color: #fff;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  box-shadow: 0 1px 4px rgba(5, 0, 51, 0.12);
+  color: var(--wel-sem-color-on-surface-hi, #232136);
 }
 
 .home-page__event-card-fav svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .home-page__event-card-body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--wel-sem-spacingstatic-stack-xs, 8px);
+  padding: 0 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.home-page__event-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.home-page__event-card-date-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
 }
 
 .home-page__event-card-date {
-  font: var(--wel-typography-caption-default);
+  font-family: var(--wel-sem-fontfamilies-caption, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-caption, 12px);
+  font-weight: 400;
+  line-height: var(--wel-sem-lineheights-caption, 16px);
+  letter-spacing: var(--wel-sem-letterspacing-caption, 0);
   color: var(--wel-sem-color-on-surface-low, #5e5b73);
 }
 
 .home-page__event-card-title {
-  font: var(--wel-typography-title-03);
+  font-family: var(--wel-sem-fontfamilies-title, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-title-sm, 18px);
+  font-weight: 500;
+  line-height: var(--wel-sem-lineheights-title-sm, 24px);
+  letter-spacing: var(--wel-sem-letterspacing-title, 0);
   color: var(--wel-sem-color-on-surface-hi, #232136);
   margin: 0;
   display: -webkit-box;
@@ -366,30 +397,46 @@
 }
 
 .home-page__event-card-tag {
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
+  font-family: var(--wel-sem-fontfamilies-label, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-label-sm, 12px);
   font-weight: 500;
-  line-height: 16px;
-  color: var(--wel-sem-color-on-surface-mid, #38364d);
+  line-height: var(--wel-sem-lineheights-label-sm, 16px);
+  letter-spacing: var(--wel-sem-letterspacing-label, 0);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
 }
 
-.home-page__event-card-payment {
+.home-page__event-card-payment-stack {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--wel-sem-spacingstatic-stack-2xs, 4px);
+  width: 100%;
+}
+
+.home-page__event-card-payment-primary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
 }
 
 .home-page__event-card-payment-label {
-  font: var(--wel-typography-label-default-03);
+  font-family: var(--wel-sem-fontfamilies-label, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-label-sm, 12px);
+  font-weight: 400;
+  line-height: var(--wel-sem-lineheights-label-sm, 16px);
+  letter-spacing: var(--wel-sem-letterspacing-label, 0);
   color: var(--wel-sem-color-neutral-container, #6d7072);
+  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
 }
 
 .home-page__event-card-points {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
+  width: 100%;
+  box-sizing: border-box;
   background: var(--ads-colors-loyalty-container-low, #f3efff);
-  padding: 4px;
+  padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-xs, 8px);
   border-radius: var(--wel-sem-borderradius-element-static-sm, 2px);
   overflow: hidden;
 }
@@ -401,7 +448,11 @@
 }
 
 .home-page__event-card-points span {
-  font: var(--wel-typography-label-strong-03);
+  font-family: var(--wel-sem-fontfamilies-label, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-label-sm, 12px);
+  font-weight: 500;
+  line-height: var(--wel-sem-lineheights-label-sm, 16px);
+  letter-spacing: var(--wel-sem-letterspacing-label, 0);
   color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
   white-space: nowrap;
 }
@@ -409,18 +460,27 @@
 .home-page__event-card-timer {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
+  width: 100%;
+  box-sizing: border-box;
   background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
-  padding: 4px;
+  padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-2xs, 4px);
   border-radius: var(--wel-sem-borderradius-element-static-md, 4px);
-  font: var(--wel-typography-caption-strong);
+  font-size: var(--wel-sem-fontsizes-caption, 12px);
+  line-height: var(--wel-sem-lineheights-caption, 16px);
+  letter-spacing: var(--wel-sem-letterspacing-caption, 0);
   color: var(--wel-sem-color-on-surface-hi, #232136);
   white-space: nowrap;
 }
 
 .home-page__event-card-timer-label {
-  font: var(--wel-typography-caption-default);
-  color: var(--wel-sem-color-on-surface-hi, #232136);
+  font-family: var(--wel-sem-fontfamilies-caption, 'Roboto', sans-serif);
+  font-weight: 400;
+}
+
+.home-page__event-card-timer-value {
+  font-family: var(--wel-sem-fontfamilies-caption, 'Roboto', sans-serif);
+  font-weight: 500;
 }
 
 .home-page__event-card-cash {
@@ -1044,39 +1104,6 @@
 
 .home-page__signature .home-page__event-card {
   flex: 0 0 220px;
-}
-
-/* ── Responsive: Small mobile font adjustments ───────────────────────── */
-@media (max-width: 425px) {
-  .home-page__event-card-date {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .home-page__event-card-tag {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .home-page__event-card-payment-label {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .home-page__event-card-points span {
-    font-size: 15px;
-    line-height: 22px;
-  }
-
-  .home-page__event-card-timer {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .home-page__event-card-cash {
-    font-size: 15px;
-    line-height: 22px;
-  }
 }
 
 /* ── Responsive: Tablet+ (left-align hero) ────────────────────────────── */

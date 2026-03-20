@@ -16,7 +16,8 @@
 }
 
 .marketing-tag--exclusivity {
-  background: #f3efff;
+  /* Match Figma iris.marketing-tag / loyalty-container-hi (same family as Presale) */
+  background: #d6d3ff;
   color: #3a34ab;
 }
 

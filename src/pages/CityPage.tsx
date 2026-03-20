@@ -145,7 +145,7 @@ function LiveTimer({ initialMs }: { initialMs: number }) {
   return (
     <div className="city-page__event-card-timer">
       <span className="city-page__event-card-timer-label">Time left:</span>
-      <span>{formatTimeLeft(remaining)}</span>
+      <span className="city-page__event-card-timer-value">{formatTimeLeft(remaining)}</span>
     </div>
   );
 }
@@ -369,28 +369,36 @@ function EventCardCompact({
         </button>
       </div>
       <div className="city-page__event-card-body">
-        <span className="city-page__event-card-date">{event.date}</span>
-        <h3 className="city-page__event-card-title">{event.title}</h3>
-        <div className="city-page__event-card-payment">
-          {label && <span className="city-page__event-card-payment-label">{label}</span>}
-
-          {event.points && (
-            <div className="city-page__event-card-points">
-              <IconStar />
-              <span>{event.points}</span>
+        <div className="city-page__event-card-meta">
+          <div className="city-page__event-card-date-title">
+            <span className="city-page__event-card-date">{event.date}</span>
+            <h3 className="city-page__event-card-title">{event.title}</h3>
+          </div>
+          {event.eventTag ? (
+            <span className="city-page__event-card-tag">{event.eventTag}</span>
+          ) : null}
+        </div>
+        <div className="city-page__event-card-payment-stack">
+          {(label || event.points || (event.paymentType === 'cash' && event.cashPrice)) ? (
+            <div className="city-page__event-card-payment-primary">
+              {label ? <span className="city-page__event-card-payment-label">{label}</span> : null}
+              {event.points ? (
+                <div className="city-page__event-card-points">
+                  <IconStar />
+                  <span>{event.points}</span>
+                </div>
+              ) : null}
+              {event.paymentType === 'cash' && event.cashPrice ? (
+                <span className="city-page__event-card-cash">
+                  <span className="city-page__event-card-cash-from">from</span>
+                  {event.cashPrice}
+                </span>
+              ) : null}
             </div>
-          )}
-
-          {event.paymentType === 'cash' && event.cashPrice && (
-            <span className="city-page__event-card-cash">
-              <span className="city-page__event-card-cash-from">from</span>
-              {event.cashPrice}
-            </span>
-          )}
-
-          {event.hasTimer && event.msLeft != null && (
+          ) : null}
+          {event.hasTimer && event.msLeft != null ? (
             <LiveTimer initialMs={event.msLeft} />
-          )}
+          ) : null}
         </div>
       </div>
     </article>
