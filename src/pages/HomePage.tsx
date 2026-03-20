@@ -6,7 +6,7 @@ import allAccorLogo from '@/assets/all-accor-logo.svg';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
-import { sortEventsForProfile } from '@/utils/profileSort';
+import { sortEventsForProfileAndPointsBalance } from '@/utils/profileSort';
 import './HomePage.css';
 
 /* ── Data types ──────────────────────────────────────────────────────── */
@@ -91,30 +91,6 @@ function registryToCard(e: EventData): EventCard {
 }
 
 const isAccor = (e: EventData) => e.eventTag === 'Limitless Experiences';
-
-const parisEvents = EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e));
-
-const NEXT_TRIP_EVENTS: EventCard[] = parisEvents.slice(0, 8).map(registryToCard);
-
-const CONCERTS_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.category === 'Concerts and festivals' && isAccor(e))
-  .slice(0, 8)
-  .map(registryToCard);
-
-const SPORT_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.category === 'Sport and leisure' && isAccor(e))
-  .slice(0, 8)
-  .map(registryToCard);
-
-const PRIZE_DRAW_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.pageType === 'prize-draw' && isAccor(e))
-  .slice(0, 8)
-  .map(registryToCard);
-
-const AUCTION_EVENTS: EventCard[] = EVENT_REGISTRY
-  .filter((e) => e.pageType === 'auction')
-  .slice(0, 8)
-  .map(registryToCard);
 
 const TOP_EXPERIENCES: TopExperience[] = [
   {
@@ -599,6 +575,66 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 
 export default function HomePage() {
   const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
+
+  const NEXT_TRIP_EVENTS = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e)),
+        testProfileId,
+        USER_POINTS,
+      )
+        .slice(0, 8)
+        .map(registryToCard),
+    [testProfileId, USER_POINTS],
+  );
+
+  const CONCERTS_EVENTS = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter((e) => e.category === 'Concerts and festivals' && isAccor(e)),
+        testProfileId,
+        USER_POINTS,
+      )
+        .slice(0, 8)
+        .map(registryToCard),
+    [testProfileId, USER_POINTS],
+  );
+
+  const SPORT_EVENTS = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter((e) => e.category === 'Sport and leisure' && isAccor(e)),
+        testProfileId,
+        USER_POINTS,
+      )
+        .slice(0, 8)
+        .map(registryToCard),
+    [testProfileId, USER_POINTS],
+  );
+
+  const PRIZE_DRAW_EVENTS = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter((e) => e.pageType === 'prize-draw' && isAccor(e)),
+        testProfileId,
+        USER_POINTS,
+      )
+        .slice(0, 8)
+        .map(registryToCard),
+    [testProfileId, USER_POINTS],
+  );
+
+  const AUCTION_EVENTS = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter((e) => e.pageType === 'auction'),
+        testProfileId,
+        USER_POINTS,
+      )
+        .slice(0, 8)
+        .map(registryToCard),
+    [testProfileId, USER_POINTS],
+  );
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -690,10 +726,9 @@ export default function HomePage() {
   const pdTotalPages = Math.ceil(PRIZE_DRAW_EVENTS.length / perPage);
   const pdVisible = PRIZE_DRAW_EVENTS.slice((pdPage - 1) * perPage, pdPage * perPage);
 
-  const sortedAuctionEvents = sortEventsForProfile(AUCTION_EVENTS, testProfileId);
   const [auPage, setAuPage] = useState(1);
-  const auTotalPages = Math.ceil(sortedAuctionEvents.length / perPage);
-  const auVisible = sortedAuctionEvents.slice((auPage - 1) * perPage, auPage * perPage);
+  const auTotalPages = Math.ceil(AUCTION_EVENTS.length / perPage);
+  const auVisible = AUCTION_EVENTS.slice((auPage - 1) * perPage, auPage * perPage);
 
   const [citiesPage, setCitiesPage] = useState(1);
   const citiesTotalPages = Math.ceil(POPULAR_CITIES.length / perPage);
@@ -726,8 +761,14 @@ export default function HomePage() {
     }
   };
 
-  const allEvents = Array.from(
-    new Map([...NEXT_TRIP_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS].map((e) => [e.id, e])).values(),
+  const allEvents = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          [...NEXT_TRIP_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
+        ).values(),
+      ),
+    [NEXT_TRIP_EVENTS, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
   );
 
   const menuFavourites: MenuFavouriteEvent[] = useMemo(
@@ -744,7 +785,7 @@ export default function HomePage() {
           points: e.points ?? e.cashPrice ?? '',
           countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
         })),
-    [favourites],
+    [allEvents, favourites],
   );
 
   return (

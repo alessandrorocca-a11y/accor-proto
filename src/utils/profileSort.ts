@@ -1,4 +1,6 @@
 import type { TestProfileId } from '@/context/UserContext';
+import type { EventData } from '@/data/events/eventRegistry';
+import { getEffectivePointsCost, isEventAffordableWithBalance } from '@/data/events/eventRegistry';
 
 interface SortableEvent {
   pageType?: string;
@@ -30,4 +32,26 @@ export function sortEventsForProfile<T extends SortableEvent>(
   profileId: TestProfileId,
 ): T[] {
   return [...events].sort((a, b) => profileScore(b, profileId) - profileScore(a, profileId));
+}
+
+/**
+ * Homepage / city: affordable-with-balance first, then ascending points cost,
+ * then profile relevance as tiebreaker.
+ */
+export function sortEventsForProfileAndPointsBalance(
+  events: EventData[],
+  profileId: TestProfileId,
+  userPoints: number,
+): EventData[] {
+  return [...events].sort((a, b) => {
+    const affA = isEventAffordableWithBalance(a, userPoints) ? 0 : 1;
+    const affB = isEventAffordableWithBalance(b, userPoints) ? 0 : 1;
+    if (affA !== affB) return affA - affB;
+
+    const costA = getEffectivePointsCost(a);
+    const costB = getEffectivePointsCost(b);
+    if (costA !== costB) return costA - costB;
+
+    return profileScore(b, profileId) - profileScore(a, profileId);
+  });
 }

@@ -5,7 +5,7 @@ import { getNearbyCities, searchCities } from '@/data/europeanCities';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
-import { sortEventsForProfile } from '@/utils/profileSort';
+import { sortEventsForProfileAndPointsBalance } from '@/utils/profileSort';
 import './CityPage.css';
 
 /* ── Types ──────────────────────────────────────────────────────────── */
@@ -211,16 +211,6 @@ function getEventsForCity(cityName: string): EventData[] {
   if (cityEvents.length >= 10) return cityEvents;
   const parisEvents = EVENT_REGISTRY.filter((e) => e.city === 'Paris');
   return [...cityEvents, ...parisEvents].slice(0, Math.max(cityEvents.length, 20));
-}
-
-function getTopForCity(cityName: string): EventCard[] {
-  return getEventsForCity(cityName).slice(0, 10).map((e) => ({
-    id: e.id,
-    title: e.title,
-    date: e.date,
-    image: e.image,
-    route: getEventRoute(e),
-  }));
 }
 
 function latLonToTile(lat: number, lon: number, zoom: number): [number, number] {
@@ -458,11 +448,12 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
   const matchedCities = searchCities(cityQuery.trim()).slice(0, 10);
 
   const allCityEvents = getEventsForCity(cityName);
-  const cityEvents = sortEventsForProfile(
+  const cityEvents = sortEventsForProfileAndPointsBalance(
     (dateFilterActive && dateFrom && dateTo)
       ? allCityEvents.filter((e) => isEventInRange(e.date, dateFrom, dateTo))
       : allCityEvents,
     testProfileId,
+    USER_POINTS,
   );
   const TOP_10 = cityEvents.slice(0, 10).map((e) => ({
     id: e.id,

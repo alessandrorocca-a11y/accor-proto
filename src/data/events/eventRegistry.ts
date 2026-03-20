@@ -75,6 +75,31 @@ export function formatPoints(n: number): string {
   return n.toLocaleString('de-DE');
 }
 
+/** Points barrier for ordering / “can I afford this?” (prototype heuristic). */
+export function getEffectivePointsCost(event: EventData): number {
+  switch (event.pageType) {
+    case 'auction':
+      return event.currentBid ?? event.points;
+    case 'prize-draw':
+      return event.ticketPrice ?? event.points;
+    case 'redeem':
+      return event.points;
+    case 'standard':
+    case 'waitlist':
+      return 0;
+    default:
+      return event.points;
+  }
+}
+
+/** Whether the user’s points balance is enough for this mechanic (approximate). */
+export function isEventAffordableWithBalance(event: EventData, userPoints: number): boolean {
+  if (event.pageType === 'standard' || event.pageType === 'waitlist') return true;
+  const cost = getEffectivePointsCost(event);
+  if (event.pageType === 'auction') return userPoints > cost;
+  return userPoints >= cost;
+}
+
 function makeHeroImages(mainImage: string, mainAlt: string, category: EventCategory): HeroImage[] {
   const categoryExtras: Record<EventCategory, HeroImage[]> = {
     'Concerts and festivals': [
