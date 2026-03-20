@@ -62,15 +62,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [points, setPoints] = useState(profile.points);
   const [orders, setOrders] = useState<OrderItem[]>([]);
 
-  const setTestProfile = useCallback((id: TestProfileId) => {
-    setTestProfileIdState(id);
-    setPoints(TEST_PROFILES[id].points);
-    try {
-      localStorage.setItem(STORAGE_KEY, id);
-    } catch {
-      /* ignore */
-    }
-  }, []);
+  const setTestProfile = useCallback(
+    (id: TestProfileId) => {
+      if (id === testProfileId) return;
+      try {
+        localStorage.setItem(STORAGE_KEY, id);
+      } catch {
+        /* ignore */
+      }
+      // Full reload so every page picks up profile (sorting, Voyager gates, local UI state).
+      window.location.reload();
+    },
+    [testProfileId],
+  );
 
   useEffect(() => {
     setPoints(TEST_PROFILES[testProfileId].points);
