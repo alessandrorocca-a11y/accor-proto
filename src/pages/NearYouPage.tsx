@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
@@ -71,7 +71,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'March 7, 2026',
     image: '/roland-garros-1.png',
     paymentType: 'prize-draw',
-    points: '1.000.000 Reward Points',
+    points: '1.000.000',
     hasTimer: true,
     msLeft: 80 * 24 * 60 * 60 * 1000,
     eventTag: 'Limitless Experiences',
@@ -83,7 +83,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'March 18, 2026',
     image: 'https://applications-media.feverup.com/image/upload/f_auto,w_720,h_720/fever2/plan/photo/443ebdda-88ac-11ea-bf03-06551cb39bc6.jpg',
     paymentType: 'redeem',
-    points: '6.000 Reward Points',
+    points: '6.000',
     eventTag: 'Limitless Experiences',
     route: '#redeem',
   },
@@ -93,7 +93,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'May 1, 2026',
     image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=400&fit=crop',
     paymentType: 'redeem',
-    points: '9.500 Reward Points',
+    points: '9.500',
     eventTag: 'Limitless Experiences',
     route: '#standard',
   },
@@ -103,7 +103,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'June 2, 2026',
     image: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=400&h=400&fit=crop',
     paymentType: 'redeem',
-    points: '12.000 Reward Points',
+    points: '12.000',
     route: '#redeem',
   },
   {
@@ -112,7 +112,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'April 12, 2026',
     image: 'https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?w=400&h=400&fit=crop',
     paymentType: 'redeem',
-    points: '18.000 Reward Points',
+    points: '18.000',
     eventTag: 'Limitless Experiences',
     route: '#redeem',
   },
@@ -122,7 +122,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'March 22, 2026',
     image: 'https://images.unsplash.com/photo-1551410224-699683e15636?w=400&h=400&fit=crop',
     paymentType: 'auction',
-    points: '8.500 Reward Points',
+    points: '8.500',
     eventTag: 'Signature Exclusive',
     route: '#auction',
   },
@@ -132,7 +132,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'April 5, 2026',
     image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&h=400&fit=crop',
     paymentType: 'redeem',
-    points: '15.000 Reward Points',
+    points: '15.000',
     eventTag: 'Limitless Experiences',
     route: '#redeem',
   },
@@ -142,7 +142,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'March 29, 2026',
     image: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=400&h=400&fit=crop',
     paymentType: 'redeem',
-    points: '4.500 Reward Points',
+    points: '4.500',
     eventTag: 'Food & Drinks',
     route: '#standard',
   },
@@ -152,7 +152,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'May 15, 2026',
     image: 'https://limitlessexperiences.accor.com/media/.renditions/wysiwyg/2025/ALL/December2025/SofitelxDevialet/Sofitel_Candle_Experience_Banner_355x320.png',
     paymentType: 'redeem',
-    points: '7.200 Reward Points',
+    points: '7.200',
     eventTag: 'Hotel Experiences',
     route: '#standard',
   },
@@ -162,7 +162,7 @@ const MAP_EVENTS: MapEventCard[] = [
     date: 'June 14, 2026',
     image: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=400&h=400&fit=crop',
     paymentType: 'prize-draw',
-    points: '500.000 Reward Points',
+    points: '500.000',
     hasTimer: true,
     msLeft: 100 * 24 * 60 * 60 * 1000,
     eventTag: 'Signature Exclusive',
@@ -300,14 +300,6 @@ function IconCompass() {
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
       <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" fill="currentColor" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z" stroke={filled ? '#B40875' : 'currentColor'} strokeWidth="1.5" />
     </svg>
   );
 }

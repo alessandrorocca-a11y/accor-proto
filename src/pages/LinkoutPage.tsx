@@ -1,8 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import {
+  IconHeart,
   Link,
   MarketplaceHeader,
   Menu,
+  YouMayAlsoLike,
 } from '@/components';
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
@@ -36,42 +38,6 @@ const INCLUDED_ITEMS = [
   'Open Food and Premium Open Bar, live shows, beauty services and much more',
 ];
 
-const RECOMMENDED_EVENTS = [
-  {
-    id: 'rec-candlelight',
-    title: 'Candlelight Concert at Théâtre Mogador',
-    date: 'April 12, 2026',
-    image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop',
-    points: '75.000',
-    eventTag: 'Fever Original',
-    paymentLabel: 'Auction',
-    countdown: '14d 06h 32m 15s',
-    route: '#redeem/evt-001',
-  },
-  {
-    id: 'rec-roland-garros',
-    title: 'Roland Garros VIP Hospitality 2026',
-    date: 'May 25, 2026',
-    image: '/roland-garros-1.png',
-    points: '500.000',
-    eventTag: 'Limitless Experiences',
-    paymentLabel: 'Prize Draw',
-    countdown: '21d 12h 45m 00s',
-    route: '#draw/evt-021',
-  },
-  {
-    id: 'rec-wine-tasting',
-    title: 'Exclusive Wine Tasting at Fairmont Le Montreux Palace',
-    date: 'March 22, 2026',
-    image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=400&fit=crop',
-    points: '25.000',
-    eventTag: 'Hotel Experience',
-    paymentLabel: 'Redeem',
-    countdown: '',
-    route: '#standard/evt-052',
-  },
-];
-
 function IconChevronLeft() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -81,19 +47,6 @@ function IconChevronLeft() {
 }
 
 
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
 
 function IconPin() {
   return (
@@ -128,15 +81,6 @@ function IconArrowRight() {
   );
 }
 
-function IconStar() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M7.64903 4.06886C7.7899 3.77365 8.21012 3.77365 8.35099 4.06886L9.25318 5.95956C9.30987 6.07836 9.42282 6.16043 9.55334 6.17763L11.6303 6.45141C11.9546 6.49416 12.0844 6.89381 11.8472 7.11901L10.3278 8.5613C10.2324 8.65194 10.1892 8.78472 10.2132 8.91416L10.5946 10.9741C10.6542 11.2957 10.3142 11.5427 10.0267 11.3867L8.18552 10.3873C8.06982 10.3246 7.9302 10.3246 7.8145 10.3873L5.97329 11.3867C5.68581 11.5427 5.34584 11.2957 5.4054 10.9741L5.78683 8.91416C5.8108 8.78472 5.76766 8.65194 5.67218 8.5613L4.15282 7.11901C3.91559 6.89381 4.04544 6.49416 4.36974 6.45141L6.44668 6.17763C6.5772 6.16043 6.69015 6.07836 6.74684 5.95956L7.64903 4.06886Z" stroke="#3a34ab" />
-      <circle cx="8" cy="8" r="6" stroke="#3a34ab" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export interface LinkoutPageProps {
   /** When set (e.g. `#linkout/evt-101`), hero date matches that event’s registry `date` (same as cards). */
   eventId?: string;
@@ -157,7 +101,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const favTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { isFavourite: isGlobalFav, toggleFavourite: toggleGlobalFav, favouritesList, removeFavourite } = useFavourites();
+  const { favouritesList, removeFavourite } = useFavourites();
 
   useEffect(() => {
     return () => {
@@ -463,41 +407,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
 
           <hr className="auction-page__divider" aria-hidden />
 
-          <section className="linkout__recommendations">
-            <h2 className="linkout__recommendations-title">You may also like</h2>
-            <div className="linkout__recommendations-scroll">
-              {RECOMMENDED_EVENTS.map((event) => (
-                <a key={event.id} className="linkout__card" href={event.route} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="linkout__card-img-wrap">
-                    <img src={event.image} alt={event.title} className="linkout__card-img" />
-                    <button
-                      type="button"
-                      className="linkout__card-fav"
-                      aria-label={isGlobalFav(event.id) ? 'Remove from favourites' : 'Add to favourites'}
-                      aria-pressed={isGlobalFav(event.id)}
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleGlobalFav({ id: event.id, image: event.image, date: event.date, title: event.title, eventTag: event.eventTag, paymentLabel: event.paymentLabel, points: event.points + ' Reward Points', countdown: event.countdown }); }}
-                    >
-                      <IconHeart filled={isGlobalFav(event.id)} />
-                    </button>
-                  </div>
-                  <div className="linkout__card-body">
-                    <p className="linkout__card-date">{event.date}</p>
-                    <p className="linkout__card-title">{event.title}</p>
-                    <div className="linkout__card-price-badge">
-                      <IconStar />
-                      <span>{event.points} Reward Points</span>
-                    </div>
-                    {event.countdown && (
-                      <div className="linkout__card-countdown">
-                        <span>Time left:</span>
-                        <span>{event.countdown}</span>
-                      </div>
-                    )}
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
+          <YouMayAlsoLike event={eventData ?? null} excludeEventId={eventId} />
         </main>
 
         <aside className="auction-page__sidebar">

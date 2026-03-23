@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import {
   Button,
   Countdown,
+  IconHeart,
   Input,
   Link,
   MarketplaceHeader,
@@ -11,12 +12,12 @@ import {
   VoyagerBadge,
   VoyagerDialog,
   useVoyagerGate,
+  YouMayAlsoLike,
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import { getEventById, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
-import { useFavourites } from '@/context/FavouritesContext';
 import './AuctionPage.css';
 
 const DEFAULT_AUCTION_MS_LEFT = (21 * 24 * 60 + 5 * 60 + 34) * 60 * 1000;
@@ -72,20 +73,6 @@ function IconBell({ filled }: { filled: boolean }) {
   );
 }
 
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function IconPin() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -114,7 +101,6 @@ function IconGallery() {
 export default function AuctionPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
-  useFavourites();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const AUCTION_MS_LEFT = eventData?.msLeft ?? DEFAULT_AUCTION_MS_LEFT;
@@ -666,6 +652,9 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
             </p>
             <Link href="#" onClick={(e) => { e.preventDefault(); setTermsOpen(true); }}>Read more</Link>
           </section>
+
+          <hr className="auction-page__divider" aria-hidden />
+          <YouMayAlsoLike event={eventData ?? null} excludeEventId={eventId} />
         </main>
 
         <aside className="auction-page__sidebar">

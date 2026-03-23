@@ -4,6 +4,7 @@ export { Button } from './Button';
 export { Checkbox } from './Checkbox';
 export { Chip } from './Chip';
 export { Icon } from './Icon';
+export { IconHeart } from './IconHeart/IconHeart';
 export { Input } from './Input';
 export { Link } from './Link';
 export { Loading } from './Loading';

@@ -1139,7 +1139,7 @@
 
 .loyalty-sheet__card {
   width: 270px;
-  height: 130px;
+  height: 180px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -1149,12 +1149,96 @@
   overflow: hidden;
 }
 
+/* Stacked card (LoyaltyProgramCardVisual sheet): 270×180; bg 130px art scaled on Y only */
+.loyalty-sheet__card-stack {
+  width: 270px;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.loyalty-sheet__card-bg.loyalty-sheet__card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 270px;
+  height: 130px;
+  margin: -65px 0 0 -135px;
+  transform: scale(1, calc(180 / 130));
+  transform-origin: center center;
+  display: block;
+  flex-direction: unset;
+  justify-content: unset;
+  align-items: unset;
+  border-radius: 12px;
+}
+
+.loyalty-sheet__card-front-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.loyalty-sheet__card-front {
+  position: relative;
+  flex: 1 1 auto;
+  width: 270px;
+  min-height: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Tier at top; logo dead-centre of the full 180px card (stacked sheet only) */
+.loyalty-sheet__card-front .loyalty-sheet__card-tier {
+  top: 12px;
+  left: 16px;
+}
+
+.loyalty-sheet__card-front .loyalty-sheet__card-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+}
+
+.loyalty-sheet__card-front--diamond .loyalty-sheet__card-tier {
+  color: var(--wel-sem-color-on-family, #050033);
+}
+
+.loyalty-sheet__card-front--diamond .loyalty-sheet__card-logo path {
+  fill: var(--wel-sem-color-on-family, #050033);
+}
+
 .loyalty-sheet__card--classic {
   background: linear-gradient(135deg, #1a1844 0%, #050033 60%, #2d2b6b 100%);
 }
 
 .loyalty-sheet__card--gold {
   background: linear-gradient(135deg, #c9a84c 0%, #8a6d2b 50%, #c9a84c 100%);
+}
+
+.loyalty-sheet__card--platinum {
+  background: linear-gradient(135deg, #90969e 0%, #6b7280 45%, #8a9098 100%);
+}
+
+.loyalty-sheet__card--diamond {
+  background: linear-gradient(135deg, #ece6f5 0%, #d4c4e8 45%, #ebe4f4 100%);
+}
+
+.loyalty-sheet__card--diamond .loyalty-sheet__card-tier {
+  color: var(--wel-sem-color-on-family, #050033);
+}
+
+.loyalty-sheet__card--diamond .loyalty-sheet__card-logo path {
+  fill: var(--wel-sem-color-on-family, #050033);
 }
 
 .loyalty-sheet__card-tier {

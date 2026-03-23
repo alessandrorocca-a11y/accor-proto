@@ -1,3 +1,5 @@
+@import './AuctionPage.css';
+
 .home-page {
   width: 100%;
   min-height: 100vh;
@@ -296,9 +298,8 @@
   gap: var(--wel-sem-spacingstatic-stack-sm, 12px);
   scroll-snap-align: start;
   cursor: pointer;
-  background: #fff;
+  background: transparent;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(5, 0, 51, 0.08);
   overflow: hidden;
 }
 
@@ -306,7 +307,7 @@
   position: relative;
   width: 100%;
   height: 173px;
-  border-radius: 0;
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -330,39 +331,45 @@
   position: absolute;
   top: var(--wel-sem-spacingstatic-inset-xs, 8px);
   right: var(--wel-sem-spacingstatic-inset-xs, 8px);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: transparent;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 1px 4px rgba(5, 0, 51, 0.12);
-  color: var(--wel-sem-color-on-surface-hi, #232136);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.home-page__event-card-fav:focus-visible {
+  outline: 2px solid var(--wel-sem-color-outline-accent, #2d4cd5);
+  outline-offset: 2px;
 }
 
 .home-page__event-card-fav svg {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
 }
 
 .home-page__event-card-body {
   display: flex;
   flex-direction: column;
   gap: var(--wel-sem-spacingstatic-stack-xs, 8px);
-  padding: 0 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  padding: 0;
+  margin: 0;
   width: 100%;
   box-sizing: border-box;
+  background: transparent;
 }
 
 .home-page__event-card-meta {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px) 0 0;
   width: 100%;
   box-sizing: border-box;
 }
@@ -426,14 +433,16 @@
   line-height: var(--wel-sem-lineheights-label-sm, 16px);
   letter-spacing: var(--wel-sem-letterspacing-label, 0);
   color: var(--wel-sem-color-neutral-container, #6d7072);
-  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px) 0 0;
 }
 
 .home-page__event-card-points {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
   background: var(--ads-colors-loyalty-container-low, #f3efff);
   padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-xs, 8px);
@@ -457,13 +466,18 @@
   white-space: nowrap;
 }
 
+.home-page__event-card-points .home-page__event-card-cash-from {
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  font-weight: 400;
+}
+
 .home-page__event-card-timer {
   display: flex;
   align-items: center;
   gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
   width: 100%;
   box-sizing: border-box;
-  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  background: var(--wel-sem-color-surface-container-mid, #f2f4f7);
   padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-2xs, 4px);
   border-radius: var(--wel-sem-borderradius-element-static-md, 4px);
   font-size: var(--wel-sem-fontsizes-caption, 12px);
@@ -483,15 +497,8 @@
   font-weight: 500;
 }
 
-.home-page__event-card-cash {
-  font: var(--wel-typography-label-strong-03);
-  color: var(--wel-sem-color-on-surface-hi, #232136);
-}
-
 .home-page__event-card-cash-from {
   font: var(--wel-typography-label-default-03);
-  color: var(--wel-sem-color-on-surface-low, #5e5b73);
-  margin-right: 4px;
 }
 
 /* ── Top experiences carousel ─────────────────────────────────────────── */
@@ -644,10 +651,10 @@
   color: var(--wel-sem-color-on-surface-hi, #232136);
 }
 
-/* ── Suggested for you (gold tier) ────────────────────────────────────── */
+/* ── Suggested for you (loyalty accent bar matches header tier) ─────────── */
 .home-page__suggested {
-  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
-  padding: 32px 0 24px 24px;
+  background: #f3f4fb;
+  padding: 20px 0 16px 24px;
   position: relative;
 }
 
@@ -658,13 +665,28 @@
   top: 0;
   width: 24px;
   height: 100%;
-  background: var(--wel-sem-color-gold, #af913a);
   border-top-right-radius: var(--wel-sem-borderradius-container-high, 6px);
   border-bottom-right-radius: var(--wel-sem-borderradius-container-high, 6px);
 }
 
-.home-page__suggested .home-page__section-title {
-  color: var(--wel-sem-color-gold, #af913a);
+.home-page__suggested--classic::before {
+  background: var(--marketplace-header-points-classic, var(--wel-sem-color-on-family, #050033));
+}
+
+.home-page__suggested--silver::before {
+  background: var(--marketplace-header-points-silver, #9ca3af);
+}
+
+.home-page__suggested--gold::before {
+  background: var(--marketplace-header-points-gold, #af913a);
+}
+
+.home-page__suggested--platinum::before {
+  background: var(--marketplace-header-points-platinum, #6b7280);
+}
+
+.home-page__suggested--diamond::before {
+  background: var(--marketplace-header-points-diamond, var(--wel-sem-color-family, #e8c6e8));
 }
 
 /* ── Popular cities ───────────────────────────────────────────────────── */
@@ -1007,10 +1029,14 @@
   display: block;
 }
 
+/*
+ * Figma 💠 loyalty-card (6411:13937): 107×71 (~1.507:1). Sheet art is 270×130 (~2.08:1);
+ * uniform width-only scale kept a “long rectangle”; use scaleX + scaleY to land on Figma ratio.
+ */
 .home-page__banner-loyalty-card {
   position: absolute;
   left: 28px;
-  bottom: -30px;
+  bottom: -22px;
   transform: none;
   width: 107px;
   height: 71px;
@@ -1018,12 +1044,66 @@
   overflow: hidden;
   filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
   z-index: 2;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.home-page__banner-loyalty-card-img {
+.home-page__banner-loyalty-card-scale {
+  position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+}
+
+/* Gradient only: Figma 107×71 frame (non-uniform scale of 270×130). */
+.home-page__banner-loyalty-card-bg.loyalty-sheet__card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 270px;
+  height: 130px;
+  margin: -65px 0 0 -135px;
+  transform: scale(calc(107 / 270), calc(71 / 130));
+  transform-origin: center center;
   display: block;
+  flex-direction: unset;
+  justify-content: unset;
+  align-items: unset;
+  pointer-events: none;
+}
+
+/* Tier + logo: sheet layout at 270×130, uniform scale only (no stretch). */
+.home-page__banner-loyalty-card-front-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home-page__banner-loyalty-card-front {
+  position: relative;
+  width: 270px;
+  height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transform: scale(calc(107 / 270));
+  transform-origin: center center;
+}
+
+.home-page__banner-loyalty-card-front--diamond .loyalty-sheet__card-tier {
+  color: var(--wel-sem-color-on-family, #050033);
+}
+
+.home-page__banner-loyalty-card-front--diamond .loyalty-sheet__card-logo path {
+  fill: var(--wel-sem-color-on-family, #050033);
 }
 
 .home-page__banner-content {
@@ -1129,7 +1209,7 @@
 
   .home-page__banner-loyalty-card {
     left: 24px;
-    bottom: -15px;
+    bottom: -10px;
     transform: none;
   }
 
@@ -1252,11 +1332,12 @@
 
   .home-page__banner-loyalty-card {
     left: -80px;
-    top: 50%;
+    top: 48%;
     bottom: auto;
     transform: translateY(-50%);
     width: 213px;
-    height: 142px;
+    /* Same ratio as Figma 107×71 */
+    height: calc(213px * 71 / 107);
   }
 
   .home-page__banner-content {
@@ -1276,6 +1357,14 @@
   .home-page__banner-title {
     font: 700 26px/32px 'Montserrat', sans-serif;
     letter-spacing: 0.5px;
+  }
+
+  .home-page__banner-loyalty-card-bg.loyalty-sheet__card {
+    transform: scale(calc(213 / 270), calc(213 * 71 / 107 / 130));
+  }
+
+  .home-page__banner-loyalty-card-front {
+    transform: scale(calc(213 / 270));
   }
 }
 
@@ -1695,8 +1784,8 @@
 
   /* ── Suggested for you (desktop) ─────────────────────────────────── */
   .home-page__suggested {
-    background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
-    padding: 64px 0 24px 24px;
+    background: #f3f4fb;
+    padding: 32px 0 16px 24px;
     position: relative;
   }
 

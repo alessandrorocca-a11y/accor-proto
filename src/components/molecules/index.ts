@@ -18,3 +18,5 @@ export { TermsDialog } from './TermsDialog';
 export { Textarea } from './Textarea';
 export { Toggle } from './Toggle';
 export { VoyagerBadge, VoyagerDialog, useVoyagerGate } from './VoyagerExclusive/VoyagerExclusive';
+export { YouMayAlsoLike } from './YouMayAlsoLike';
+export type { YouMayAlsoLikeProps } from './YouMayAlsoLike';

@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import {
   Button,
+  IconHeart,
   Link,
   MarketplaceHeader,
   Menu,
@@ -9,6 +10,7 @@ import {
   VoyagerBadge,
   VoyagerDialog,
   useVoyagerGate,
+  YouMayAlsoLike,
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
@@ -57,20 +59,6 @@ function IconBell({ filled }: { filled: boolean }) {
       <path
         d="M18 8A6 6 0 1 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0"
         stroke={filled ? '#2D4CD5' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -686,6 +674,9 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
             </p>
             <Link href="#" onClick={(e) => { e.preventDefault(); setTermsOpen(true); }}>Read more</Link>
           </section>
+
+          <hr className="auction-page__divider" aria-hidden />
+          <YouMayAlsoLike event={eventData ?? null} excludeEventId={eventId} />
         </main>
 
         <aside className="auction-page__sidebar">

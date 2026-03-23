@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react';
-import { Avatar } from '@/components/atoms';
+import { Avatar, IconHeart } from '@/components/atoms';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
 
@@ -105,20 +105,6 @@ function IconStar({ className }: { className?: string }) {
     <svg className={className} width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
       <path d="M7.64903 4.06886C7.7899 3.77365 8.21012 3.77365 8.35099 4.06886L9.25318 5.95956C9.30987 6.07836 9.42282 6.16043 9.55334 6.17763L11.6303 6.45141C11.9546 6.49416 12.0844 6.89381 11.8472 7.11901L10.3278 8.5613C10.2324 8.65194 10.1892 8.78472 10.2132 8.91416L10.5946 10.9741C10.6542 11.2957 10.3142 11.5427 10.0267 11.3867L8.18552 10.3873C8.06982 10.3246 7.9302 10.3246 7.8145 10.3873L5.97329 11.3867C5.68581 11.5427 5.34584 11.2957 5.4054 10.9741L5.78683 8.91416C5.8108 8.78472 5.76766 8.65194 5.67218 8.5613L4.15282 7.11901C3.91559 6.89381 4.04544 6.49416 4.36974 6.45141L6.44668 6.17763C6.5772 6.16043 6.69015 6.07836 6.74684 5.95956L7.64903 4.06886Z" fill="currentColor" stroke="currentColor" strokeLinejoin="round" />
       <circle cx="8" cy="8" r="6" stroke="currentColor" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled, className }: { filled: boolean; className?: string }) {
-  return (
-    <svg className={className} width="32" height="32" viewBox="0 0 32 32" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M16 27.5l-1.8-1.6C6.4 18.2 2 14 2 9.2 2 5.5 4.9 2.5 8.5 2.5c2.4 0 4.6 1.2 6 3 1.4-1.8 3.6-3 6-3 3.6 0 6.5 3 6.5 6.7 0 4.8-4.4 9-12.2 16.7L16 27.5z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
     </svg>
   );
 }
@@ -356,7 +342,7 @@ export function MarketplaceHeader({
               aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
               aria-pressed={isFavourite}
             >
-              <IconHeart filled={isFavourite} />
+              <IconHeart filled={isFavourite} size={32} />
             </button>
           )}
         </div>

@@ -25,9 +25,9 @@ export const TEST_PROFILES: Record<
   TestProfileId,
   { points: number; loyaltyTier: LoyaltyTier; isVoyagerSubscriber: boolean }
 > = {
-  silver: { points: 3000, loyaltyTier: 'silver', isVoyagerSubscriber: false },
-  gold: { points: 24000, loyaltyTier: 'gold', isVoyagerSubscriber: false },
-  goldVoyager: { points: 24000, loyaltyTier: 'gold', isVoyagerSubscriber: true },
+  silver: { points: 2500, loyaltyTier: 'silver', isVoyagerSubscriber: false },
+  gold: { points: 15000, loyaltyTier: 'gold', isVoyagerSubscriber: false },
+  goldVoyager: { points: 25000, loyaltyTier: 'gold', isVoyagerSubscriber: true },
 };
 
 const STORAGE_KEY = 'accor-test-profile';

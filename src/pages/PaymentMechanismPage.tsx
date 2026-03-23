@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
+  IconHeart,
   MarketplaceHeader,
   Menu,
   MarketingTag,
@@ -68,7 +69,7 @@ const ALL_EVENTS: PaymentEvent[] = EVENT_REGISTRY.map((e) => ({
   eventTag: e.eventTag,
   paymentType: paymentTypeMap[e.pageType] ?? 'cash',
   points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
-  cashPrice: e.pageType === 'standard' ? `${formatPoints(e.points)} pts` : undefined,
+  cashPrice: e.pageType === 'standard' ? formatPoints(e.points) : undefined,
   hasTimer: !!e.msLeft,
   msLeft: e.msLeft,
   marketingTag: e.marketingTag,
@@ -147,20 +148,6 @@ function IconChevronDown() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
     </svg>
   );
 }
@@ -347,7 +334,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
         title: e.title,
         eventTag: e.eventTag ?? '',
         paymentLabel: paymentLabel(e.paymentType) || (e.paymentType === 'cash' ? 'Cash' : e.paymentType === 'flex' ? 'Flex' : ''),
-        points: e.points ? `${e.points} Reward Points` : e.cashPrice ?? '',
+        points: e.points ? String(e.points) : e.cashPrice ?? '',
         countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
       })),
     [favourites],
@@ -656,7 +643,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                               <div className="category-page__card-points-badge">
                                 <IconStar />
                                 <span className="category-page__card-points-value">
-                                  {event.points} Reward Points
+                                  {event.points}
                                 </span>
                               </div>
                             ) : null}
@@ -669,7 +656,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                               <div className="category-page__card-points-badge">
                                 <IconStar />
                                 <span className="category-page__card-points-value">
-                                  {event.points} Reward Points
+                                  {event.points}
                                 </span>
                               </div>
                             ) : null}
@@ -683,9 +670,10 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                         )}
 
                         {event.paymentType === 'cash' && event.cashPrice ? (
-                          <div className="category-page__card-cash">
+                          <div className="category-page__card-points-badge">
                             <span className="category-page__card-cash-from">from</span>
-                            <span className="category-page__card-cash-price">{event.cashPrice}</span>
+                            <IconStar />
+                            <span className="category-page__card-points-value">{event.cashPrice}</span>
                           </div>
                         ) : null}
 

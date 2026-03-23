@@ -2,11 +2,13 @@ import { useState, useRef, useCallback, useMemo } from 'react';
 import {
   Button,
   Countdown,
+  IconHeart,
   Input,
   Link,
   MarketplaceHeader,
   Menu,
   TermsDialog,
+  YouMayAlsoLike,
 } from '@/components';
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
@@ -48,20 +50,6 @@ function IconChevronLeft() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
     </svg>
   );
 }
@@ -937,6 +925,11 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             </p>
             <Link href="#" onClick={(e) => { e.preventDefault(); setTermsOpen(true); }}>Read more</Link>
           </section>
+
+          <hr className="auction-page__divider" aria-hidden />
+          {plan ? (
+            <YouMayAlsoLike contextCategory={plan.category} contextCity={plan.city} />
+          ) : null}
         </main>
 
         {/* Sidebar */}

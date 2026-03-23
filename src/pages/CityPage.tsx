@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { getNearbyCities, searchCities } from '@/data/europeanCities';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
@@ -200,8 +200,8 @@ function registryToCard(e: EventData): EventCard {
     date: e.date,
     image: e.image,
     paymentType: ptMap[e.pageType] ?? 'cash',
-    points: e.pageType !== 'standard' ? `${formatPoints(e.points)} Reward Points` : undefined,
-    cashPrice: e.pageType === 'standard' ? `${formatPoints(e.points)} Points` : undefined,
+    points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
+    cashPrice: e.pageType === 'standard' ? formatPoints(e.points) : undefined,
     hasTimer: !!e.msLeft,
     msLeft: e.msLeft,
     eventTag: e.eventTag,
@@ -276,14 +276,6 @@ function IconPin() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z" stroke={filled ? '#B40875' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -363,6 +355,7 @@ function EventCardCompact({
           type="button"
           className="city-page__event-card-fav"
           aria-label={isFav ? 'Remove from favourites' : 'Add to favourites'}
+          aria-pressed={isFav}
           onClick={(e) => { e.stopPropagation(); onFavToggle(); }}
         >
           <IconHeart filled={isFav} />
@@ -389,10 +382,11 @@ function EventCardCompact({
                 </div>
               ) : null}
               {event.paymentType === 'cash' && event.cashPrice ? (
-                <span className="city-page__event-card-cash">
+                <div className="city-page__event-card-points">
                   <span className="city-page__event-card-cash-from">from</span>
-                  {event.cashPrice}
-                </span>
+                  <IconStar />
+                  <span>{event.cashPrice}</span>
+                </div>
               ) : null}
             </div>
           ) : null}
@@ -443,6 +437,8 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
   useEffect(() => { window.scrollTo(0, 0); }, [cityName]);
 
   const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
+  const showAccorPlusEventsSection =
+    isVoyagerSubscriber || (userLoyaltyTier !== 'silver' && userLoyaltyTier !== 'gold');
   const { toggleFavourite: toggleFavCtx } = useFavourites();
 
   const config = CITY_CONFIGS[cityName] ?? DEFAULT_CONFIG;
@@ -557,7 +553,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         title: evt.title,
         eventTag: evt.eventTag ?? '',
         paymentLabel: getPaymentLabel(evt.pageType),
-        points: `${formatPoints(evt.points)} Reward Points`,
+        points: formatPoints(evt.points),
         countdown: '',
       });
     }
@@ -726,9 +722,11 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         })()}
       </section>
 
-      <EventSection title="ALL Accor Plus events" events={apVisible} favourites={favourites} onToggleFav={toggleFav}
-        page={apPage} totalPages={apTotalPages} onPrev={() => setApPage((p) => Math.max(1, p - 1))} onNext={() => setApPage((p) => Math.min(apTotalPages, p + 1))}
-        linkHash="#category/all-accor-plus-exclusives" />
+      {showAccorPlusEventsSection ? (
+        <EventSection title="ALL Accor Plus events" events={apVisible} favourites={favourites} onToggleFav={toggleFav}
+          page={apPage} totalPages={apTotalPages} onPrev={() => setApPage((p) => Math.max(1, p - 1))} onNext={() => setApPage((p) => Math.min(apTotalPages, p + 1))}
+          linkHash="#category/all-accor-plus-exclusives" />
+      ) : null}
 
       {/* ── Categories ─────────────────────────────────────────────── */}
       <section className="city-page__section city-page__categories">

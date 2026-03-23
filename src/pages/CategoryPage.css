@@ -246,7 +246,6 @@
   cursor: pointer;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(5, 0, 51, 0.08);
   padding: 12px 16px 12px 12px;
   overflow: hidden;
 }
@@ -279,24 +278,28 @@
   position: absolute;
   top: var(--wel-sem-spacingstatic-inset-xs, 8px);
   right: var(--wel-sem-spacingstatic-inset-xs, 8px);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: transparent;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
   z-index: 1;
-  color: var(--wel-sem-color-on-surface-hi, #232136);
-  box-shadow: 0 1px 4px rgba(5, 0, 51, 0.12);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.category-page__card-fav:focus-visible {
+  outline: 2px solid var(--wel-sem-color-outline-accent, #2d4cd5);
+  outline-offset: 2px;
 }
 
 .category-page__card-fav svg {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
 }
 
 .category-page__card-logo {
@@ -395,10 +398,12 @@
 }
 
 .category-page__card-points-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
   padding: 2px var(--wel-sem-spacingstatic-inset-xs, 8px) 2px var(--wel-sem-spacingstatic-inset-2xs, 4px);
   background: var(--ads-colors-loyalty-container-low, #f3efff);
@@ -418,6 +423,11 @@
   line-height: var(--wel-sem-lineheights-label-md, 20px);
   letter-spacing: var(--wel-sem-letterspacing-label, 0);
   color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
+}
+
+.category-page__card-points-badge .category-page__card-cash-from {
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  font-weight: 400;
 }
 
 .category-page__card-cash {

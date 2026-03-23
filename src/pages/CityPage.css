@@ -189,9 +189,8 @@ button.city-page__numbered-card {
   gap: var(--wel-sem-spacingstatic-stack-sm, 12px);
   scroll-snap-align: start;
   cursor: pointer;
-  background: #fff;
+  background: transparent;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(5, 0, 51, 0.08);
   overflow: hidden;
 }
 
@@ -199,7 +198,7 @@ button.city-page__numbered-card {
   position: relative;
   width: 100%;
   height: 173px;
-  border-radius: 0;
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -223,39 +222,45 @@ button.city-page__numbered-card {
   position: absolute;
   top: var(--wel-sem-spacingstatic-inset-xs, 8px);
   right: var(--wel-sem-spacingstatic-inset-xs, 8px);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: transparent;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 1px 4px rgba(5, 0, 51, 0.12);
-  color: var(--wel-sem-color-on-surface-hi, #232136);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.city-page__event-card-fav:focus-visible {
+  outline: 2px solid var(--wel-sem-color-outline-accent, #2d4cd5);
+  outline-offset: 2px;
 }
 
 .city-page__event-card-fav svg {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
 }
 
 .city-page__event-card-body {
   display: flex;
   flex-direction: column;
   gap: var(--wel-sem-spacingstatic-stack-xs, 8px);
-  padding: 0 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  padding: 0;
+  margin: 0;
   width: 100%;
   box-sizing: border-box;
+  background: transparent;
 }
 
 .city-page__event-card-meta {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px) 0 0;
   width: 100%;
   box-sizing: border-box;
 }
@@ -319,14 +324,16 @@ button.city-page__numbered-card {
   line-height: var(--wel-sem-lineheights-label-sm, 16px);
   letter-spacing: var(--wel-sem-letterspacing-label, 0);
   color: var(--wel-sem-color-neutral-container, #6d7072);
-  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px);
+  padding: 0 var(--wel-sem-spacingstatic-inset-xs, 8px) 0 0;
 }
 
 .city-page__event-card-points {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
   background: var(--ads-colors-loyalty-container-low, #f3efff);
   padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-xs, 8px);
@@ -350,13 +357,18 @@ button.city-page__numbered-card {
   white-space: nowrap;
 }
 
+.city-page__event-card-points .city-page__event-card-cash-from {
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+  font-weight: 400;
+}
+
 .city-page__event-card-timer {
   display: flex;
   align-items: center;
   gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
   width: 100%;
   box-sizing: border-box;
-  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  background: var(--wel-sem-color-surface-container-mid, #f2f4f7);
   padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-2xs, 4px);
   border-radius: var(--wel-sem-borderradius-element-static-md, 4px);
   font-size: var(--wel-sem-fontsizes-caption, 12px);
@@ -376,15 +388,8 @@ button.city-page__numbered-card {
   font-weight: 500;
 }
 
-.city-page__event-card-cash {
-  font: var(--wel-typography-label-strong-03, 500 12px/16px 'Roboto', sans-serif);
-  color: var(--wel-sem-color-on-surface-hi, #232136);
-}
-
 .city-page__event-card-cash-from {
   font: var(--wel-typography-label-default-03, 400 12px/16px 'Roboto', sans-serif);
-  color: var(--wel-sem-color-on-surface-low, #5e5b73);
-  margin-right: 4px;
 }
 
 /* ── Near-you map ────────────────────────────────────────────────── */

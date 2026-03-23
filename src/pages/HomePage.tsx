@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
 import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
-import { useUser } from '@/context/UserContext';
+import { useUser, type LoyaltyTier } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
   sortEventsForProfileAndPointsBalance,
@@ -84,8 +84,8 @@ function registryToCard(e: EventData): EventCard {
     date: e.date,
     image: e.image,
     paymentType: ptMap[e.pageType] ?? 'cash',
-    points: e.pageType !== 'standard' ? `${formatPoints(e.points)} Reward Points` : undefined,
-    cashPrice: e.pageType === 'standard' ? `${formatPoints(e.points)} Points` : undefined,
+    points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
+    cashPrice: e.pageType === 'standard' ? formatPoints(e.points) : undefined,
     hasTimer: !!e.msLeft,
     msLeft: e.msLeft,
     eventTag: e.eventTag,
@@ -180,9 +180,79 @@ const ALL_CITIES = [
 ];
 
 const BANNER_IMAGE = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=320&fit=crop&q=80';
-const BANNER_LOYALTY_CARD_IMAGE = '/banner-loyalty-card.svg';
 
+const LOYALTY_CARD_LOGO_PATHS = (
+  <>
+    <path d="M37.9997 31.8653L36.3392 29.8751C37.2136 29.6723 37.7471 29.1668 37.7471 28.2871C37.7471 27.2932 36.9111 26.7953 35.8521 26.7953H32.5333V31.8653H33.4133V29.947H35.3871L36.9077 31.8653H37.9997ZM33.4133 27.5822H35.8764C36.4831 27.5822 36.8453 27.8689 36.8453 28.3489C36.8453 28.8418 36.465 29.1602 35.8764 29.1602H33.4133V27.5822Z" fill="white" />
+    <path d="M2.59991 26.7953L0.00423325 31.8653H0.999631L1.55328 30.7362H4.50927L5.06292 31.8653H6.081L3.48532 26.7953H2.59991ZM1.9392 29.9494L3.03134 27.722L4.12347 29.9494H1.9392Z" fill="white" />
+    <path d="M10.736 27.4622C11.5636 27.4622 12.2458 27.7767 12.5957 28.329L13.3055 27.8482C12.8085 27.1462 11.9292 26.6608 10.736 26.6608C8.80719 26.6608 7.69913 27.9291 7.69913 29.3303C7.69913 30.7315 8.80719 32 10.736 32C11.9294 32 12.8085 31.5147 13.3055 30.8127L12.5957 30.3319C12.2458 30.8842 11.5636 31.1986 10.736 31.1986C9.43923 31.1986 8.60136 30.4653 8.60136 29.3305C8.60136 28.1956 9.43923 27.4622 10.736 27.4622Z" fill="white" />
+    <path d="M18.7279 27.4622C19.5554 27.4622 20.2377 27.7767 20.5876 28.329L21.2973 27.8482C20.8004 27.1462 19.9211 26.6608 18.7279 26.6608C16.799 26.6608 15.691 27.9291 15.691 29.3303C15.691 30.7315 16.799 32 18.7279 32C19.9212 32 20.8004 31.5147 21.2973 30.8127L20.5876 30.3319C20.2377 30.8842 19.5554 31.1986 18.7279 31.1986C17.4311 31.1986 16.5932 30.4653 16.5932 29.3305C16.5932 28.1956 17.4311 27.4622 18.7279 27.4622Z" fill="white" />
+    <path d="M26.7208 26.6608C24.7919 26.6608 23.6839 27.9291 23.6839 29.3303C23.6839 30.7315 24.7919 31.9999 26.7208 31.9999C28.6496 31.9999 29.7577 30.7315 29.7577 29.3303C29.7577 27.9291 28.6496 26.6608 26.7208 26.6608ZM26.7208 31.2072C25.424 31.2072 24.5861 30.4705 24.5861 29.3303C24.5861 28.1901 25.424 27.4534 26.7208 27.4534C28.0176 27.4534 28.8555 28.1903 28.8555 29.3303C28.8555 30.4704 28.0176 31.2072 26.7208 31.2072Z" fill="white" />
+    <path d="M29.5938 22.5944H26.3473C24.9793 22.5944 24.2908 22.2917 23.7891 21.6319C23.2547 20.929 23.2547 19.8581 23.2547 18.8433V0.0096291H27.4283V19.4476C27.4283 20.9863 27.5996 22.0875 29.5939 22.5263V22.5945L29.5938 22.5944Z" fill="white" />
+    <path d="M21.152 22.5912H15.9292L12.09 14.5315C9.9944 15.6791 8.79891 18.3367 6.67391 20.092C5.5912 20.9863 4.32395 21.7838 2.7447 22.3231C2.02982 22.5672 0.815335 22.8829 0.358166 22.9286C0.167371 22.9476 0.033037 22.9399 0.00461532 22.8704C-0.0173064 22.8168 0.0353313 22.7757 0.238872 22.6767C0.470961 22.5637 1.43003 22.1639 2.03097 21.7419C2.78115 21.2153 3.21092 20.6455 3.24469 20.206C3.03822 19.4736 1.56921 17.8478 3.072 14.8647C3.61124 13.7944 4.07759 13.0241 4.41164 12.2499C4.7954 11.3606 5.06687 10.1078 5.15927 9.1767C5.16462 9.12239 5.17431 9.12508 5.20375 9.15526C5.93558 9.90041 8.77176 12.8421 8.36175 15.7663C9.30476 15.4013 10.9404 14.293 11.6946 13.7016C12.4907 13.0773 13.0095 12.426 13.8527 12.4115C14.6079 12.3986 14.6729 12.7622 15.2743 12.8421C15.4233 12.8619 15.6438 12.8328 15.7578 12.7765C15.804 12.7538 15.7927 12.703 15.7228 12.6864C14.9027 12.4915 14.7063 11.8183 13.6462 11.8183C12.6952 11.8183 11.9383 12.7003 11.3901 13.0624L8.70816 7.43218C7.58646 5.07744 7.92892 3.36617 10.3908 0L21.152 22.5912Z" fill="white" />
+    <path d="M37.9999 22.5944H34.7534C33.3854 22.5944 32.6969 22.2917 32.1952 21.6319C31.6608 20.929 31.6608 19.8581 31.6608 18.8433V0.0096291H35.8343V19.4476C35.8343 20.9863 36.0056 22.0875 38 22.5263V22.5945L37.9999 22.5944Z" fill="white" />
+  </>
+);
 
+/** Same ALL card art as the loyalty sheet (points button), for banner + sheet. Banner: bg only is non-uniform-scaled; tier + logo use uniform scale. */
+function LoyaltyProgramCardVisual({
+  tier,
+  className,
+  variant = 'sheet',
+  'aria-label': ariaLabel,
+}: {
+  tier: LoyaltyTier;
+  className?: string;
+  variant?: 'sheet' | 'banner';
+  'aria-label'?: string;
+}) {
+  if (variant === 'banner') {
+    return (
+      <>
+        <div
+          className={`loyalty-sheet__card loyalty-sheet__card--${tier} home-page__banner-loyalty-card-bg`}
+          aria-hidden
+        />
+        <div className="home-page__banner-loyalty-card-front-wrap">
+          <div
+            className={[
+              'home-page__banner-loyalty-card-front',
+              tier === 'diamond' ? 'home-page__banner-loyalty-card-front--diamond' : '',
+            ].filter(Boolean).join(' ')}
+          >
+            <span className="loyalty-sheet__card-tier">{tier.toUpperCase()}</span>
+            <svg className="loyalty-sheet__card-logo" width="76" height="64" viewBox="0 0 38 32" fill="none" aria-hidden>
+              {LOYALTY_CARD_LOGO_PATHS}
+            </svg>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  /* Sheet dialog: 270×180 frame; gradient scales vertically only; tier + logo keep 270×130 proportions */
+  return (
+    <div
+      className={['loyalty-sheet__card-stack', className].filter(Boolean).join(' ')}
+      {...(ariaLabel ? { role: 'img' as const, 'aria-label': ariaLabel } : {})}
+    >
+      <div className={`loyalty-sheet__card loyalty-sheet__card--${tier} loyalty-sheet__card-bg`} aria-hidden />
+      <div className="loyalty-sheet__card-front-wrap">
+        <div
+          className={[
+            'loyalty-sheet__card-front',
+            tier === 'diamond' ? 'loyalty-sheet__card-front--diamond' : '',
+          ].filter(Boolean).join(' ')}
+        >
+          <span className="loyalty-sheet__card-tier">{tier.toUpperCase()}</span>
+          <svg className="loyalty-sheet__card-logo" width="76" height="64" viewBox="0 0 38 32" fill="none" aria-hidden>
+            {LOYALTY_CARD_LOGO_PATHS}
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ── Helpers ──────────────────────────────────────────────────────────── */
 
@@ -274,20 +344,6 @@ function IconChevronRight() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
     </svg>
   );
 }
@@ -520,6 +576,7 @@ function EventCardCompact({
           type="button"
           className="home-page__event-card-fav"
           aria-label={isFav ? 'Remove from favourites' : 'Add to favourites'}
+          aria-pressed={isFav}
           onClick={(e) => { e.stopPropagation(); onFavToggle(); }}
         >
           <IconHeart filled={isFav} />
@@ -546,10 +603,11 @@ function EventCardCompact({
                 </div>
               ) : null}
               {event.paymentType === 'cash' && event.cashPrice ? (
-                <span className="home-page__event-card-cash">
+                <div className="home-page__event-card-points">
                   <span className="home-page__event-card-cash-from">from</span>
-                  {event.cashPrice}
-                </span>
+                  <IconStar />
+                  <span>{event.cashPrice}</span>
+                </div>
               ) : null}
             </div>
           ) : null}
@@ -663,6 +721,23 @@ export default function HomePage() {
       ).map(registryToCard),
     [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
+
+  const SUGGESTED_FOR_YOU_EVENTS = useMemo(
+    () =>
+      takeSortedWithVoyagerExclusiveCap(
+        sortEventsForProfileAndPointsBalance(
+          EVENT_REGISTRY.filter((e) => isAccor(e)),
+          testProfileId,
+          USER_POINTS,
+          'home-suggested-for-you',
+        ),
+        isVoyagerSubscriber,
+        8,
+        2,
+      ).map(registryToCard),
+    [testProfileId, USER_POINTS, isVoyagerSubscriber],
+  );
+
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -758,6 +833,10 @@ export default function HomePage() {
   const auTotalPages = Math.ceil(AUCTION_EVENTS.length / perPage);
   const auVisible = AUCTION_EVENTS.slice((auPage - 1) * perPage, auPage * perPage);
 
+  const [sgPage, setSgPage] = useState(1);
+  const sgTotalPages = Math.ceil(SUGGESTED_FOR_YOU_EVENTS.length / perPage);
+  const sgVisible = SUGGESTED_FOR_YOU_EVENTS.slice((sgPage - 1) * perPage, sgPage * perPage);
+
   const [citiesPage, setCitiesPage] = useState(1);
   const citiesTotalPages = Math.ceil(POPULAR_CITIES.length / perPage);
   const citiesVisible = POPULAR_CITIES.slice((citiesPage - 1) * perPage, citiesPage * perPage);
@@ -783,7 +862,7 @@ export default function HomePage() {
         title: evt.title,
         eventTag: evt.eventTag ?? '',
         paymentLabel: getPaymentLabel(evt.pageType),
-        points: `${formatPoints(evt.points)} Reward Points`,
+        points: formatPoints(evt.points),
         countdown: evt.msLeft ? '' : '',
       });
     }
@@ -793,11 +872,15 @@ export default function HomePage() {
     () =>
       Array.from(
         new Map(
-          [...NEXT_TRIP_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
+          [...NEXT_TRIP_EVENTS, ...SUGGESTED_FOR_YOU_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
         ).values(),
       ),
-    [NEXT_TRIP_EVENTS, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
+    [NEXT_TRIP_EVENTS, SUGGESTED_FOR_YOU_EVENTS, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
   );
+
+  useEffect(() => {
+    setSgPage(1);
+  }, [testProfileId, USER_POINTS]);
 
   const menuFavourites: MenuFavouriteEvent[] = useMemo(
     () =>
@@ -1036,6 +1119,43 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Suggested for you (profile + points + Voyager cap) ───────── */}
+      {SUGGESTED_FOR_YOU_EVENTS.length > 0 ? (
+        <section
+          className={`home-page__section home-page__suggested home-page__suggested--${userLoyaltyTier}`}
+          aria-labelledby="home-suggested-heading"
+        >
+          <div className="home-page__section-header">
+            <h2 id="home-suggested-heading" className="home-page__section-title">
+              Suggested for you
+            </h2>
+            <button
+              type="button"
+              className="home-page__section-link"
+              onClick={() => { window.location.hash = '#category/suggested-for-you'; }}
+            >
+              See all
+            </button>
+          </div>
+          <div className="home-page__scroll">
+            {sgVisible.map((event) => (
+              <EventCardCompact
+                key={event.id}
+                event={event}
+                isFav={favourites.has(event.id)}
+                onFavToggle={() => toggleFavourite(event.id)}
+              />
+            ))}
+          </div>
+          <Pagination
+            current={sgPage}
+            total={sgTotalPages}
+            onPrev={() => setSgPage((p) => Math.max(1, p - 1))}
+            onNext={() => setSgPage((p) => Math.min(sgTotalPages, p + 1))}
+          />
+        </section>
+      ) : null}
+
       {/* ── Event sections (order varies by profile) ─────────────────── */}
       {(() => {
         const makeSection = (key: string, title: string, hash: string, visible: EventCard[], page: number, totalPages: number, onPrev: () => void, onNext: () => void) => (
@@ -1203,8 +1323,14 @@ export default function HomePage() {
       <div className="home-page__banner">
         <div className="home-page__banner-visual">
           <img src={BANNER_IMAGE} alt="" />
-          <div className="home-page__banner-loyalty-card" aria-hidden>
-            <img src={BANNER_LOYALTY_CARD_IMAGE} alt="" className="home-page__banner-loyalty-card-img" />
+          <div
+            className="home-page__banner-loyalty-card"
+            role="img"
+            aria-label={`ALL Accor ${userLoyaltyTier.charAt(0).toUpperCase() + userLoyaltyTier.slice(1)} membership card`}
+          >
+            <div className="home-page__banner-loyalty-card-scale">
+              <LoyaltyProgramCardVisual tier={userLoyaltyTier} variant="banner" />
+            </div>
           </div>
         </div>
         <div className="home-page__banner-content">
@@ -1296,19 +1422,7 @@ export default function HomePage() {
                   <span className="loyalty-sheet__expire">Expire on February 12, 2027</span>
                 </div>
               </div>
-              <div className={`loyalty-sheet__card loyalty-sheet__card--${userLoyaltyTier}`}>
-                <span className="loyalty-sheet__card-tier">{userLoyaltyTier.toUpperCase()}</span>
-                <svg className="loyalty-sheet__card-logo" width="76" height="64" viewBox="0 0 38 32" fill="none" aria-hidden>
-                  <path d="M37.9997 31.8653L36.3392 29.8751C37.2136 29.6723 37.7471 29.1668 37.7471 28.2871C37.7471 27.2932 36.9111 26.7953 35.8521 26.7953H32.5333V31.8653H33.4133V29.947H35.3871L36.9077 31.8653H37.9997ZM33.4133 27.5822H35.8764C36.4831 27.5822 36.8453 27.8689 36.8453 28.3489C36.8453 28.8418 36.465 29.1602 35.8764 29.1602H33.4133V27.5822Z" fill="white"/>
-                  <path d="M2.59991 26.7953L0.00423325 31.8653H0.999631L1.55328 30.7362H4.50927L5.06292 31.8653H6.081L3.48532 26.7953H2.59991ZM1.9392 29.9494L3.03134 27.722L4.12347 29.9494H1.9392Z" fill="white"/>
-                  <path d="M10.736 27.4622C11.5636 27.4622 12.2458 27.7767 12.5957 28.329L13.3055 27.8482C12.8085 27.1462 11.9292 26.6608 10.736 26.6608C8.80719 26.6608 7.69913 27.9291 7.69913 29.3303C7.69913 30.7315 8.80719 32 10.736 32C11.9294 32 12.8085 31.5147 13.3055 30.8127L12.5957 30.3319C12.2458 30.8842 11.5636 31.1986 10.736 31.1986C9.43923 31.1986 8.60136 30.4653 8.60136 29.3305C8.60136 28.1956 9.43923 27.4622 10.736 27.4622Z" fill="white"/>
-                  <path d="M18.7279 27.4622C19.5554 27.4622 20.2377 27.7767 20.5876 28.329L21.2973 27.8482C20.8004 27.1462 19.9211 26.6608 18.7279 26.6608C16.799 26.6608 15.691 27.9291 15.691 29.3303C15.691 30.7315 16.799 32 18.7279 32C19.9212 32 20.8004 31.5147 21.2973 30.8127L20.5876 30.3319C20.2377 30.8842 19.5554 31.1986 18.7279 31.1986C17.4311 31.1986 16.5932 30.4653 16.5932 29.3305C16.5932 28.1956 17.4311 27.4622 18.7279 27.4622Z" fill="white"/>
-                  <path d="M26.7208 26.6608C24.7919 26.6608 23.6839 27.9291 23.6839 29.3303C23.6839 30.7315 24.7919 31.9999 26.7208 31.9999C28.6496 31.9999 29.7577 30.7315 29.7577 29.3303C29.7577 27.9291 28.6496 26.6608 26.7208 26.6608ZM26.7208 31.2072C25.424 31.2072 24.5861 30.4705 24.5861 29.3303C24.5861 28.1901 25.424 27.4534 26.7208 27.4534C28.0176 27.4534 28.8555 28.1903 28.8555 29.3303C28.8555 30.4704 28.0176 31.2072 26.7208 31.2072Z" fill="white"/>
-                  <path d="M29.5938 22.5944H26.3473C24.9793 22.5944 24.2908 22.2917 23.7891 21.6319C23.2547 20.929 23.2547 19.8581 23.2547 18.8433V0.0096291H27.4283V19.4476C27.4283 20.9863 27.5996 22.0875 29.5939 22.5263V22.5945L29.5938 22.5944Z" fill="white"/>
-                  <path d="M21.152 22.5912H15.9292L12.09 14.5315C9.9944 15.6791 8.79891 18.3367 6.67391 20.092C5.5912 20.9863 4.32395 21.7838 2.7447 22.3231C2.02982 22.5672 0.815335 22.8829 0.358166 22.9286C0.167371 22.9476 0.033037 22.9399 0.00461532 22.8704C-0.0173064 22.8168 0.0353313 22.7757 0.238872 22.6767C0.470961 22.5637 1.43003 22.1639 2.03097 21.7419C2.78115 21.2153 3.21092 20.6455 3.24469 20.206C3.03822 19.4736 1.56921 17.8478 3.072 14.8647C3.61124 13.7944 4.07759 13.0241 4.41164 12.2499C4.7954 11.3606 5.06687 10.1078 5.15927 9.1767C5.16462 9.12239 5.17431 9.12508 5.20375 9.15526C5.93558 9.90041 8.77176 12.8421 8.36175 15.7663C9.30476 15.4013 10.9404 14.293 11.6946 13.7016C12.4907 13.0773 13.0095 12.426 13.8527 12.4115C14.6079 12.3986 14.6729 12.7622 15.2743 12.8421C15.4233 12.8619 15.6438 12.8328 15.7578 12.7765C15.804 12.7538 15.7927 12.703 15.7228 12.6864C14.9027 12.4915 14.7063 11.8183 13.6462 11.8183C12.6952 11.8183 11.9383 12.7003 11.3901 13.0624L8.70816 7.43218C7.58646 5.07744 7.92892 3.36617 10.3908 0L21.152 22.5912Z" fill="white"/>
-                  <path d="M37.9999 22.5944H34.7534C33.3854 22.5944 32.6969 22.2917 32.1952 21.6319C31.6608 20.929 31.6608 19.8581 31.6608 18.8433V0.0096291H35.8343V19.4476C35.8343 20.9863 36.0056 22.0875 38 22.5263V22.5945L37.9999 22.5944Z" fill="white"/>
-                </svg>
-              </div>
+              <LoyaltyProgramCardVisual tier={userLoyaltyTier} />
               <a
                 href="https://all.accor.com/loyalty-program/en/reasontojoin/index.vhtml"
                 className="loyalty-sheet__link"

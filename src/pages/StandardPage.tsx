@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import {
   Button,
+  IconHeart,
   Link,
   MarketingTag,
   MarketplaceHeader,
   Menu,
   TermsDialog,
+  YouMayAlsoLike,
 } from '@/components';
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
@@ -100,12 +102,6 @@ const ADDON_FLEX = {
   price: 1.85,
 };
 
-const RECOMMENDED_EVENTS = [
-  { id: 'rec-monaco-gp', title: 'Monaco Grand Prix Fairmont Hairpin Experience', date: 'May 24, 2026', image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&h=400&fit=crop', points: '120.000', eventTag: 'Fever Original', paymentLabel: 'Auction', countdown: '10d 08h 15m 42s', route: '#auction/evt-024' },
-  { id: 'rec-spa-sofitel', title: 'Spa & Wellness Day at Sofitel Paris Le Faubourg', date: 'April 5, 2026', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop', points: '18.000', eventTag: 'Hotel Experience', paymentLabel: 'Redeem', countdown: '', route: '#redeem/evt-076' },
-  { id: 'rec-tour-france', title: 'Tour de France VIP Finish Line Experience', date: 'July 19, 2026', image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=400&fit=crop', points: '200.000', eventTag: 'Limitless Experiences', paymentLabel: 'Prize Draw', countdown: '7d 18h 22m 30s', route: '#draw/evt-023' },
-];
-
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 
@@ -121,14 +117,6 @@ function IconBell({ filled }: { filled: boolean }) {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#2D4CD5' : 'none'} aria-hidden>
       <path d="M18 8A6 6 0 1 0 6 8c0 7-3 9-3 9h18s-3-2-3-9ZM13.73 21a2 2 0 0 1-3.46 0" stroke={filled ? '#2D4CD5' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z" stroke={filled ? '#B40875' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -164,15 +152,6 @@ function IconPlus() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconStar() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M7.64903 4.06886C7.7899 3.77365 8.21012 3.77365 8.35099 4.06886L9.25318 5.95956C9.30987 6.07836 9.42282 6.16043 9.55334 6.17763L11.6303 6.45141C11.9546 6.49416 12.0844 6.89381 11.8472 7.11901L10.3278 8.5613C10.2324 8.65194 10.1892 8.78472 10.2132 8.91416L10.5946 10.9741C10.6542 11.2957 10.3142 11.5427 10.0267 11.3867L8.18552 10.3873C8.06982 10.3246 7.9302 10.3246 7.8145 10.3873L5.97329 11.3867C5.68581 11.5427 5.34584 11.2957 5.4054 10.9741L5.78683 8.91416C5.8108 8.78472 5.76766 8.65194 5.67218 8.5613L4.15282 7.11901C3.91559 6.89381 4.04544 6.49416 4.36974 6.45141L6.44668 6.17763C6.5772 6.16043 6.69015 6.07836 6.74684 5.95956L7.64903 4.06886Z" stroke="#3a34ab" />
-      <circle cx="8" cy="8" r="6" stroke="#3a34ab" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -234,7 +213,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const [termsOpen, setTermsOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple-pay' | 'google-pay' | null>(null);
   const [showRewardsSheet, setShowRewardsSheet] = useState(false);
-  const { isFavourite: isGlobalFav, toggleFavourite: toggleGlobalFav, favouritesList, removeFavourite } = useFavourites();
+  const { favouritesList, removeFavourite } = useFavourites();
   const [rewardsPointsUsed, setRewardsPointsUsed] = useState(0);
   const [rewardsStepperValue, setRewardsStepperValue] = useState(0);
   const POINTS_PER_EUR = 100;
@@ -788,25 +767,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           </section>
 
           <hr className="auction-page__divider" aria-hidden />
-          <section className="linkout__recommendations">
-            <h2 className="linkout__recommendations-title">You may also like</h2>
-            <div className="linkout__recommendations-scroll">
-              {RECOMMENDED_EVENTS.map((event) => (
-                <a key={event.id} className="linkout__card" href={event.route} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="linkout__card-img-wrap">
-                    <img src={event.image} alt={event.title} className="linkout__card-img" />
-                    <button type="button" className="linkout__card-fav" aria-label={isGlobalFav(event.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isGlobalFav(event.id)} onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleGlobalFav({ id: event.id, image: event.image, date: event.date, title: event.title, eventTag: event.eventTag, paymentLabel: event.paymentLabel, points: event.points + ' Reward Points', countdown: event.countdown }); }}><IconHeart filled={isGlobalFav(event.id)} /></button>
-                  </div>
-                  <div className="linkout__card-body">
-                    <p className="linkout__card-date">{event.date}</p>
-                    <p className="linkout__card-title">{event.title}</p>
-                    <div className="linkout__card-price-badge"><IconStar /><span>{event.points} Reward Points</span></div>
-                    {event.countdown && <div className="linkout__card-countdown"><span>Time left:</span><span>{event.countdown}</span></div>}
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
+          <YouMayAlsoLike event={eventData ?? null} excludeEventId={eventId} />
         </main>
 
         <aside className="auction-page__sidebar">

@@ -49,17 +49,27 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
+  background: transparent;
   border: none;
+  border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  color: #fff;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
+}
+
+.ny-list__card-fav:focus-visible {
+  outline: 2px solid var(--wel-sem-color-outline-accent, #2d4cd5);
+  outline-offset: 2px;
+}
+
+.ny-list__card-fav svg {
+  width: 28px;
+  height: 28px;
 }
 
 .ny-list__card-logo {

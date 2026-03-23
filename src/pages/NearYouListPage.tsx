@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
+  IconHeart,
   MarketplaceHeader,
   Menu,
   MarketingTag,
@@ -255,20 +256,6 @@ function IconChevronLeft() {
   );
 }
 
-function IconHeart({ filled }: { filled: boolean }) {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#B40875' : 'none'} aria-hidden>
-      <path
-        d="M12 21l-1.35-1.2C4.8 14.4 1.5 11.3 1.5 7.4 1.5 4.4 3.9 2 6.9 2c1.8 0 3.4.9 4.5 2.3C12.5 2.9 14.2 2 16 2c3 0 5.4 2.4 5.4 5.4 0 3.9-3.3 7-9.1 12.4L12 21z"
-        stroke={filled ? '#B40875' : 'currentColor'}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function IconStar() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -458,7 +445,7 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
         title: e.title,
         eventTag: e.eventTag ?? '',
         paymentLabel: paymentLabel(e.paymentType) || (e.paymentType === 'cash' ? 'Cash' : ''),
-        points: e.points ? `${e.points} Reward Points` : e.cashPrice ?? '',
+        points: e.points ? String(e.points) : e.cashPrice ?? '',
         countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
       })),
     [favourites],
@@ -737,7 +724,7 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
                       {event.points && (
                         <div className="ny-list__card-points-badge">
                           <IconStar />
-                          <span className="ny-list__card-points-value">{event.points} Reward Points</span>
+                          <span className="ny-list__card-points-value">{event.points}</span>
                         </div>
                       )}
                       {event.hasTimer && event.msLeft != null && (
