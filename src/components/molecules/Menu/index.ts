@@ -1,3 +1,3 @@
 import './Menu.css';
 export { Menu } from './Menu';
-export type { MenuProps, MenuView, MenuFavouriteEvent } from './Menu';
+export type { AuctionHistoryBadgeVariant, MenuProps, MenuView, MenuFavouriteEvent } from './Menu';

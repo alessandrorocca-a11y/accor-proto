@@ -5,7 +5,7 @@ export { Breadcrumb } from './Breadcrumb';
 export { Drawer } from './Drawer';
 export { MarketplaceHeader } from './MarketplaceHeader';
 export { Menu } from './Menu';
-export type { MenuView, MenuFavouriteEvent } from './Menu';
+export type { AuctionHistoryBadgeVariant, MenuView, MenuFavouriteEvent } from './Menu';
 export { Message } from './Message';
 export { Modal } from './Modal';
 export { Pagination } from './Pagination';

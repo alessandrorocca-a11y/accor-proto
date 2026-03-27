@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { IconHeart } from '@/components/atoms';
 import { useUser, type OrderItem, type TestProfileId, TEST_PROFILES } from '@/context/UserContext';
 import { searchCities, type City } from '@/data/europeanCities';
+import { formatPoints } from '@/data/events/eventRegistry';
 
 export interface MenuFavouriteEvent {
   id: string;
@@ -12,6 +13,8 @@ export interface MenuFavouriteEvent {
   paymentLabel: string;
   points: string;
   countdown: string;
+  /** When true, omit the Reward-points star (e.g. standard cash price in €). */
+  hideRewardsIcon?: boolean;
 }
 
 export interface MenuProps {
@@ -32,7 +35,15 @@ export interface MenuProps {
   selectedCity?: string;
 }
 
-export type MenuView = 'navigation' | 'profile' | 'account' | 'favourites' | 'orders' | 'communications' | 'test-account';
+export type MenuView =
+  | 'navigation'
+  | 'profile'
+  | 'account'
+  | 'favourites'
+  | 'orders'
+  | 'auction-history'
+  | 'communications'
+  | 'test-account';
 
 const TIER_LABELS: Record<string, string> = {
   classic: 'Classic',
@@ -53,7 +64,7 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Account details', icon: 'account', action: 'account' },
   { label: 'Favourites', icon: 'favourites', action: 'favourites' },
   { label: 'Orders', icon: 'orders', action: 'orders' },
-  { label: 'Auctions history', icon: 'auctions', href: '#' },
+  { label: 'Auctions history', icon: 'auctions', action: 'auction-history' },
   { label: 'Communications preferences', icon: 'communications', action: 'communications' },
   { label: 'Test account', icon: 'test-account', action: 'test-account' },
   { label: 'Logout', icon: 'logout', href: '#' },
@@ -315,6 +326,66 @@ interface OrderEvent {
 
 const STATIC_PAST_ORDERS: OrderEvent[] = [];
 
+/** Image badge = Figma 💠 web.badge (nodes 2567:31676–31677, 2567:31675) */
+export type AuctionHistoryBadgeVariant = 'winning' | 'outbid' | 'winner';
+
+type AuctionHistoryListRow = {
+  id: string;
+  eventId: string;
+  image: string;
+  date: string;
+  title: string;
+  eventTag: string;
+  paymentLabel: string;
+  points: string;
+  auctionBadge: AuctionHistoryBadgeVariant;
+  auctionEndsAt?: number;
+};
+
+const AUCTION_BADGE_LABEL: Record<AuctionHistoryBadgeVariant, string> = {
+  winning: 'Winning',
+  outbid: 'Outbid',
+  winner: 'Winner',
+};
+
+function MenuAuctionImageBadge({ variant }: { variant: AuctionHistoryBadgeVariant }) {
+  return (
+    <span className={`menu__order-card-img-badge menu__order-card-img-badge--${variant}`}>
+      {AUCTION_BADGE_LABEL[variant]}
+    </span>
+  );
+}
+
+function padTimeUnit(n: number) {
+  return n.toString().padStart(2, '0');
+}
+
+function formatTimeLeftMs(ms: number): string {
+  if (ms <= 0) return '';
+  const sec = Math.floor(ms / 1000);
+  const days = Math.floor(sec / 86400);
+  const hours = Math.floor((sec % 86400) / 3600);
+  const minutes = Math.floor((sec % 3600) / 60);
+  const seconds = sec % 60;
+  return `${days}d ${padTimeUnit(hours)}h ${padTimeUnit(minutes)}m ${padTimeUnit(seconds)}s`;
+}
+
+function MenuAuctionCountdown({ endsAt }: { endsAt: number }) {
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => tick((x) => x + 1), 1000);
+    return () => clearInterval(id);
+  }, [endsAt]);
+  const text = formatTimeLeftMs(endsAt - Date.now());
+  if (!text) return null;
+  return (
+    <span className="menu__order-card-countdown">
+      <span className="menu__order-card-countdown-label">Time left:</span>
+      <span className="menu__order-card-countdown-value">{text}</span>
+    </span>
+  );
+}
+
 /* ── Field display ────────────────────────────────────────────────────── */
 
 function AccountField({ label, value }: { label: string; value: string }) {
@@ -350,6 +421,7 @@ export function Menu({
   const [view, setView] = useState<MenuView>(initialView);
   const [navHidden, setNavHidden] = useState(false);
   const [ordersTab, setOrdersTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [auctionsHistoryTab, setAuctionsHistoryTab] = useState<'ongoing' | 'ended'>('ongoing');
   const [categoriesExpanded, setCategoriesExpanded] = useState(true);
   const [subscriptionsExpanded, setSubscriptionsExpanded] = useState(true);
   const [paymentsExpanded, setPaymentsExpanded] = useState(true);
@@ -375,6 +447,37 @@ export function Menu({
   }, [userCtx?.orders]);
 
   const PAST_ORDERS = STATIC_PAST_ORDERS;
+
+  const auctionHistoryOngoingRows: AuctionHistoryListRow[] = useMemo(() => {
+    if (!userCtx) return [];
+    return userCtx.auctionOngoing.map((a) => ({
+      id: a.id,
+      eventId: a.eventId,
+      image: a.image,
+      date: a.date,
+      title: a.title,
+      eventTag: a.eventTag,
+      paymentLabel: 'Your bid',
+      points: `${formatPoints(a.bidAmount)} Reward Points`,
+      auctionEndsAt: a.auctionEndsAt,
+      auctionBadge: a.status === 'winning' ? 'winning' : 'outbid',
+    }));
+  }, [userCtx?.auctionOngoing]);
+
+  const auctionHistoryEndedRows: AuctionHistoryListRow[] = useMemo(() => {
+    if (!userCtx) return [];
+    return userCtx.auctionWon.map((w) => ({
+      id: w.id,
+      eventId: w.eventId,
+      image: w.image,
+      date: w.date,
+      title: w.title,
+      eventTag: w.eventTag,
+      paymentLabel: 'Winning bid',
+      points: `${formatPoints(w.winningBid)} Reward Points`,
+      auctionBadge: 'winner',
+    }));
+  }, [userCtx?.auctionWon]);
   const [prefEmail, setPrefEmail] = useState(true);
   const [prefHigherBid, setPrefHigherBid] = useState(true);
   const [prefLastDay, setPrefLastDay] = useState(true);
@@ -399,6 +502,7 @@ export function Menu({
     } else {
       setView(initialView);
       setOrdersTab('upcoming');
+      setAuctionsHistoryTab('ongoing');
       setNavHidden(false);
       setCitySearchOpen(false);
       setCityQuery('');
@@ -472,7 +576,10 @@ export function Menu({
           view === 'profile' ? 'Profile menu' :
           view === 'account' ? 'My account' :
           view === 'favourites' ? 'Favourites' :
-          view === 'test-account' ? 'Test account' : 'Orders'
+          view === 'orders' ? 'Orders' :
+          view === 'auction-history' ? 'Auctions history' :
+          view === 'communications' ? 'Communications preferences' :
+          view === 'test-account' ? 'Test account' : 'Menu'
         }
       >
         {/* ── Navigation view (Figma sidebar) ────────────────────── */}
@@ -849,7 +956,7 @@ export function Menu({
                       {event.eventTag && <span className="menu__fav-card-tag">{event.eventTag}</span>}
                       <span className="menu__fav-card-payment">{event.paymentLabel}</span>
                       <span className="menu__fav-card-points">
-                        <IconPointsStar />
+                        {!event.hideRewardsIcon && <IconPointsStar />}
                         {event.points}
                       </span>
                       {event.countdown && (
@@ -948,6 +1055,97 @@ export function Menu({
                       </div>
                     </a>
                   ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ── Auctions history view (same layout as orders) ───────── */}
+        {view === 'auction-history' && (
+          <>
+            <div className={`menu__nav${navHidden ? ' menu__nav--hidden' : ''}`}>
+              <button
+                type="button"
+                className="menu__back"
+                onClick={() => setView('profile')}
+                aria-label="Back to profile"
+              >
+                <IconChevronLeft />
+              </button>
+              <h2 className="menu__nav-title">Auctions history</h2>
+              <button
+                type="button"
+                className="menu__close"
+                onClick={onClose}
+                aria-label="Close menu"
+              >
+                <IconClose />
+              </button>
+            </div>
+
+            <div className="menu__content" onScroll={handleContentScroll}>
+              <div className="menu__orders">
+                <div className="menu__orders-tabs" role="tablist">
+                  <button
+                    type="button"
+                    role="tab"
+                    className={`menu__orders-tab${auctionsHistoryTab === 'ongoing' ? ' menu__orders-tab--active' : ''}`}
+                    aria-selected={auctionsHistoryTab === 'ongoing'}
+                    onClick={() => setAuctionsHistoryTab('ongoing')}
+                  >
+                    Ongoing
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    className={`menu__orders-tab${auctionsHistoryTab === 'ended' ? ' menu__orders-tab--active' : ''}`}
+                    aria-selected={auctionsHistoryTab === 'ended'}
+                    onClick={() => setAuctionsHistoryTab('ended')}
+                  >
+                    Ended
+                  </button>
+                </div>
+
+                <div className="menu__orders-list">
+                  {(auctionsHistoryTab === 'ongoing' ? auctionHistoryOngoingRows : auctionHistoryEndedRows).map(
+                    (event) => (
+                      <a
+                        key={event.id}
+                        href={`#auction/${event.eventId}`}
+                        className="menu__order-card"
+                        onClick={onClose}
+                      >
+                        <div className="menu__order-card-img-wrap">
+                          <MenuAuctionImageBadge variant={event.auctionBadge} />
+                          <img
+                            src={event.image}
+                            alt=""
+                            className="menu__order-card-img"
+                          />
+                        </div>
+                        <div className="menu__order-card-body">
+                          <div className="menu__order-card-header">
+                            <div className="menu__order-card-date-title">
+                              <span className="menu__order-card-date">{event.date}</span>
+                              <span className="menu__order-card-title">{event.title}</span>
+                            </div>
+                            <span className="menu__order-card-tag">{event.eventTag}</span>
+                          </div>
+                          <div className="menu__order-card-payment">
+                            <span className="menu__order-card-payment-label">{event.paymentLabel}</span>
+                            <div className="menu__order-card-points">
+                              <IconPointsStar />
+                              <span className="menu__order-card-points-value">{event.points}</span>
+                            </div>
+                          </div>
+                          {event.auctionEndsAt != null ? (
+                            <MenuAuctionCountdown endsAt={event.auctionEndsAt} />
+                          ) : null}
+                        </div>
+                      </a>
+                    ),
+                  )}
                 </div>
               </div>
             </div>
@@ -1087,7 +1285,7 @@ export function Menu({
                         ? `Silver — ${pts} points, no subscription`
                         : id === 'gold'
                           ? `Gold — ${pts} points, no subscription`
-                          : `Gold + Voyager — ${pts} points, Voyager subscriber`;
+                          : `Gold + Explorer — ${pts} points, Explorer subscriber`;
                     return (
                       <li key={id} className="menu__item menu__item--bordered">
                         <button

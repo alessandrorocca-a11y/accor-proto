@@ -728,6 +728,39 @@
   overflow: hidden;
 }
 
+/* Auctions history — image overlay badges (Figma 💠 web.badge; same placement idea as marketing-tag on cards) */
+.menu__order-card-img-badge {
+  position: absolute;
+  top: var(--wel-sem-spacingstatic-inset-xs, 8px);
+  left: var(--wel-sem-spacingstatic-inset-xs, 8px);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  padding: 4px 8px;
+  border-radius: var(--wel-sem-borderradius-element-static-md, 4px);
+  font: var(--wel-typography-label-default-03);
+  line-height: 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.menu__order-card-img-badge--winning {
+  background: var(--wel-sem-color-success-container-low, #caffea);
+  color: var(--wel-sem-color-on-success-container-hi, #00513f);
+}
+
+.menu__order-card-img-badge--outbid {
+  background: var(--wel-sem-color-danger, #be003c);
+  color: var(--wel-sem-color-on-danger, #fff);
+}
+
+.menu__order-card-img-badge--winner {
+  background: var(--wel-sem-color-success, #006a53);
+  color: var(--wel-sem-color-on-success, #fff);
+}
+
 .menu__order-card-img {
   width: 100%;
   height: 100%;

@@ -13,7 +13,7 @@ import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './StandardPage.css';
-import { getEventById } from '@/data/events/eventRegistry';
+import { getEventById, getStandardEventFromPriceEur, STANDARD_POINTS_PER_EUR } from '@/data/events/eventRegistry';
 import { getVenueInfo } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 
@@ -60,19 +60,6 @@ type CalendarDayInfo = {
 
 const TODAY_DAY = new Date().getDate();
 
-const CALENDAR_PRICES: Record<number, CalendarDayInfo> = {};
-for (let d = 1; d <= 28; d++) {
-  if (d <= 3) {
-    CALENDAR_PRICES[d] = { price: 10, availability: 'available', indicator: 'low' };
-  } else if (d >= 25) {
-    CALENDAR_PRICES[d] = { price: 10, availability: 'available', indicator: 'low' };
-  } else if ([7, 14, 21].includes(d)) {
-    CALENDAR_PRICES[d] = { price: 10, availability: 'available', indicator: 'best' };
-  } else {
-    CALENDAR_PRICES[d] = { price: 10, availability: 'available', indicator: 'both' };
-  }
-}
-
 interface ZoneTicket {
   id: string;
   zone: string;
@@ -88,18 +75,101 @@ interface ZoneTicket {
   defaultQty: number;
 }
 
-const ZONE_TICKETS: ZoneTicket[] = [
-  { id: 'frisa-premium', zone: 'Frisa Premium', category: 'Best view', sectionColor: '#e91e8c', description: 'Front-row seats with unobstructed view of the parade floats and performers.', discount: 15, originalPrice: 295.00, price: 250.75, bookingFee: 3.50, soldOut: false, maxQty: 4, defaultQty: 1 },
-  { id: 'lounge-vip', zone: 'ALL Lounge VIP', category: 'Exclusive', sectionColor: '#3a34ab', description: 'Private lounge with premium open bar, gourmet catering and dedicated service.', discount: 10, originalPrice: 185.00, price: 166.50, bookingFee: 2.50, soldOut: false, maxQty: 6, defaultQty: 1 },
-  { id: 'grandstand', zone: 'Grandstand', category: 'Standard', sectionColor: '#3a34ab', description: 'Covered grandstand seating with great views of the Sambadrome main stage.', discount: null, originalPrice: 95.00, price: 95.00, bookingFee: 1.50, soldOut: false, maxQty: 8, defaultQty: 0 },
-  { id: 'standing-general', zone: 'General Admission', category: 'Standing', sectionColor: '#898c8e', description: 'Open standing area near the parade route with a lively atmosphere.', discount: null, originalPrice: 55.00, price: 55.00, bookingFee: 1.00, soldOut: true, maxQty: 0, defaultQty: 0 },
-];
+/** Demo “from” price (whole €) when no event is loaded — calendar + zones scale from this. */
+const DEFAULT_FROM_WHOLE_EUR = 56;
+
+function buildZoneTicketsForFromWhole(fromWhole: number): ZoneTicket[] {
+  return [
+    {
+      id: 'frisa-premium',
+      zone: 'Frisa Premium',
+      category: 'Best view',
+      sectionColor: '#e91e8c',
+      description: 'Front-row seats with unobstructed view of the parade floats and performers.',
+      discount: 15,
+      originalPrice: fromWhole + 231,
+      price: fromWhole + 196,
+      bookingFee: 0,
+      soldOut: false,
+      maxQty: 4,
+      defaultQty: 1,
+    },
+    {
+      id: 'lounge-vip',
+      zone: 'ALL Lounge VIP',
+      category: 'Exclusive',
+      sectionColor: '#3a34ab',
+      description: 'Private lounge with premium open bar, gourmet catering and dedicated service.',
+      discount: 10,
+      originalPrice: fromWhole + 124,
+      price: fromWhole + 111,
+      bookingFee: 0,
+      soldOut: false,
+      maxQty: 6,
+      defaultQty: 1,
+    },
+    {
+      id: 'grandstand',
+      zone: 'Grandstand',
+      category: 'Standard',
+      sectionColor: '#3a34ab',
+      description: 'Covered grandstand seating with great views of the Sambadrome main stage.',
+      discount: null,
+      originalPrice: fromWhole + 40,
+      price: fromWhole + 40,
+      bookingFee: 0,
+      soldOut: false,
+      maxQty: 8,
+      defaultQty: 0,
+    },
+    {
+      id: 'standing-general',
+      zone: 'General Admission',
+      category: 'Standing',
+      sectionColor: '#898c8e',
+      description: 'Open standing area near the parade route with a lively atmosphere.',
+      discount: null,
+      originalPrice: fromWhole,
+      price: fromWhole,
+      bookingFee: 0,
+      soldOut: true,
+      maxQty: 0,
+      defaultQty: 0,
+    },
+  ];
+}
+
+function initZoneQty(tickets: ZoneTicket[]): Record<string, number> {
+  const init: Record<string, number> = {};
+  tickets.forEach((z) => {
+    init[z.id] = z.defaultQty;
+  });
+  return init;
+}
+
+const DEFAULT_ZONE_TICKETS = buildZoneTicketsForFromWhole(DEFAULT_FROM_WHOLE_EUR);
+
+function buildCalendarPrices(fromEur: number): Record<number, CalendarDayInfo> {
+  const map: Record<number, CalendarDayInfo> = {};
+  for (let d = 1; d <= 28; d++) {
+    if (d <= 3) {
+      map[d] = { price: fromEur, availability: 'available', indicator: 'low' };
+    } else if (d >= 25) {
+      map[d] = { price: fromEur, availability: 'available', indicator: 'low' };
+    } else if ([7, 14, 21].includes(d)) {
+      map[d] = { price: fromEur, availability: 'available', indicator: 'best' };
+    } else {
+      map[d] = { price: fromEur, availability: 'available', indicator: 'both' };
+    }
+  }
+  return map;
+}
 
 const ADDON_FLEX = {
   id: 'flex-cancel',
   name: 'Flexible cancellation',
   description: 'Reschedule hassle-free or claim a refund when you cancel up to 48 hours before the start time.',
-  price: 1.85,
+  price: 2,
 };
 
 const WEEKDAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -157,7 +227,7 @@ function IconPlus() {
 }
 
 function formatEur(n: number) {
-  return '€' + n.toFixed(2).replace('.', ',');
+  return `€${Math.round(n).toLocaleString('de-DE')}`;
 }
 
 function getCalendarDays(year: number, month: number) {
@@ -188,11 +258,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
   const [selectedDate, setSelectedDate] = useState(16);
   const [selectedTimeIdx, setSelectedTimeIdx] = useState<number | null>(null);
-  const [zoneQty, setZoneQty] = useState<Record<string, number>>(() => {
-    const init: Record<string, number> = {};
-    ZONE_TICKETS.forEach((z) => { init[z.id] = z.defaultQty; });
-    return init;
-  });
+  const [zoneQty, setZoneQty] = useState<Record<string, number>>(() => initZoneQty(DEFAULT_ZONE_TICKETS));
   const [flexCancelQty, setFlexCancelQty] = useState(0);
   const [expandedInfo, setExpandedInfo] = useState<string | null>(null);
   const [isFavourite, setFavourite] = useState(false);
@@ -216,7 +282,9 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const { favouritesList, removeFavourite } = useFavourites();
   const [rewardsPointsUsed, setRewardsPointsUsed] = useState(0);
   const [rewardsStepperValue, setRewardsStepperValue] = useState(0);
-  const POINTS_PER_EUR = 100;
+  const POINTS_PER_EUR = STANDARD_POINTS_PER_EUR;
+  const rewardsSliderMax = Math.max(USER_POINTS, 1);
+  const rewardsSliderPct = (rewardsStepperValue / rewardsSliderMax) * 100;
   const [showVoucher, setShowVoucher] = useState(false);
   const [voucherCode, setVoucherCode] = useState('');
   const [voucherApplied, setVoucherApplied] = useState(false);
@@ -230,16 +298,33 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
   const calendarDays = useMemo(() => getCalendarDays(2026, 1), []);
 
+  const standardFromWholeEur = useMemo(() => {
+    if (eventData?.pageType === 'standard') {
+      return Math.round(getStandardEventFromPriceEur(eventData));
+    }
+    return DEFAULT_FROM_WHOLE_EUR;
+  }, [eventData]);
+
+  const zoneTickets = useMemo(
+    () => buildZoneTicketsForFromWhole(standardFromWholeEur),
+    [standardFromWholeEur]
+  );
+
+  const calendarPrices = useMemo(
+    () => buildCalendarPrices(standardFromWholeEur),
+    [standardFromWholeEur]
+  );
+
   const selectedTimeSlot = selectedTimeIdx !== null ? TIME_SLOTS[selectedTimeIdx] : null;
 
   const ticketsSubtotal = useMemo(() => {
     let total = 0;
-    ZONE_TICKETS.forEach((z) => {
+    zoneTickets.forEach((z) => {
       const qty = zoneQty[z.id] || 0;
       total += qty * (z.price + z.bookingFee);
     });
     return total;
-  }, [zoneQty]);
+  }, [zoneQty, zoneTickets]);
 
   const totalPriceEur = ticketsSubtotal + flexCancelQty * ADDON_FLEX.price;
   const totalTickets = useMemo(() => {
@@ -248,7 +333,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
   const handleZoneQtyChange = (id: string, delta: number) => {
     setZoneQty((prev) => {
-      const zone = ZONE_TICKETS.find((z) => z.id === id);
+      const zone = zoneTickets.find((z) => z.id === id);
       if (!zone || zone.soldOut) return prev;
       const next = Math.max(0, Math.min(zone.maxQty, (prev[id] || 0) + delta));
       return { ...prev, [id]: next };
@@ -300,7 +385,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
   const recapItems = useMemo(() => {
     const items: { label: string; qty: number; unitPrice: number }[] = [];
-    ZONE_TICKETS.forEach((z) => {
+    zoneTickets.forEach((z) => {
       const qty = zoneQty[z.id] || 0;
       if (qty > 0) items.push({ label: z.zone, qty, unitPrice: z.price + z.bookingFee });
     });
@@ -308,7 +393,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
       items.push({ label: ADDON_FLEX.name, qty: flexCancelQty, unitPrice: ADDON_FLEX.price });
     }
     return items;
-  }, [zoneQty, flexCancelQty]);
+  }, [zoneQty, zoneTickets, flexCancelQty]);
 
   const handleBuyTicket = () => {
     if (totalTickets === 0) return;
@@ -344,7 +429,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   };
 
   const handleDateSelect = (d: number) => {
-    if (CALENDAR_PRICES[d]) {
+    if (calendarPrices[d]) {
       setSelectedDate(d);
       setSelectedTimeIdx(null);
     }
@@ -385,7 +470,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           </div>
           <div className="standard__calendar-grid">
             {calendarDays.map((d, i) => {
-              const info = d !== null ? CALENDAR_PRICES[d] : null;
+              const info = d !== null ? calendarPrices[d] : null;
               const isSelected = d === selectedDate;
               const isToday = d === TODAY_DAY;
               const isAvailable = info?.availability === 'available';
@@ -414,7 +499,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                       {isSelected && <span className="standard__calendar-day-corner" />}
                       <span className="standard__calendar-day-num">{d}</span>
                       {info && (
-                        <span className="standard__calendar-day-price">${info.price}</span>
+                        <span className="standard__calendar-day-price">{formatEur(info.price)}</span>
                       )}
                       {info && info.indicator !== 'none' && (
                         <span className="standard__calendar-day-indicators">
@@ -434,7 +519,11 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           </div>
         </div>
         <div className="standard__calendar-legend">
-          <span className="standard__calendar-legend-note">All prices shown in US Dollars</span>
+          <span className="standard__calendar-legend-note">
+            {eventData?.pageType === 'standard'
+              ? 'All prices in euros, whole amounts (matches event listing and zones)'
+              : 'All prices in euros, whole amounts (from lowest category)'}
+          </span>
           <div className="standard__calendar-legend-keys">
             <span className="standard__calendar-legend-key standard__calendar-legend-key--low">
               <span className="standard__calendar-legend-dash" /> Low availability
@@ -484,7 +573,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
 
       {/* ── Zone ticket cards ───────────────────────────────────── */}
       <div className="standard__zones">
-        {ZONE_TICKETS.map((zone) => {
+        {zoneTickets.map((zone) => {
           const qty = zoneQty[zone.id] || 0;
           const isActive = qty > 0;
           const borderColor = isActive ? 'var(--wel-sem-color-outline-accent, #2d4cd5)' : '#ccd2d8';
@@ -508,7 +597,9 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                           {hasEventDiscount && zone.discount !== null && <span className="standard__ticket-original">{formatEur(zone.originalPrice)}</span>}
                           <span className="standard__ticket-price">{formatEur(zone.price)}</span>
                         </div>
-                        <span className="standard__ticket-fee">+ {formatEur(zone.bookingFee)} booking fee</span>
+                        {zone.bookingFee > 0 ? (
+                          <span className="standard__ticket-fee">+ {formatEur(zone.bookingFee)} booking fee</span>
+                        ) : null}
                       </div>
                     </div>
                     <div className="standard__ticket-selector-sold" />
@@ -533,7 +624,9 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                           {hasEventDiscount && zone.discount !== null && <span className="standard__ticket-original">{formatEur(zone.originalPrice)}</span>}
                           <span className="standard__ticket-price">{formatEur(zone.price)}</span>
                         </div>
-                        <span className="standard__ticket-fee">+ {formatEur(zone.bookingFee)} booking fee</span>
+                        {zone.bookingFee > 0 ? (
+                          <span className="standard__ticket-fee">+ {formatEur(zone.bookingFee)} booking fee</span>
+                        ) : null}
                       </div>
                     </div>
                     <div className="standard__ticket-selector" style={{ borderColor, borderLeftColor: 'transparent', background: isActive ? 'var(--wel-sem-color-surface-container-mid, #f7f9fb)' : 'transparent' }}>
@@ -588,10 +681,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           disabled={totalTickets === 0}
           onClick={handleBuyTicket}
         >
-          Get it - {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
+          Get it - {formatEur(totalPriceEur)}
         </Button>
         <p className="standard__reward-points-alt">
-          or {formatEur(totalPriceEur)}
+          or {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
         </p>
       </div>
     </section>
@@ -709,7 +802,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <span className="auction-page__date">{_EVENT_DATE}</span>
               <div className="auction-page__date-icons">
                 <button type="button" className={`auction-page__icon-btn${isNotifyOn ? ' auction-page__icon-btn--notify-on' : ''}`} aria-label={isNotifyOn ? 'Disable notifications' : 'Enable notifications'} aria-pressed={isNotifyOn} onClick={handleBellClick}><IconBell filled={isNotifyOn} /></button>
-                <button type="button" className={`auction-page__icon-btn${isFavourite ? ' auction-page__icon-btn--fav-on' : ''}`} aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isFavourite} onClick={handleHeartClick}><IconHeart filled={isFavourite} /></button>
+                <button type="button" className={`auction-page__icon-btn${isFavourite ? ' auction-page__icon-btn--fav-on' : ''}`} aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isFavourite} onClick={handleHeartClick}><IconHeart filled={isFavourite} outlineWhenUnfilled /></button>
               </div>
             </div>
             <h1 className="auction-page__title">{EVENT_TITLE}</h1>
@@ -718,6 +811,9 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <span className="auction-page__tag">Sustainable Experience</span>
               <span className="auction-page__tag">Limitless Experience</span>
             </div>
+            {eventData?.pageType === 'standard' ? (
+              <p className="standard__listing-from">Tickets from {formatEur(standardFromWholeEur)}</p>
+            ) : null}
           </section>
 
           <hr className="auction-page__divider auction-page__divider--mobile-only" aria-hidden />
@@ -780,8 +876,11 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
       {showStickyBar && !showRecap && !showConfirmation && !isEventSoldOut && totalTickets > 0 && (
         <div className="standard__sticky-bar">
           <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handleBuyTicket}>
-            Get it - {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
+            Get it - {formatEur(totalPriceEur)}
           </Button>
+          <p className="standard__reward-points-alt">
+            or {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
+          </p>
         </div>
       )}
 
@@ -1145,13 +1244,16 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                       type="range"
                       className="recap-page__rewards-slider"
                       min={0}
-                      max={USER_POINTS}
+                      max={rewardsSliderMax}
                       step={10}
                       value={rewardsStepperValue}
                       onChange={(e) => setRewardsStepperValue(Number(e.target.value))}
-                      style={{
-                        background: `linear-gradient(to right, #050033 0%, #050033 ${(rewardsStepperValue / USER_POINTS) * 100}%, #d9dadc ${(rewardsStepperValue / USER_POINTS) * 100}%, #d9dadc 100%)`
-                      }}
+                      onInput={(e) => setRewardsStepperValue(Number(e.currentTarget.value))}
+                      style={
+                        {
+                          '--recap-rewards-slider-pct': `${rewardsSliderPct}%`,
+                        } as React.CSSProperties
+                      }
                     />
                     <p className="recap-page__rewards-slider-caption">You have earned {USER_POINTS.toLocaleString('de-DE')} Points</p>
                   </div>

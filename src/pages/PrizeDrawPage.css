@@ -665,10 +665,13 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
+  /* Taller control so the thumb isn’t clipped; track is drawn on pseudo-elements */
+  height: 28px;
   border-radius: 2px;
-  background: var(--wel-sem-color-outline-low, #d9dadc);
+  background: transparent;
   outline: none;
+  /* Set from JS: matches thumb position (avoid inline background on the input — WebKit breaks thumb sync) */
+  --recap-rewards-slider-pct: 0%;
 }
 
 .recap-page__rewards-slider::-webkit-slider-thumb {
@@ -697,12 +700,25 @@
 .recap-page__rewards-slider::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    #050033 0%,
+    #050033 var(--recap-rewards-slider-pct),
+    #d9dadc var(--recap-rewards-slider-pct),
+    #d9dadc 100%
+  );
 }
 
 .recap-page__rewards-slider::-moz-range-track {
   height: 4px;
   border-radius: 2px;
-  background: var(--wel-sem-color-outline-low, #d9dadc);
+  background: linear-gradient(
+    to right,
+    #050033 0%,
+    #050033 var(--recap-rewards-slider-pct),
+    #d9dadc var(--recap-rewards-slider-pct),
+    #d9dadc 100%
+  );
 }
 
 .recap-page__rewards-slider-caption {

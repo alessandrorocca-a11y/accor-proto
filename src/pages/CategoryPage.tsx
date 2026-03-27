@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
+  ExplorerOnlyCardFooter,
   IconHeart,
   MarketplaceHeader,
   Menu,
@@ -7,7 +8,14 @@ import {
 } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
-import { EVENT_REGISTRY, getEventRoute, formatPoints, type MarketingTagType } from '@/data/events/eventRegistry';
+import {
+  EVENT_REGISTRY,
+  getEventRoute,
+  formatPoints,
+  formatStandardEventListPrice,
+  isExplorerExclusiveMarketingTag,
+  type MarketingTagType,
+} from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import { sortEventsForProfile } from '@/utils/profileSort';
@@ -59,7 +67,7 @@ const ALL_EVENTS: CategoryEvent[] = EVENT_REGISTRY.map((e) => ({
   eventTag: e.eventTag,
   paymentType: categoryPaymentTypeMap[e.pageType] ?? 'cash',
   points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
-  cashPrice: e.pageType === 'standard' ? formatPoints(e.points) : undefined,
+  cashPrice: e.pageType === 'standard' ? formatStandardEventListPrice(e) : undefined,
   hasTimer: !!e.msLeft,
   msLeft: e.msLeft,
   marketingTag: e.marketingTag,
@@ -374,9 +382,10 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
           : e.paymentType === 'flex' ? 'Flex'
           : e.paymentType === 'waitlist' ? 'Waitlist'
           : e.paymentType === 'linkout' ? ''
-          : 'Cash',
+          : '',
         points: e.points ? String(e.points) : e.cashPrice ?? '',
         countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
+        hideRewardsIcon: e.paymentType === 'cash',
       })),
     [favourites],
   );
@@ -766,9 +775,8 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
                         )}
 
                         {event.paymentType === 'cash' && event.cashPrice ? (
-                          <div className="category-page__card-points-badge">
+                          <div className="category-page__card-points-badge category-page__card-points-badge--eur">
                             <span className="category-page__card-cash-from">from</span>
-                            <IconStar />
                             <span className="category-page__card-points-value">{event.cashPrice}</span>
                           </div>
                         ) : null}
@@ -784,6 +792,9 @@ export default function CategoryPage({ defaultCategory = 'Sport and leisure', br
                     </div>
                   </div>
                 )}
+                {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+                  <ExplorerOnlyCardFooter />
+                ) : null}
               </div>
             </article>
             );

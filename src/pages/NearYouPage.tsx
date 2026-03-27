@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
+import { isExplorerExclusiveMarketingTag } from '@/data/events/eventRegistry';
 import './NearYouPage.css';
 import './CategoryPage.css';
 
@@ -409,17 +410,22 @@ function MapEventHorizontalCard({
         {event.eventTag && (
           <span className="near-you__event-card-tag">{event.eventTag}</span>
         )}
-        <div className="near-you__event-card-payment">
-          {label && <span className="near-you__event-card-payment-label">{label}</span>}
-          {event.points && (
-            <div className="near-you__event-card-points">
-              <IconStar />
-              <span>{event.points}</span>
-            </div>
-          )}
-          {event.hasTimer && event.msLeft != null && (
-            <LiveTimer initialMs={event.msLeft} />
-          )}
+        <div className="near-you__event-card-body-bottom">
+          <div className="near-you__event-card-payment">
+            {label && <span className="near-you__event-card-payment-label">{label}</span>}
+            {event.points && (
+              <div className="near-you__event-card-points">
+                <IconStar />
+                <span>{event.points}</span>
+              </div>
+            )}
+            {event.hasTimer && event.msLeft != null && (
+              <LiveTimer initialMs={event.msLeft} />
+            )}
+          </div>
+          {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+            <ExplorerOnlyCardFooter variant="vertical" />
+          ) : null}
         </div>
       </div>
     </article>

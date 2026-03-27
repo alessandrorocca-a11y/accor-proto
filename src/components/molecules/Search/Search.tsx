@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { searchCities } from '@/data/europeanCities';
 import { EVENT_REGISTRY, getEventRoute, type EventData } from '@/data/events/eventRegistry';
 
@@ -309,7 +310,7 @@ export function Search({ open, onClose }: SearchProps) {
 
   const q = query.trim();
 
-  return (
+  return createPortal(
     <div className="search-overlay" role="dialog" aria-modal aria-label="Search" onClick={onClose}>
       <div className="search-overlay__content" style={cardStyle} onClick={(e) => e.stopPropagation()}>
         <div className={`search-overlay__input-wrap${q ? ' search-overlay__input-wrap--focused' : ''}`}>
@@ -336,6 +337,7 @@ export function Search({ open, onClose }: SearchProps) {
 
         <SearchResultsPanel query={query} onQueryChange={setQuery} />
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

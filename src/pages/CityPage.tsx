@@ -1,8 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { getNearbyCities, searchCities } from '@/data/europeanCities';
-import { EVENT_REGISTRY, getEventRoute, getPaymentLabel, formatPoints, type EventData, type MarketingTagType } from '@/data/events/eventRegistry';
+import {
+  EVENT_REGISTRY,
+  getEventRoute,
+  getPaymentLabel,
+  formatPoints,
+  formatStandardEventListPrice,
+  isExplorerExclusiveMarketingTag,
+  type EventData,
+  type MarketingTagType,
+} from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
@@ -201,7 +210,7 @@ function registryToCard(e: EventData): EventCard {
     image: e.image,
     paymentType: ptMap[e.pageType] ?? 'cash',
     points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
-    cashPrice: e.pageType === 'standard' ? formatPoints(e.points) : undefined,
+    cashPrice: e.pageType === 'standard' ? formatStandardEventListPrice(e) : undefined,
     hasTimer: !!e.msLeft,
     msLeft: e.msLeft,
     eventTag: e.eventTag,
@@ -360,6 +369,9 @@ function EventCardCompact({
         >
           <IconHeart filled={isFav} />
         </button>
+        {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+          <ExplorerOnlyCardFooter variant="imageOverlay" />
+        ) : null}
       </div>
       <div className="city-page__event-card-body">
         <div className="city-page__event-card-meta">
@@ -382,9 +394,8 @@ function EventCardCompact({
                 </div>
               ) : null}
               {event.paymentType === 'cash' && event.cashPrice ? (
-                <div className="city-page__event-card-points">
+                <div className="city-page__event-card-points city-page__event-card-points--eur">
                   <span className="city-page__event-card-cash-from">from</span>
-                  <IconStar />
                   <span>{event.cashPrice}</span>
                 </div>
               ) : null}
@@ -553,8 +564,9 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         title: evt.title,
         eventTag: evt.eventTag ?? '',
         paymentLabel: getPaymentLabel(evt.pageType),
-        points: formatPoints(evt.points),
+        points: evt.pageType === 'standard' ? formatStandardEventListPrice(evt) : formatPoints(evt.points),
         countdown: '',
+        hideRewardsIcon: evt.pageType === 'standard',
       });
     }
   };

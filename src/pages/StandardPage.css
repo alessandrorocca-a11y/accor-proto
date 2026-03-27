@@ -2,6 +2,13 @@
 @import './LinkoutPage.css';
 @import './PrizeDrawPage.css';
 
+.standard__listing-from {
+  margin: 12px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--wel-sem-color-text-primary, #050033);
+}
+
 .standard__purchase {
   display: flex;
   flex-direction: column;
@@ -163,10 +170,11 @@
   color: var(--wel-sem-color-primary, #050033);
 }
 
-/* price text */
+/* price text (euro amounts can be longer than old $ preview) */
 .standard__calendar-day-price {
-  font: 400 12px/16px 'Roboto', sans-serif;
+  font: 400 11px/14px 'Roboto', sans-serif;
   color: var(--wel-sem-color-neutral-container, #6d7072);
+  letter-spacing: -0.02em;
 }
 
 /* indicator bars at bottom */

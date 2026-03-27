@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
+  ExplorerOnlyCardFooter,
   IconHeart,
   MarketplaceHeader,
   Menu,
@@ -8,6 +9,7 @@ import {
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
+import { isExplorerExclusiveMarketingTag } from '@/data/events/eventRegistry';
 import './NearYouListPage.css';
 import './CategoryPage.css';
 
@@ -718,20 +720,27 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
                 <div className="ny-list__card-body">
                   <span className="ny-list__card-date">{event.date}</span>
                   <h3 className="ny-list__card-title">{event.title}</h3>
-                  {event.paymentType !== 'linkout' && (
-                    <div className="ny-list__card-payment">
-                      {label && <span className="ny-list__card-payment-label">{label}</span>}
-                      {event.points && (
-                        <div className="ny-list__card-points-badge">
-                          <IconStar />
-                          <span className="ny-list__card-points-value">{event.points}</span>
+                  {(event.paymentType !== 'linkout' || isExplorerExclusiveMarketingTag(event.marketingTag)) ? (
+                    <div className="ny-list__card-body-bottom">
+                      {event.paymentType !== 'linkout' ? (
+                        <div className="ny-list__card-payment">
+                          {label && <span className="ny-list__card-payment-label">{label}</span>}
+                          {event.points && (
+                            <div className="ny-list__card-points-badge">
+                              <IconStar />
+                              <span className="ny-list__card-points-value">{event.points}</span>
+                            </div>
+                          )}
+                          {event.hasTimer && event.msLeft != null && (
+                            <LiveTimer initialMs={event.msLeft} />
+                          )}
                         </div>
-                      )}
-                      {event.hasTimer && event.msLeft != null && (
-                        <LiveTimer initialMs={event.msLeft} />
-                      )}
+                      ) : null}
+                      {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+                        <ExplorerOnlyCardFooter variant="vertical" />
+                      ) : null}
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </article>
             );

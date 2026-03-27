@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import voyagerCard from '@/assets/voyager-card.svg';
+import explorerCard from '@/assets/explorer-card.png';
 import './VoyagerExclusive.css';
 
 function IconClose() {
@@ -13,7 +13,7 @@ function IconClose() {
 export function VoyagerBadge() {
   return (
     <div className="voyager-badge">
-      <img src={voyagerCard} alt="ALL Accor+ Voyager" className="voyager-badge__card" />
+      <img src={explorerCard} alt="ALL+ Accor Explorer member card" className="voyager-badge__card" />
     </div>
   );
 }
@@ -32,7 +32,7 @@ export function VoyagerDialog({ open, onClose }: VoyagerDialogProps) {
         className="voyager-dialog"
         role="dialog"
         aria-modal
-        aria-label="Exclusive event — Upgrade to Voyager"
+        aria-label="Exclusive event — Upgrade to Explorer"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="voyager-dialog__header">
@@ -49,12 +49,12 @@ export function VoyagerDialog({ open, onClose }: VoyagerDialogProps) {
         </div>
 
         <div className="voyager-dialog__body">
-          <img src={voyagerCard} alt="ALL Accor+ Voyager Card" className="voyager-dialog__card" />
+          <img src={explorerCard} alt="ALL+ Accor Explorer member card" className="voyager-dialog__card" />
 
           <div className="voyager-dialog__content">
             <p className="voyager-dialog__heading">You found an exclusive experience!</p>
             <p className="voyager-dialog__text">
-              This event is reserved for <strong>ALL Accor+ Voyager</strong> subscribers.
+              This event is reserved for <strong>ALL+ Accor Explorer</strong> subscribers.
               Upgrade now to unlock exclusive events, premium experiences, and guaranteed discounts at over 4,500 hotels worldwide.
             </p>
           </div>
@@ -66,7 +66,7 @@ export function VoyagerDialog({ open, onClose }: VoyagerDialogProps) {
               rel="noopener noreferrer"
               className="voyager-dialog__cta"
             >
-              Upgrade to Voyager
+              Upgrade to Explorer
             </a>
           </div>
         </div>

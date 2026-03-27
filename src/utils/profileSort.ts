@@ -50,12 +50,12 @@ function profileScore(event: SortableEvent, profileId: TestProfileId): number {
     return 0;
   }
 
-  // Gold without Voyager: never prioritise presale / exclusivity (subscriber-only) experiences
+  // Gold without Explorer subscription: never prioritise presale / exclusivity (subscriber-only) experiences
   if (profileId === 'gold' && voyagerOnly) {
     return -10;
   }
 
-  // goldVoyager (+ shared gold mechanics below for both gold tiers when not subscriber-only)
+  // goldVoyager = Gold + Explorer subscriber (+ shared gold mechanics below when not subscriber-only)
   if (pt === 'auction' && isLimitless) return 5;
   if (pt === 'auction') return 4;
   if (isLimitless) return 3;
@@ -110,7 +110,7 @@ export function sortEventsForProfileAndPointsBalance(
 }
 
 /**
- * Non-Voyager subscribers: same order, but only the first `maxExclusive` presale/exclusivity
+ * Without Explorer subscription: same order, but only the first `maxExclusive` presale/exclusivity
  * events in this list are kept (rest of exclusives dropped). Other events unchanged.
  */
 export function limitVoyagerExclusivePerSection<T extends { marketingTag?: MarketingTagType }>(
@@ -131,7 +131,7 @@ export function limitVoyagerExclusivePerSection<T extends { marketingTag?: Marke
 }
 
 /**
- * Take up to `take` items from a sorted pool. For non-subscribers, at most `maxExclusive`
+ * Take up to `take` items from a sorted pool. Without an Explorer subscription, at most `maxExclusive`
  * presale/exclusivity items appear in that result (skips further exclusives while filling slots).
  */
 export function takeSortedWithVoyagerExclusiveCap<T extends { marketingTag?: MarketingTagType }>(

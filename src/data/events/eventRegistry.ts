@@ -35,6 +35,10 @@ export interface EventData {
   msLeft?: number;
   currentBid?: number;
   bidChips?: number[];
+  /**
+   * Prize draw: points cost per ticket.
+   * Standard (cash) events: optional “from” price in EUR for listings; when omitted, derived as `points / STANDARD_POINTS_PER_EUR`.
+   */
   ticketPrice?: number;
   maxTickets?: number;
   /** Prize draw end date (ISO string). When set, used instead of msLeft for draw end. */
@@ -43,10 +47,14 @@ export interface EventData {
   marketingTag?: MarketingTagType;
 }
 
-/** Event is Voyager-exclusive when it has Presale or Exclusivity marketing tag. */
+/** Presale or exclusivity tag → Explorer (ALL+) subscription required on listings and detail. */
+export function isExplorerExclusiveMarketingTag(tag?: MarketingTagType): boolean {
+  return tag === 'presale' || tag === 'exclusivity';
+}
+
+/** Event requires ALL+ Explorer (subscriber) when it has Presale or Exclusivity marketing tag. */
 export function isVoyagerExclusiveEvent(event: EventData | null | undefined): boolean {
-  if (!event?.marketingTag) return false;
-  return event.marketingTag === 'presale' || event.marketingTag === 'exclusivity';
+  return isExplorerExclusiveMarketingTag(event?.marketingTag);
 }
 
 const ROUTE_MAP: Record<PageType, string> = {
@@ -66,13 +74,32 @@ export function getPaymentLabel(pageType: PageType): string {
     case 'auction': return 'Current bid';
     case 'prize-draw': return 'Prize Draw';
     case 'redeem': return 'Redeem';
-    case 'standard': return 'Cash';
+    case 'standard': return '';
     case 'waitlist': return 'Waitlist';
   }
 }
 
 export function formatPoints(n: number): string {
   return n.toLocaleString('de-DE');
+}
+
+/** Matches StandardPage cash conversion (Reward points per €1). */
+export const STANDARD_POINTS_PER_EUR = 100;
+
+/** “From” ticket price in EUR for standard (cash) events. */
+export function getStandardEventFromPriceEur(event: EventData): number {
+  if (event.pageType !== 'standard') return 0;
+  if (event.ticketPrice != null) return event.ticketPrice;
+  return event.points / STANDARD_POINTS_PER_EUR;
+}
+
+/** Whole euros only (matches StandardPage cash display, e.g. €20). */
+export function formatStandardPriceEur(eur: number): string {
+  return `€${Math.round(eur).toLocaleString('de-DE')}`;
+}
+
+export function formatStandardEventListPrice(event: EventData): string {
+  return formatStandardPriceEur(getStandardEventFromPriceEur(event));
 }
 
 /** Points barrier for ordering / “can I afford this?” (prototype heuristic). */
@@ -1595,7 +1622,7 @@ export const EVENT_REGISTRY: EventData[] = [
     description: 'A breathtaking hot air balloon ride over the castles and vineyards of the Loire Valley at dawn.',
     date: 'June 20, 2026',
     location: 'Château de Chenonceau, Loire Valley',
-    city: 'Paris',
+    city: 'Tours',
     pageType: 'auction',
     category: 'Visits',
     points: 14000,
@@ -1792,6 +1819,195 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', 'Rio Carnaval', 'Concerts and festivals'),
     includedItems: ['2 VIP Sambadrome box seats', 'Open bar with caipirinhas and champagne', 'Traditional Brazilian buffet', 'Exclusive parade programme', 'Return transfer from Fairmont Copacabana'],
     eventTag: 'Limitless Experiences',
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // OPEN AUCTIONS (no Explorer-subscriber marketing tag)
+  // ═══════════════════════════════════════════════════════════
+  {
+    id: 'evt-102',
+    title: 'UEFA Champions League Final 2026 – VIP Hospitality',
+    description: 'Bid for two premium hospitality tickets to the UEFA Champions League Final with pre-match dining, open bar, and category-1 seating.',
+    date: 'May 30, 2026',
+    location: 'Stadium TBC, Europe',
+    city: 'Lyon',
+    pageType: 'auction',
+    category: 'Sport and leisure',
+    points: 22000,
+    currentBid: 22000,
+    bidChips: [22500, 23000, 24000, 25000],
+    msLeft: 65 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&h=800&fit=crop', 'Champions League final', 'Sport and leisure'),
+    includedItems: ['2 hospitality tickets', 'Pre-match three-course meal', 'Premium drinks package', 'Official match programme', 'Dedicated host'],
+    eventTag: 'Limitless Experiences',
+  },
+  {
+    id: 'evt-103',
+    title: 'Coldplay – Front Circle & Afterparty',
+    description: 'Two front-circle tickets at Paris La Défense Arena plus access to the official afterparty with light bites and drinks.',
+    date: 'June 14, 2026',
+    location: 'Paris La Défense Arena, Nanterre',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Concerts and festivals',
+    points: 12000,
+    currentBid: 12000,
+    bidChips: [12500, 13000, 14000, 15000],
+    msLeft: 80 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&h=800&fit=crop', 'Arena concert', 'Concerts and festivals'),
+    includedItems: ['2 front-circle tickets', 'Afterparty access for 2', 'Welcome drink', 'Commemorative laminate'],
+    eventTag: 'Fever Original',
+  },
+  {
+    id: 'evt-104',
+    title: 'Three-Michelin-Star Chef’s Table for Four',
+    description: 'An intimate chef’s table dinner for four at a leading Paris restaurant, with wine pairings chosen by the sommelier.',
+    date: 'April 18, 2026',
+    location: '8th arrondissement, Paris',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Food and drinks',
+    points: 28000,
+    currentBid: 28000,
+    bidChips: [28500, 29000, 30000, 32000],
+    msLeft: 23 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&h=800&fit=crop', 'Fine dining', 'Food and drinks'),
+    includedItems: ['Chef’s table for 4', 'Multi-course tasting menu', 'Premium wine pairing', 'Kitchen tour', 'Signed menu'],
+    eventTag: 'Fever Original',
+  },
+  {
+    id: 'evt-105',
+    title: 'Comédie-Française – Private Box & Champagne',
+    description: 'A private box for two at the Comédie-Française with champagne service and programme notes from a house dramaturg.',
+    date: 'May 9, 2026',
+    location: 'Comédie-Française, Paris',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Shows and culture',
+    points: 9500,
+    currentBid: 9500,
+    bidChips: [10000, 10500, 11000, 12000],
+    msLeft: 44 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1503095396549-807759245b35?w=1200&h=800&fit=crop', 'Theatre interior', 'Shows and culture'),
+    includedItems: ['Private box for 2', 'Bottle of champagne', 'House programme', 'Coat check', 'Premium seats'],
+    eventTag: 'Hotel Experience',
+  },
+  {
+    id: 'evt-106',
+    title: 'Riviera Spa Day for Two at Negresco',
+    description: 'A full day of spa treatments, pool access, and lunch for two at an iconic Nice hotel spa overlooking the Mediterranean.',
+    date: 'June 28, 2026',
+    location: 'Le Negresco, Nice',
+    city: 'Nice',
+    pageType: 'auction',
+    category: 'Wellness',
+    points: 11000,
+    currentBid: 11000,
+    bidChips: [11500, 12000, 12500, 13000],
+    msLeft: 94 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1200&h=800&fit=crop', 'Luxury spa', 'Wellness'),
+    includedItems: ['Dual treatment menu', 'Pool & hammam access', 'Lunch for 2', 'Robes and slippers', 'Herbal tea ritual'],
+    eventTag: 'Hotel Experience',
+  },
+  {
+    id: 'evt-107',
+    title: 'Louvre Private Before-Hours Tour',
+    description: 'Enter the Louvre before public opening with an art historian guide, focusing on masterpieces without the crowds.',
+    date: 'April 12, 2026',
+    location: 'Musée du Louvre, Paris',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Visits',
+    points: 7500,
+    currentBid: 7500,
+    bidChips: [8000, 8500, 9000, 9500],
+    msLeft: 17 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1200&h=800&fit=crop', 'Louvre pyramid', 'Visits'),
+    includedItems: ['Private tour for 2', 'Before-hours entry', 'Expert guide', 'Audio headsets', 'Coffee after the tour'],
+    eventTag: 'Fever Original',
+  },
+  {
+    id: 'evt-108',
+    title: 'Bordeaux Wine Estate Weekend',
+    description: 'Two nights in a Médoc château with vineyard walks, barrel tasting, and a multi-course dinner with the winemaker.',
+    date: 'September 12, 2026',
+    location: 'Médoc, Bordeaux',
+    city: 'Bordeaux',
+    pageType: 'auction',
+    category: 'Hotel experiences',
+    points: 19000,
+    currentBid: 19000,
+    bidChips: [19500, 20000, 21000, 22000],
+    msLeft: 170 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop', 'Château hotel', 'Hotel experiences'),
+    includedItems: ['2 nights for 2', 'Daily breakfast', 'Winemaker dinner', 'Vineyard & cellar visit', 'Welcome bottle'],
+    eventTag: 'Limitless Experiences',
+  },
+  {
+    id: 'evt-109',
+    title: 'VivaTech 2026 – Executive VIP Pass',
+    description: 'Two executive passes with fast-track entry, startup pitch lounge access, and invitation to the closing networking reception.',
+    date: 'June 18, 2026',
+    location: 'Paris Expo Porte de Versailles',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Tech',
+    points: 6500,
+    currentBid: 6500,
+    bidChips: [7000, 7500, 8000, 9000],
+    msLeft: 84 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=800&fit=crop', 'Tech conference', 'Tech'),
+    includedItems: ['2 executive passes', 'Fast-track entry', 'Pitch lounge access', 'Closing reception', 'Digital delegate bag'],
+    eventTag: 'Fever Original',
+  },
+  {
+    id: 'evt-110',
+    title: 'Roland-Garros Men’s Final – Loge Package',
+    description: 'Two tickets in a shared loge for the men’s singles final with lunch, champagne, and official Roland-Garros gifts.',
+    date: 'June 8, 2026',
+    location: 'Stade Roland-Garros, Paris',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Sport and leisure',
+    points: 24000,
+    currentBid: 24000,
+    bidChips: [24500, 25000, 26000, 27000],
+    msLeft: 74 * 24 * 60 * 60 * 1000,
+    image: '/roland-garros-1.png',
+    heroImages: [
+      { src: '/roland-garros-1.png', alt: 'Roland-Garros clay court match' },
+      { src: '/roland-garros-2.png', alt: 'Roland-Garros aerial court view' },
+      { src: '/roland-garros-3.png', alt: 'Tennis racket on clay court' },
+      ...makeHeroImages('/roland-garros-1.png', 'Roland-Garros final loge', 'Sport and leisure').slice(1),
+    ],
+    includedItems: ['2 loge tickets', 'Champagne on arrival', 'Gourmet lunch', 'Official towel & programme', 'VIP entrance'],
+    eventTag: 'Limitless Experiences',
+  },
+  {
+    id: 'evt-111',
+    title: 'Jazz à Juan – Beachfront VIP for Two',
+    description: 'Premium seated tickets on the Juan-les-Pins waterfront stage with lounge access and parking.',
+    date: 'July 19, 2026',
+    location: 'Pinède Gould, Juan-les-Pins',
+    city: 'Nice',
+    pageType: 'auction',
+    category: 'Concerts and festivals',
+    points: 8500,
+    currentBid: 8500,
+    bidChips: [9000, 9500, 10000, 11000],
+    msLeft: 115 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=400&h=400&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1200&h=800&fit=crop', 'Jazz festival', 'Concerts and festivals'),
+    includedItems: ['2 premium seats', 'VIP lounge access', 'Welcome drink', 'Parking pass', 'Festival lanyards'],
+    eventTag: 'Fever Original',
   },
 ];
 

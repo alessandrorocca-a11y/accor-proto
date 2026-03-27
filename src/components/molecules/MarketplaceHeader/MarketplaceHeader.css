@@ -402,3 +402,9 @@
   width: 32px;
   height: 32px;
 }
+
+@media (max-width: 767px) {
+  .marketplace-header {
+    --header-shadow: 0 1px 3px rgba(7, 5, 24, 0.06);
+  }
+}

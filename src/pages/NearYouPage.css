@@ -463,10 +463,17 @@
 .near-you__event-card-body {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   flex: 1;
   min-width: 0;
   overflow: hidden;
+}
+
+.near-you__event-card-body-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  min-width: 0;
 }
 
 .near-you__event-card-date {

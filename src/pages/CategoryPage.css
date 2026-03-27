@@ -11,6 +11,12 @@
   box-shadow: 0 var(--wel-sem-number-shadow-down-y) var(--wel-sem-number-shadow-blur) var(--wel-sem-color-shadow-default);
 }
 
+@media (max-width: 767px) {
+  .category-page .marketplace-header__bar {
+    box-shadow: 0 1px 3px rgba(7, 5, 24, 0.06);
+  }
+}
+
 .category-page .marketplace-header__logo-all,
 .category-page .marketplace-header__logo-accor,
 .category-page .marketplace-header__icon-btn,
@@ -237,7 +243,7 @@
 .category-page__card {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: stretch;
   gap: var(--wel-sem-spacingstatic-inline-xs, 8px);
   width: 100%;
   box-sizing: border-box;
@@ -428,6 +434,12 @@
 .category-page__card-points-badge .category-page__card-cash-from {
   color: var(--wel-sem-color-on-surface-low, #5e5b73);
   font-weight: 400;
+}
+
+.category-page__card-points-badge--eur {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
 }
 
 .category-page__card-cash {

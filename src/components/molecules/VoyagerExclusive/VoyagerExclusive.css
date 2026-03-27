@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════════
-   VOYAGER EXCLUSIVE — Badge + Upgrade Dialog
+   EXPLORER (ALL+) EXCLUSIVE — Badge + Upgrade Dialog
    ══════════════════════════════════════════════════════════════════════ */
 
 /* ── Badge (inline, below tags) ──────────────────────────────────────── */
@@ -11,9 +11,11 @@
 }
 
 .voyager-badge__card {
-  height: 56px;
+  max-height: 44px;
   width: auto;
+  max-width: 140px;
   display: block;
+  object-fit: contain;
 }
 
 /* ── Dialog backdrop ─────────────────────────────────────────────────── */
@@ -105,10 +107,17 @@
 }
 
 .voyager-dialog__card {
-  width: 200px;
+  width: 100%;
+  max-width: 320px;
   height: auto;
-  border-radius: 6px;
-  filter: drop-shadow(0 2px 8px rgba(5, 0, 51, 0.15));
+  border-radius: 8px;
+  filter: drop-shadow(0 1px 4px rgba(5, 0, 51, 0.1));
+}
+
+@media (min-width: 768px) {
+  .voyager-dialog__card {
+    filter: drop-shadow(0 2px 8px rgba(5, 0, 51, 0.15));
+  }
 }
 
 .voyager-dialog__content {

@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { IconHeart } from '@/components/atoms';
+import { ExplorerOnlyCardFooter, IconHeart } from '@/components/atoms';
 import { useFavourites } from '@/context/FavouritesContext';
 import { useUser } from '@/context/UserContext';
 import type { EventData } from '@/data/events/eventRegistry';
 import {
   formatPoints,
+  formatStandardEventListPrice,
   getEffectivePointsCost,
   getEventRoute,
   getPaymentLabel,
+  isExplorerExclusiveMarketingTag,
 } from '@/data/events/eventRegistry';
 import { getRecommendedEvents } from '@/utils/recommendedEvents';
 import type { MenuFavouriteEvent } from '../Menu/Menu';
@@ -77,7 +79,10 @@ function EventCountdown({ event }: { event: EventData }) {
 }
 
 function badgePointsLabel(event: EventData): string {
-  if (event.pageType === 'standard' || event.pageType === 'waitlist') {
+  if (event.pageType === 'standard') {
+    return formatStandardEventListPrice(event);
+  }
+  if (event.pageType === 'waitlist') {
     return formatPoints(event.points);
   }
   return formatPoints(getEffectivePointsCost(event));
@@ -101,6 +106,7 @@ function toMenuFavourite(event: EventData): MenuFavouriteEvent {
     paymentLabel: getPaymentLabel(event.pageType),
     points: badgePointsLabel(event),
     countdown: snapshotCountdown(event),
+    hideRewardsIcon: event.pageType === 'standard',
   };
 }
 
@@ -172,12 +178,15 @@ export function YouMayAlsoLike({ event = null, excludeEventId, contextCategory, 
                 >
                   <IconHeart filled={isFavourite(e.id)} />
                 </button>
+                {isExplorerExclusiveMarketingTag(e.marketingTag) ? (
+                  <ExplorerOnlyCardFooter variant="imageOverlay" />
+                ) : null}
               </div>
               <div className="linkout__card-body">
                 <p className="linkout__card-date">{e.date}</p>
                 <p className="linkout__card-title">{e.title}</p>
                 <div className="linkout__card-price-badge">
-                  <IconStar />
+                  {e.pageType !== 'standard' ? <IconStar /> : null}
                   <span>{fav.points}</span>
                 </div>
                 <EventCountdown event={e} />

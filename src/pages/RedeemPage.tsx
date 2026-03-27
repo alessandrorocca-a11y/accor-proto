@@ -520,7 +520,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                   aria-pressed={isFavourite}
                   onClick={handleHeartClick}
                 >
-                  <IconHeart filled={isFavourite} />
+                  <IconHeart filled={isFavourite} outlineWhenUnfilled />
                 </button>
               </div>
             </div>

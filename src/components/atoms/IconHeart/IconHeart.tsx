@@ -3,6 +3,10 @@ export interface IconHeartProps {
   /** Rendered width/height in px; viewBox stays 24×24. Default 24. */
   size?: number;
   className?: string;
+  /**
+   * When true and `filled` is false: no fill, `currentColor` stroke (same idea as the bell on product pages).
+   */
+  outlineWhenUnfilled?: boolean;
 }
 
 const PATH =
@@ -14,13 +18,14 @@ const STROKE_SELECTED = '#ffffff';
 const FILL_DEFAULT = 'rgba(5, 0, 51, 0.22)';
 const STROKE_DEFAULT = '#ecebf2';
 
-export function IconHeart({ filled, size = 24, className }: IconHeartProps) {
+export function IconHeart({ filled, size = 24, className, outlineWhenUnfilled = false }: IconHeartProps) {
+  const outline = outlineWhenUnfilled && !filled;
   return (
     <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d={PATH}
-        fill={filled ? ACTIVE : FILL_DEFAULT}
-        stroke={filled ? STROKE_SELECTED : STROKE_DEFAULT}
+        fill={filled ? ACTIVE : outline ? 'none' : FILL_DEFAULT}
+        stroke={filled ? STROKE_SELECTED : outline ? 'currentColor' : STROKE_DEFAULT}
         strokeWidth={filled ? '2' : '1.5'}
         strokeLinecap="round"
         strokeLinejoin="round"

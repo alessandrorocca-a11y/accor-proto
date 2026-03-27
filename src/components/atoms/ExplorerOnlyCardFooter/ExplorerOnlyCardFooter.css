@@ -1,0 +1,78 @@
+/* ALL+ Explorer strip — bottom of listing cards (Figma marketplace card) */
+
+.explorer-only-card-footer {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.explorer-only-card-footer--horizontal {
+  margin-top: auto;
+  padding-top: var(--wel-sem-spacingstatic-stack-xs, 8px);
+}
+
+.explorer-only-card-footer--vertical {
+  margin-top: var(--wel-sem-spacingstatic-stack-xs, 8px);
+}
+
+/* Bottom strip on top of the hero/listing image (Figma marketplace card) */
+.explorer-only-card-footer--imageOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: 0;
+  padding-top: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Dark fade behind artwork so the strip reads on any photo */
+.explorer-only-card-footer__scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 2, 2, 0) 0%,
+    rgba(2, 2, 2, 0.55) 45%,
+    rgba(2, 2, 2, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+/* Mobile: scrim was eating ~¼ of the card — keep a thin, light fade only */
+@media (max-width: 767px) {
+  .explorer-only-card-footer__scrim {
+    height: 22px;
+    background: linear-gradient(
+      180deg,
+      rgba(2, 2, 2, 0) 0%,
+      rgba(2, 2, 2, 0.12) 50%,
+      rgba(2, 2, 2, 0.38) 100%
+    );
+  }
+}
+
+.explorer-only-card-footer--imageOverlay .explorer-only-card-footer__img {
+  position: relative;
+  z-index: 1;
+}
+
+.explorer-only-card-footer__img {
+  display: block;
+  width: 100%;
+  min-height: 22px;
+  height: auto;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 -1px 2px rgba(0, 0, 0, 0.18));
+}
+
+@media (min-width: 768px) {
+  .explorer-only-card-footer__img {
+    filter: drop-shadow(0 -1px 3px rgba(0, 0, 0, 0.45));
+  }
+}

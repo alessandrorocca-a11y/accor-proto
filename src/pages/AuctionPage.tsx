@@ -100,7 +100,14 @@ function IconGallery() {
 
 export default function AuctionPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
-  const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
+  const {
+    points: userPoints,
+    loyaltyTier: userLoyaltyTier,
+    isVoyagerSubscriber,
+    deductPoints,
+    recordAuctionBid,
+    settleAuctionEnd,
+  } = useUser();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const AUCTION_MS_LEFT = eventData?.msLeft ?? DEFAULT_AUCTION_MS_LEFT;
@@ -146,7 +153,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
 
   const handleAuctionEnd = useCallback(() => {
     setAuctionEnded(true);
-  }, []);
+    if (eventData?.id) settleAuctionEnd(eventData.id, isHighestBidder);
+  }, [eventData?.id, isHighestBidder, settleAuctionEnd]);
 
   useEffect(() => {
     const el = placeBidRef.current;
@@ -224,7 +232,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const handleConfirmBid = () => {
     if (eventData) {
       deductPoints(bidNumeric);
-      addOrder(eventData, bidNumeric);
+      recordAuctionBid(eventData, bidNumeric);
     }
     setCurrentBid(bidNumeric);
     setBidCount((c) => c + 1);
@@ -475,7 +483,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
                   aria-pressed={isFavourite}
                   onClick={handleHeartClick}
                 >
-                  <IconHeart filled={isFavourite} />
+                  <IconHeart filled={isFavourite} outlineWhenUnfilled />
                 </button>
               </div>
             </div>

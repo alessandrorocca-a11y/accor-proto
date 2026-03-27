@@ -135,7 +135,7 @@
   width: 100%;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 4px rgba(7, 5, 24, 0.08), 0 4px 12px rgba(7, 5, 24, 0.06);
   padding: 24px;
   z-index: 1100;
   max-height: calc(100vh - 200px);
@@ -157,13 +157,19 @@
   }
 }
 
+@media (min-width: 768px) {
+  .home-page__hero-search-dropdown {
+    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
 /* ── Next Trip Card (inside hero) ─────────────────────────────────────── */
 .home-page__trip-card {
   position: relative;
   z-index: 1;
   background: var(--wel-sem-color-surface);
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(7, 5, 24, 0.12);
+  box-shadow: 0 1px 6px rgba(7, 5, 24, 0.08);
   padding: 12px;
   display: flex;
   align-items: center;
@@ -174,6 +180,12 @@
   align-self: flex-start;
   margin-left: 16px;
   margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .home-page__trip-card {
+    box-shadow: 0 2px 12px rgba(7, 5, 24, 0.12);
+  }
 }
 
 .home-page__trip-thumb {
@@ -305,6 +317,7 @@
 
 .home-page__event-card-img {
   position: relative;
+  isolation: isolate;
   width: 100%;
   height: 173px;
   border-radius: var(--wel-sem-borderradius-surface, 6px);
@@ -315,6 +328,7 @@
 .home-page__event-card-img img {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -324,13 +338,14 @@
   position: absolute;
   top: var(--wel-sem-spacingstatic-inset-xs, 8px);
   left: var(--wel-sem-spacingstatic-inset-xs, 8px);
-  z-index: 1;
+  z-index: 2;
 }
 
 .home-page__event-card-fav {
   position: absolute;
   top: var(--wel-sem-spacingstatic-inset-xs, 8px);
   right: var(--wel-sem-spacingstatic-inset-xs, 8px);
+  z-index: 5;
   width: 36px;
   height: 36px;
   display: flex;
@@ -471,6 +486,12 @@
   font-weight: 400;
 }
 
+.home-page__event-card-points--eur {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
 .home-page__event-card-timer {
   display: flex;
   align-items: center;
@@ -530,7 +551,7 @@
   border-radius: var(--wel-sem-borderradius-surface, 6px);
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 8px 16px rgba(7, 5, 24, 0.05);
+  box-shadow: 0 2px 8px rgba(7, 5, 24, 0.04);
   transition: width 0.35s ease, height 0.35s ease;
   width: 168px;
   height: 299px;
@@ -539,6 +560,12 @@
 .home-page__top-card--active {
   width: 200px;
   height: 356px;
+}
+
+@media (min-width: 768px) {
+  .home-page__top-card {
+    box-shadow: 0 8px 16px rgba(7, 5, 24, 0.05);
+  }
 }
 
 .home-page__top-card-media {
@@ -1042,12 +1069,18 @@
   height: 71px;
   border-radius: 6px;
   overflow: hidden;
-  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.14));
   z-index: 2;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .home-page__banner-loyalty-card {
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
+  }
 }
 
 .home-page__banner-loyalty-card-scale {
@@ -1398,7 +1431,7 @@
 .home-page__yml-grid .home-page__event-card-img {
   width: 100%;
   height: auto;
-  aspect-ratio: 310 / 240;
+  aspect-ratio: 1 / 1;
   position: relative;
 }
 
@@ -1729,7 +1762,7 @@
   .home-page__event-card-img {
     width: 100%;
     height: auto;
-    aspect-ratio: 310 / 240;
+    aspect-ratio: 1 / 1;
   }
 
   .home-page__event-card-title {
