@@ -258,6 +258,7 @@
 
 .category-page__card-img-wrap {
   position: relative;
+  isolation: isolate;
   width: 164px;
   min-width: 164px;
   height: 164px;
@@ -267,6 +268,9 @@
 }
 
 .category-page__card-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -277,7 +281,7 @@
   position: absolute;
   top: var(--wel-sem-spacingstatic-inset-xs, 8px);
   left: var(--wel-sem-spacingstatic-inset-xs, 8px);
-  z-index: 1;
+  z-index: 2;
 }
 
 .category-page__card-fav {
@@ -294,7 +298,7 @@
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
-  z-index: 1;
+  z-index: 5;
   color: var(--wel-sem-color-on-surface-low, #5e5b73);
 }
 
@@ -312,6 +316,7 @@
   position: absolute;
   bottom: 8px;
   left: 8px;
+  z-index: 11;
   width: 32px;
   height: 32px;
   border-radius: 4px;
@@ -482,8 +487,10 @@
 .category-page__card-timer {
   display: flex;
   align-items: center;
+  align-self: flex-start;
   gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
   padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-2xs, 4px);
   background: var(--wel-sem-color-surface-container-mid, #f7f9fb);

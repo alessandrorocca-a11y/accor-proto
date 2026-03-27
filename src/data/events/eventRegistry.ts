@@ -57,6 +57,20 @@ export function isVoyagerExclusiveEvent(event: EventData | null | undefined): bo
   return isExplorerExclusiveMarketingTag(event?.marketingTag);
 }
 
+/** Category filter / chips: ALL+ Explorer (subscription) experiences bucket. */
+export const ACCOR_PLUS_EXCLUSIVES_CATEGORY = 'All Accor Plus Exclusives' as const;
+
+/**
+ * Primary `category` plus the ALL+ bucket when the event is Explorer-only (presale / exclusivity),
+ * so it appears under “All Accor Plus Exclusives” as well as its thematic category.
+ */
+export function getEventListingCategories(event: Pick<EventData, 'category' | 'marketingTag'>): string[] {
+  if (isExplorerExclusiveMarketingTag(event.marketingTag)) {
+    return [event.category, ACCOR_PLUS_EXCLUSIVES_CATEGORY];
+  }
+  return [event.category];
+}
+
 const ROUTE_MAP: Record<PageType, string> = {
   'auction': '#auction',
   'prize-draw': '#draw',

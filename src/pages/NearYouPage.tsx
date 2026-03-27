@@ -3,7 +3,7 @@ import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTa
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
-import { isExplorerExclusiveMarketingTag } from '@/data/events/eventRegistry';
+import { ACCOR_PLUS_EXCLUSIVES_CATEGORY, isExplorerExclusiveMarketingTag } from '@/data/events/eventRegistry';
 import './NearYouPage.css';
 import './CategoryPage.css';
 
@@ -192,7 +192,7 @@ const CATEGORIES = [
   'Paris Saint Germain',
   'Arena',
   'All Signature Exclusives',
-  'All Accor Plus Exclusives',
+  ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
 
 const PAYMENT_OPTIONS = ['Standard', 'Auctions', 'Prize Draws', 'Redeem now', 'Waitlist'];

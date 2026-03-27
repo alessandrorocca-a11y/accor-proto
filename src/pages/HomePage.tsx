@@ -17,6 +17,7 @@ import { useUser, type LoyaltyTier } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
   sortEventsForProfileAndPointsBalance,
+  sortEventsForProfileAndPointsBalancePreferredCityFirst,
   takeSortedWithVoyagerExclusiveCap,
 } from '@/utils/profileSort';
 import './HomePage.css';
@@ -336,15 +337,6 @@ function IconPin() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function IconCalendar() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -734,20 +726,23 @@ export default function HomePage() {
     [testProfileId, USER_POINTS, isVoyagerSubscriber],
   );
 
+  const suggestedHomeCity = PLANNED_TRIP?.city ?? 'Paris';
+
   const SUGGESTED_FOR_YOU_EVENTS = useMemo(
     () =>
       takeSortedWithVoyagerExclusiveCap(
-        sortEventsForProfileAndPointsBalance(
+        sortEventsForProfileAndPointsBalancePreferredCityFirst(
           EVENT_REGISTRY.filter((e) => isAccor(e)),
           testProfileId,
           USER_POINTS,
           'home-suggested-for-you',
+          suggestedHomeCity,
         ),
         isVoyagerSubscriber,
         8,
         2,
       ).map(registryToCard),
-    [testProfileId, USER_POINTS, isVoyagerSubscriber],
+    [testProfileId, USER_POINTS, isVoyagerSubscriber, suggestedHomeCity],
   );
 
   const { toggleFavourite: toggleFavCtx } = useFavourites();
@@ -986,7 +981,7 @@ export default function HomePage() {
       </nav>
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className={`home-page__hero${PLANNED_TRIP ? ' home-page__hero--with-trip' : ''}`}>
+      <section className="home-page__hero">
         <div className="home-page__hero-bg">
           <img src={HERO_IMAGE} alt="" />
         </div>
@@ -1047,34 +1042,6 @@ export default function HomePage() {
           </div>
 
         </div>
-
-          {PLANNED_TRIP && (
-            <div
-              className="home-page__trip-card home-page__trip-card--hero"
-              role="button"
-              tabIndex={0}
-              onClick={() => { window.location.hash = `#city/${PLANNED_TRIP!.city.toLowerCase()}?from=${PLANNED_TRIP!.dateFrom}&to=${PLANNED_TRIP!.dateTo}`; }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { window.location.hash = `#city/${PLANNED_TRIP!.city.toLowerCase()}?from=${PLANNED_TRIP!.dateFrom}&to=${PLANNED_TRIP!.dateTo}`; } }}
-            >
-              <div className="home-page__trip-thumb">
-                <img src={PLANNED_TRIP.image} alt={PLANNED_TRIP.city} />
-              </div>
-              <div className="home-page__trip-info">
-                <span className="home-page__trip-label">
-                  Next trip to <strong>{PLANNED_TRIP.city}</strong>
-                </span>
-                <span className="home-page__trip-detail">
-                  <IconPin />
-                  {PLANNED_TRIP.hotelName}
-                </span>
-                <span className="home-page__trip-detail">
-                  <IconCalendar />
-                  {PLANNED_TRIP.dates}
-                </span>
-              </div>
-              <IconChevronRight />
-            </div>
-          )}
       </section>
 
       {/* ── Next trip to [city] ──────────────────────────────────────── */}

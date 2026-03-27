@@ -483,7 +483,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
     route: getEventRoute(e),
   }));
   const ACCOR_PLUS_EVENTS = limitVoyagerExclusivePerSection(
-    cityEvents.filter((e) => e.category === 'Hotel experiences'),
+    cityEvents.filter((e) => isExplorerExclusiveMarketingTag(e.marketingTag)),
     isVoyagerSubscriber,
     1,
   ).map(registryToCard);

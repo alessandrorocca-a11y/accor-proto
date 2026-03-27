@@ -9,10 +9,12 @@ import {
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import {
+  ACCOR_PLUS_EXCLUSIVES_CATEGORY,
   EVENT_REGISTRY,
   getEventRoute,
   formatPoints,
   formatStandardEventListPrice,
+  getEventListingCategories,
   isExplorerExclusiveMarketingTag,
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
@@ -59,7 +61,7 @@ const CATEGORIES = [
   'Paris Saint Germain',
   'Arena',
   'All Signature Exclusives',
-  'All Accor Plus Exclusives',
+  ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
 
 const CITY_NAME = 'Homepage';
@@ -73,7 +75,7 @@ const ALL_EVENTS: PaymentEvent[] = EVENT_REGISTRY.map((e) => ({
   title: e.title,
   date: e.date,
   image: e.image,
-  categories: [e.category],
+  categories: getEventListingCategories(e),
   eventTag: e.eventTag,
   paymentType: paymentTypeMap[e.pageType] ?? 'cash',
   points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
@@ -626,6 +628,9 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                 )}
+                {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+                  <ExplorerOnlyCardFooter variant="imageOverlay" />
+                ) : null}
               </div>
 
               <div className="category-page__card-body">
@@ -696,9 +701,6 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                     </div>
                   </div>
                 )}
-                {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
-                  <ExplorerOnlyCardFooter />
-                ) : null}
               </div>
             </article>
             );

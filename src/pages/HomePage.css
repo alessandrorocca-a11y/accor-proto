@@ -163,94 +163,6 @@
   }
 }
 
-/* ── Next Trip Card (inside hero) ─────────────────────────────────────── */
-.home-page__trip-card {
-  position: relative;
-  z-index: 1;
-  background: var(--wel-sem-color-surface);
-  border-radius: 12px;
-  box-shadow: 0 1px 6px rgba(7, 5, 24, 0.08);
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  width: calc(100% - 32px);
-  max-width: 400px;
-  align-self: flex-start;
-  margin-left: 16px;
-  margin-bottom: 24px;
-}
-
-@media (min-width: 768px) {
-  .home-page__trip-card {
-    box-shadow: 0 2px 12px rgba(7, 5, 24, 0.12);
-  }
-}
-
-.home-page__trip-thumb {
-  width: 72px;
-  height: 72px;
-  border-radius: 10px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.home-page__trip-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.home-page__trip-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-  flex: 1;
-}
-
-.home-page__trip-label {
-  font: var(--wel-typography-label-strong-02);
-  font-size: 16px;
-  color: var(--wel-sem-color-on-surface-hi, #232136);
-}
-
-.home-page__trip-label strong {
-  font-weight: 700;
-}
-
-.home-page__trip-detail {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font: var(--wel-typography-caption-default);
-  font-size: 13px;
-  color: var(--wel-sem-color-on-surface-low, #5e5b73);
-}
-
-.home-page__trip-detail svg {
-  flex-shrink: 0;
-  color: var(--wel-sem-color-on-surface-low, #5e5b73);
-}
-
-.home-page__trip-arrow {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  color: var(--wel-sem-color-on-surface-low, #5e5b73);
-  margin-left: auto;
-}
-
-/* ── Hero with trip card ──────────────────────────────────────────────── */
-.home-page__hero--with-trip {
-  min-height: 420px;
-}
-
-.home-page__hero--with-trip .home-page__hero-content {
-  padding-bottom: 16px;
-}
-
 /* ── Section shared styles ────────────────────────────────────────────── */
 .home-page__section {
   padding: 32px 0 0;
@@ -1271,18 +1183,6 @@
     padding: 48px 24px 56px;
   }
 
-  .home-page__hero--with-trip {
-    min-height: 480px;
-  }
-
-  .home-page__hero--with-trip .home-page__hero-content {
-    padding-bottom: 16px;
-  }
-
-  .home-page__trip-card--hero {
-    margin-left: 24px;
-  }
-
   .home-page__section-header {
     padding: 0 24px;
   }
@@ -1306,19 +1206,6 @@
   .home-page__hero-content {
     padding: 60px 32px 80px;
     gap: 24px;
-  }
-
-  .home-page__hero--with-trip {
-    min-height: 540px;
-  }
-
-  .home-page__hero--with-trip .home-page__hero-content {
-    padding-bottom: 20px;
-  }
-
-  .home-page__trip-card--hero {
-    margin-left: 32px;
-    max-width: 420px;
   }
 
   .home-page__section-header {
@@ -1582,14 +1469,6 @@
     align-items: flex-start;
   }
 
-  .home-page__hero--with-trip {
-    min-height: 680px;
-  }
-
-  .home-page__hero--with-trip .home-page__hero-content {
-    padding-bottom: 24px;
-  }
-
   .home-page__hero-content {
     padding: 0 64px 64px;
     gap: 24px;
@@ -1607,12 +1486,6 @@
 
   .home-page__hero-search-wrap {
     max-width: 600px;
-  }
-
-  /* ── Trip card inside hero on desktop ───────────────────────────── */
-  .home-page__trip-card--hero {
-    margin-left: 64px;
-    max-width: 420px;
   }
 
   /* ── Promo card ──────────────────────────────────────────────────── */

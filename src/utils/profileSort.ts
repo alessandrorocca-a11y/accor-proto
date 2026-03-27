@@ -110,6 +110,27 @@ export function sortEventsForProfileAndPointsBalance(
 }
 
 /**
+ * Same as {@link sortEventsForProfileAndPointsBalance}, but events in `preferredCity` are ordered first
+ * (each group sorted/shuffled with its own seed). Use on homepage “Suggested for you” so local experiences
+ * are not buried behind higher-scoring events elsewhere (e.g. auction in Tours vs Paris).
+ */
+export function sortEventsForProfileAndPointsBalancePreferredCityFirst(
+  events: EventData[],
+  profileId: TestProfileId,
+  userPoints: number,
+  orderSeed: string,
+  preferredCity: string,
+): EventData[] {
+  const pref = preferredCity.trim();
+  const inCity = events.filter((e) => e.city === pref);
+  const rest = events.filter((e) => e.city !== pref);
+  return [
+    ...sortEventsForProfileAndPointsBalance(inCity, profileId, userPoints, `${orderSeed}|city:${pref}`),
+    ...sortEventsForProfileAndPointsBalance(rest, profileId, userPoints, `${orderSeed}|other`),
+  ];
+}
+
+/**
  * Without Explorer subscription: same order, but only the first `maxExclusive` presale/exclusivity
  * events in this list are kept (rest of exclusives dropped). Other events unchanged.
  */

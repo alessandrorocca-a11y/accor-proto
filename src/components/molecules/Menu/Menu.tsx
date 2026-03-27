@@ -432,6 +432,9 @@ export function Menu({
   let userCtx: ReturnType<typeof useUser> | null = null;
   try { userCtx = useUser(); } catch { /* Menu might render outside UserProvider */ }
 
+  /** Signature / Accor+ exclusives nav — Explorer (ALL+) subscribers only when user context is available */
+  const showSubscriptionsSection = !userCtx || userCtx.isVoyagerSubscriber;
+
   const UPCOMING_ORDERS: OrderEvent[] = useMemo(() => {
     if (!userCtx) return [];
     return userCtx.orders.map((o: OrderItem) => ({
@@ -691,39 +694,41 @@ export function Menu({
                 )}
               </div>
 
-              {/* Subscriptions accordion */}
-              <div className="menu__sidebar-section">
-                <button
-                  type="button"
-                  className="menu__accordion-trigger"
-                  onClick={() => setSubscriptionsExpanded(!subscriptionsExpanded)}
-                  aria-expanded={subscriptionsExpanded}
-                >
-                  <span className="menu__accordion-label">Subscriptions</span>
-                  {subscriptionsExpanded ? <IconChevronUp /> : <IconChevronDown />}
-                </button>
+              {/* Subscriptions accordion — Explorer (ALL+) only */}
+              {showSubscriptionsSection ? (
+                <div className="menu__sidebar-section">
+                  <button
+                    type="button"
+                    className="menu__accordion-trigger"
+                    onClick={() => setSubscriptionsExpanded(!subscriptionsExpanded)}
+                    aria-expanded={subscriptionsExpanded}
+                  >
+                    <span className="menu__accordion-label">Subscriptions</span>
+                    {subscriptionsExpanded ? <IconChevronUp /> : <IconChevronDown />}
+                  </button>
 
-                {subscriptionsExpanded && (
-                  <div className="menu__accordion-body">
-                    {SIDEBAR_SUBSCRIPTIONS.map((sub) => (
-                      <button
-                        key={sub.hash}
-                        type="button"
-                        className="menu__category-row"
-                        onClick={() => navigateTo(sub.hash)}
-                      >
-                        <img
-                          src={sub.image}
-                          alt=""
-                          className="menu__subscription-thumb"
-                          loading="lazy"
-                        />
-                        <span className="menu__category-name">{sub.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  {subscriptionsExpanded && (
+                    <div className="menu__accordion-body">
+                      {SIDEBAR_SUBSCRIPTIONS.map((sub) => (
+                        <button
+                          key={sub.hash}
+                          type="button"
+                          className="menu__category-row"
+                          onClick={() => navigateTo(sub.hash)}
+                        >
+                          <img
+                            src={sub.image}
+                            alt=""
+                            className="menu__subscription-thumb"
+                            loading="lazy"
+                          />
+                          <span className="menu__category-name">{sub.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null}
 
               {/* Payment mechanisms accordion */}
               <div className="menu__sidebar-section">
