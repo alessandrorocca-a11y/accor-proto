@@ -422,6 +422,7 @@
   flex-shrink: 0;
   width: 16px;
   height: 16px;
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
 }
 
 .category-page__card-points-value {
@@ -584,6 +585,19 @@
   font-size: 20px;
   line-height: 24px;
   color: var(--wel-sem-color-on-surface-hi, #232136);
+}
+
+.category-page .loyalty-sheet__value--points {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
+}
+
+.category-page .loyalty-sheet__points-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: inherit;
 }
 
 .category-page .loyalty-sheet__value--gold {

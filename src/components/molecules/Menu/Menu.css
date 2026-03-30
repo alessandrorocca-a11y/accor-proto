@@ -195,96 +195,94 @@
   color: var(--wel-sem-color-on-surface-hi);
 }
 
-/* ── Status card ─────────────────────────────────────────────────────── */
+/* ── Status card (Iris — primary container low, Figma 2017:12936) ─────── */
 .menu__status {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 8px;
-  background: #050033;
+  gap: 8px;
+  padding: 8px 16px 8px 8px;
+  border-radius: var(--wel-sem-borderradius-element-static-md, 4px);
+  background: var(--wel-sem-color-primary-container-low, #f9f9ff);
 }
 
-.menu__status--classic { background: #050033; }
-.menu__status--silver  { background: #9ca3af; }
-.menu__status--gold    { background: #af913a; }
-.menu__status--platinum { background: #6b7280; }
-.menu__status--diamond { background: var(--wel-sem-color-family, #f6f2ff); }
-
 .menu__status-icon {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 6px;
+  border-radius: var(--wel-sem-borderradius-element-static-lg, 6px);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--wel-sem-color-primary, #050033);
   background: transparent;
 }
 
 .menu__status-icon svg {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
 }
 
 .menu__status-info {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   flex: 1 1 0;
   min-width: 0;
 }
 
 .menu__status-label {
-  font: var(--wel-typography-body-default-02);
-  color: rgba(255, 255, 255, 0.7);
+  font: var(--wel-typography-label-default-03);
+  color: var(--wel-sem-color-on-surface-low, #5e5b73);
 }
 
 .menu__status-tier {
-  font: var(--wel-typography-title-02);
-  color: #fff;
+  font: var(--wel-typography-label-strong-02);
+  color: var(--wel-sem-color-primary, #050033);
+}
+
+/* Tier name colour — same palette as marketplace loyalty accents (HomePage suggested rail) */
+.menu__status--classic .menu__status-tier {
+  color: var(--wel-sem-color-primary, #050033);
+}
+
+.menu__status--silver .menu__status-tier {
+  color: var(--marketplace-header-points-silver, #9ca3af);
+}
+
+.menu__status--gold .menu__status-tier {
+  color: var(--marketplace-header-points-gold, #af913a);
+}
+
+.menu__status--platinum .menu__status-tier {
+  color: var(--marketplace-header-points-platinum, #6b7280);
+}
+
+.menu__status--diamond .menu__status-tier {
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
+}
+
+.menu__status-points-wrap {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu__status-reward-icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--wel-sem-color-primary, #050033);
+}
+
+.menu__status-reward-icon svg {
+  display: block;
 }
 
 .menu__status-points {
-  font: var(--wel-typography-title-03);
-  color: #fff;
+  font: var(--wel-typography-body-strong-02);
+  color: var(--wel-sem-color-primary, #050033);
   white-space: nowrap;
-}
-
-/* Gold / Silver / Diamond: dark text on lighter backgrounds */
-.menu__status--gold .menu__status-label {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.menu__status--gold .menu__status-tier,
-.menu__status--gold .menu__status-points {
-  color: #fff;
-}
-
-.menu__status--gold .menu__status-icon svg path {
-  fill: #fff;
-}
-
-.menu__status--silver .menu__status-label {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.menu__status--silver .menu__status-tier,
-.menu__status--silver .menu__status-points {
-  color: var(--wel-sem-color-on-surface-hi, #232136);
-}
-
-.menu__status--silver .menu__status-icon svg path {
-  fill: var(--wel-sem-color-on-surface-hi, #232136);
-}
-
-.menu__status--diamond .menu__status-label {
-  color: var(--wel-sem-color-on-surface-mid, #38364d);
-}
-
-.menu__status--diamond .menu__status-tier,
-.menu__status--diamond .menu__status-points {
-  color: var(--wel-sem-color-on-family, #050033);
 }
 
 /* ── Menu list ───────────────────────────────────────────────────────── */
