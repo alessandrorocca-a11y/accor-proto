@@ -967,21 +967,6 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      <MarketplaceHeader
-        theme="light"
-        isLoggedIn
-        avatarSrc="/avatar.png"
-        points={USER_POINTS}
-        loyaltyTier={userLoyaltyTier}
-        hideSearch
-        transparentOnTop
-        className="home-page__mobile-header"
-        onLogoClick={() => { window.location.href = window.location.pathname; }}
-        onMenu={() => { setMenuInitialView('navigation'); setMenuOpen(true); }}
-        onAvatarClick={() => { setMenuInitialView('profile'); setMenuOpen(true); }}
-        onPointsClick={() => setLoyaltyOpen(true)}
-      />
-
       {showFavSnack && (
         <div className="home-page__fav-snack" role="status">
           <svg className="home-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>

@@ -34,10 +34,6 @@
   border-color: var(--wel-sem-color-primary);
 }
 
-.auction-page .marketplace-header__points-value {
-  color: #fff;
-}
-
 /* ── Hero: full-width image edge-to-edge (Figma: HeroProd1) ────────────── */
 .auction-page__hero-full {
   position: relative;

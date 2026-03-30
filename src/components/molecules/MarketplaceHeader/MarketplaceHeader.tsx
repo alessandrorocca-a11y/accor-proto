@@ -29,7 +29,7 @@ export interface MarketplaceHeaderProps {
   isLoggedIn?: boolean;
   /** Points to show in badge when logged in */
   points?: number;
-  /** Loyalty tier (affects badge color) */
+  /** Loyalty tier (menu / profile; points badge uses unified marketplace styling) */
   loyaltyTier?: LoyaltyTier;
   /** Avatar image URL when logged in */
   avatarSrc?: string | null;
@@ -225,7 +225,7 @@ export function MarketplaceHeader({
             onPointsClick ? (
               <button
                 type="button"
-                className={`marketplace-header__points marketplace-header__points--${loyaltyTier}`}
+                className="marketplace-header__points"
                 aria-label={`${points.toLocaleString()} points`}
                 onClick={onPointsClick}
               >
@@ -236,7 +236,7 @@ export function MarketplaceHeader({
               </button>
             ) : (
               <div
-                className={`marketplace-header__points marketplace-header__points--${loyaltyTier}`}
+                className="marketplace-header__points"
                 aria-label={`${points.toLocaleString()} points`}
               >
                 <IconStar className="marketplace-header__points-icon" />

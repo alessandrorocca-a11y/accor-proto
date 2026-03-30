@@ -29,10 +29,6 @@
   border-color: var(--wel-sem-color-primary);
 }
 
-.category-page .marketplace-header__points-value {
-  color: #fff;
-}
-
 /* Breadcrumb */
 .category-page__breadcrumb {
   display: flex;

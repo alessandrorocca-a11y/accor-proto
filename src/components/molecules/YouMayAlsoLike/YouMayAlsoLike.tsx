@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart } from '@/components/atoms';
+import { ExplorerOnlyCardFooter, IconHeart, MarketingTag } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { useUser } from '@/context/UserContext';
 import type { EventData } from '@/data/events/eventRegistry';
@@ -13,6 +13,7 @@ import {
 } from '@/data/events/eventRegistry';
 import { getRecommendedEvents } from '@/utils/recommendedEvents';
 import type { MenuFavouriteEvent } from '../Menu/Menu';
+import '@/pages/HomePage.css';
 import '@/pages/LinkoutPage.css';
 
 export interface YouMayAlsoLikeProps {
@@ -20,6 +21,22 @@ export interface YouMayAlsoLikeProps {
   excludeEventId?: string;
   contextCategory?: string;
   contextCity?: string;
+}
+
+type PaymentType = 'prize-draw' | 'redeem' | 'auction' | 'cash' | 'flex' | 'linkout' | 'waitlist';
+
+interface YmlCardModel {
+  date: string;
+  title: string;
+  image: string;
+  imagePosition?: string;
+  paymentType: PaymentType;
+  points?: string;
+  cashPrice?: string;
+  hasTimer: boolean;
+  msLeft?: number;
+  eventTag?: string;
+  marketingTag?: EventData['marketingTag'];
 }
 
 function formatTimeLeft(ms: number) {
@@ -32,7 +49,7 @@ function formatTimeLeft(ms: number) {
   return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
 }
 
-function MsLeftTimer({ initialMs }: { initialMs: number }) {
+function LiveTimer({ initialMs }: { initialMs: number }) {
   const startRef = useRef(Date.now());
   const [elapsed, setElapsed] = useState(0);
 
@@ -44,38 +61,50 @@ function MsLeftTimer({ initialMs }: { initialMs: number }) {
   }, [initialMs]);
 
   const remaining = Math.max(0, initialMs - elapsed);
-  if (remaining <= 0) return null;
 
   return (
-    <div className="linkout__card-countdown">
-      <span>Time left:</span>
-      <span>{formatTimeLeft(remaining)}</span>
+    <div className="home-page__event-card-timer">
+      <span className="home-page__event-card-timer-label">Time left:</span>
+      <span className="home-page__event-card-timer-value">{formatTimeLeft(remaining)}</span>
     </div>
   );
 }
 
-function DrawEndTimer({ endIso }: { endIso: string }) {
-  const [ms, setMs] = useState(() => Math.max(0, new Date(endIso).getTime() - Date.now()));
-
-  useEffect(() => {
-    const id = setInterval(() => setMs(Math.max(0, new Date(endIso).getTime() - Date.now())), 1000);
-    return () => clearInterval(id);
-  }, [endIso]);
-
-  if (ms <= 0) return null;
-
-  return (
-    <div className="linkout__card-countdown">
-      <span>Time left:</span>
-      <span>{formatTimeLeft(ms)}</span>
-    </div>
-  );
+/** Same mapping as HomePage / CityPage `registryToCard`. */
+function registryToYmlCard(e: EventData): YmlCardModel {
+  const ptMap: Record<string, PaymentType> = {
+    auction: 'auction',
+    'prize-draw': 'prize-draw',
+    redeem: 'redeem',
+    standard: 'cash',
+    waitlist: 'waitlist',
+  };
+  return {
+    date: e.date,
+    title: e.title,
+    image: e.image,
+    imagePosition: e.imagePosition,
+    paymentType: ptMap[e.pageType] ?? 'cash',
+    points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
+    cashPrice: e.pageType === 'standard' ? formatStandardEventListPrice(e) : undefined,
+    hasTimer: !!e.msLeft,
+    msLeft: e.msLeft,
+    eventTag: e.eventTag,
+    marketingTag: e.marketingTag,
+  };
 }
 
-function EventCountdown({ event }: { event: EventData }) {
-  if (event.drawEndDate) return <DrawEndTimer endIso={event.drawEndDate} />;
-  if (event.msLeft != null) return <MsLeftTimer initialMs={event.msLeft} />;
-  return null;
+function paymentLabel(type: PaymentType): string {
+  switch (type) {
+    case 'prize-draw':
+      return 'Prize Draw';
+    case 'redeem':
+      return 'Redeem';
+    case 'auction':
+      return 'Current bid';
+    default:
+      return '';
+  }
 }
 
 function badgePointsLabel(event: EventData): string {
@@ -151,23 +180,23 @@ export function YouMayAlsoLike({ event = null, excludeEventId, contextCategory, 
         {items.map((e) => {
           const route = getEventRoute(e);
           const fav = toMenuFavourite(e);
+          const card = registryToYmlCard(e);
+          const label = paymentLabel(card.paymentType);
           return (
-            <a
-              key={e.id}
-              className="linkout__card"
-              href={route}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div className="linkout__card-img-wrap">
+            <a key={e.id} className="home-page__event-card" href={route}>
+              <div className="home-page__event-card-img">
                 <img
-                  src={e.image}
-                  alt={e.title}
-                  className="linkout__card-img"
-                  style={e.imagePosition ? { objectPosition: e.imagePosition } : undefined}
+                  src={card.image}
+                  alt={card.title}
+                  loading="lazy"
+                  style={card.imagePosition ? { objectPosition: card.imagePosition } : undefined}
                 />
+                {card.marketingTag ? (
+                  <MarketingTag type={card.marketingTag} className="home-page__event-card-marketing-tag" />
+                ) : null}
                 <button
                   type="button"
-                  className="linkout__card-fav"
+                  className="home-page__event-card-fav"
                   aria-label={isFavourite(e.id) ? 'Remove from favourites' : 'Add to favourites'}
                   aria-pressed={isFavourite(e.id)}
                   onClick={(ev) => {
@@ -178,18 +207,38 @@ export function YouMayAlsoLike({ event = null, excludeEventId, contextCategory, 
                 >
                   <IconHeart filled={isFavourite(e.id)} />
                 </button>
-                {isExplorerExclusiveMarketingTag(e.marketingTag) ? (
+                {isExplorerExclusiveMarketingTag(card.marketingTag) ? (
                   <ExplorerOnlyCardFooter variant="imageOverlay" />
                 ) : null}
               </div>
-              <div className="linkout__card-body">
-                <p className="linkout__card-date">{e.date}</p>
-                <p className="linkout__card-title">{e.title}</p>
-                <div className="linkout__card-price-badge">
-                  {e.pageType !== 'standard' ? <IconStar /> : null}
-                  <span>{fav.points}</span>
+              <div className="home-page__event-card-body">
+                <div className="home-page__event-card-meta">
+                  <div className="home-page__event-card-date-title">
+                    <span className="home-page__event-card-date">{card.date}</span>
+                    <h3 className="home-page__event-card-title">{card.title}</h3>
+                  </div>
+                  {card.eventTag ? <span className="home-page__event-card-tag">{card.eventTag}</span> : null}
                 </div>
-                <EventCountdown event={e} />
+                <div className="home-page__event-card-payment-stack">
+                  {label || card.points || (card.paymentType === 'cash' && card.cashPrice) ? (
+                    <div className="home-page__event-card-payment-primary">
+                      {label ? <span className="home-page__event-card-payment-label">{label}</span> : null}
+                      {card.points ? (
+                        <div className="home-page__event-card-points">
+                          <IconStar />
+                          <span>{card.points}</span>
+                        </div>
+                      ) : null}
+                      {card.paymentType === 'cash' && card.cashPrice ? (
+                        <div className="home-page__event-card-points home-page__event-card-points--eur">
+                          <span className="home-page__event-card-cash-from">from</span>
+                          <span>{card.cashPrice}</span>
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  {card.hasTimer && card.msLeft != null ? <LiveTimer initialMs={card.msLeft} /> : null}
+                </div>
               </div>
             </a>
           );

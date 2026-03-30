@@ -3,15 +3,6 @@
  * Uses design tokens from theme.css
  */
 
-/* Optional: loyalty badge background (Figma gold #af913a when not in tokens) */
-:root {
-  --marketplace-header-points-gold: #af913a;
-  --marketplace-header-points-classic: var(--wel-sem-color-on-family);
-  --marketplace-header-points-silver: #9ca3af;
-  --marketplace-header-points-platinum: #6b7280;
-  --marketplace-header-points-diamond: var(--wel-sem-color-family);
-}
-
 .marketplace-header {
   position: fixed;
   top: 0;
@@ -50,7 +41,8 @@
 }
 
 .marketplace-header--transparent .marketplace-header__points {
-  opacity: 0.9;
+  /* Same badge as light bar — Figma IrisBadgeStar / web.badge (node 11:3776) */
+  opacity: 1;
 }
 
 .marketplace-header--light {
@@ -127,49 +119,34 @@
   color: var(--header-fg);
 }
 
-/* Points badge (logged in) */
+/* Points badge (logged in) — Figma All-Accor-Marketplace IrisBadgeStar / 💠 web.badge (11:3776); same for all loyalty tiers */
 .marketplace-header__points {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 2px;
-  font: var(--wel-typography-label-default-03);
-  color: #fff;
+  gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
+  padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-insetsquish-xs-h, 8px);
+  border-radius: var(--wel-sem-borderradius-element-static-sm, 2px);
+  font-family: var(--wel-sem-fontfamilies-label, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-label-sm, 14px);
+  font-weight: var(--wel-sem-font-weight-label-strong, 500);
+  line-height: var(--wel-sem-lineheights-label-sm, 20px);
+  letter-spacing: var(--wel-sem-letterspacing-label, 0);
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
+  background: var(--ads-colors-loyalty-container-low, #f3efff);
+  border: 1px solid rgba(58, 52, 171, 0.14);
   flex-shrink: 0;
-  border: none;
   cursor: pointer;
-}
-
-.marketplace-header__points--classic {
-  background: var(--marketplace-header-points-classic);
-}
-
-.marketplace-header__points--silver {
-  background: var(--marketplace-header-points-silver);
-}
-
-.marketplace-header__points--gold {
-  background: var(--marketplace-header-points-gold);
-  color: #fff;
-}
-
-.marketplace-header__points--platinum {
-  background: var(--marketplace-header-points-platinum);
-}
-
-.marketplace-header__points--diamond {
-  background: var(--marketplace-header-points-diamond);
-  color: var(--wel-sem-color-on-family);
+  box-sizing: border-box;
 }
 
 .marketplace-header__points-icon {
   flex-shrink: 0;
-  color: #fff;
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
 }
 
 .marketplace-header__points-value {
   white-space: nowrap;
+  color: inherit;
 }
 
 .marketplace-header__center {
@@ -264,6 +241,9 @@
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
+  /* Stay above __start when logo + points overflow the bar on narrow widths */
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 1024px) {
@@ -273,10 +253,6 @@
 
   .marketplace-header__center {
     display: flex;
-  }
-
-  .marketplace-header__points-icon {
-    color: #fff;
   }
 }
 
