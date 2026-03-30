@@ -228,8 +228,9 @@
 .category-page__list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  gap: 0;
+  /* Slightly tighter horizontal inset than page chrome so cards use more width */
+  padding: 16px 8px;
   max-width: 1440px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -248,7 +249,7 @@
   cursor: pointer;
   background: #fff;
   border-radius: 12px;
-  padding: 12px 16px 12px 12px;
+  padding: 12px 8px 12px 8px;
   overflow: hidden;
 }
 
@@ -1217,9 +1218,9 @@
 }
 
 /* ── Tablet+ — same horizontal list, more horizontal padding ─────────── */
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .category-page__list {
-    padding: 24px 32px;
+    padding: 24px 12px;
   }
 }
 
@@ -1347,7 +1348,7 @@
   }
 
   .category-page__list {
-    padding: 24px 64px 64px;
+    padding: 24px 48px 64px;
   }
 }
 
