@@ -902,6 +902,10 @@
   gap: 8px;
 }
 
+.menu__comms-toggle--margin-bottom {
+  margin-bottom: 16px;
+}
+
 .menu__comms-texts {
   flex: 1 1 0;
   min-width: 0;

@@ -45,6 +45,15 @@ export interface EventData {
   drawEndDate?: string;
   imagePosition?: string;
   marketingTag?: MarketingTagType;
+  /** Campaign / theme groupings (e.g. `#momentum/roland-garros`). */
+  momenta?: string[];
+}
+
+/** Slug for the Roland Garros momentum hub (`#momentum/roland-garros`). */
+export const ROLAND_GARROS_MOMENTUM_SLUG = 'roland-garros';
+
+export function eventBelongsToMomentum(event: Pick<EventData, 'momenta'>, slug: string): boolean {
+  return event.momenta?.includes(slug) ?? false;
 }
 
 /** Presale or exclusivity tag → Explorer (ALL+) subscription required on listings and detail. */
@@ -551,6 +560,7 @@ export const EVENT_REGISTRY: EventData[] = [
     includedItems: ['2 tickets – Le Village, Le Comptoir or Category 1', 'Philippe-Chatrier or Suzanne-Lenglen court', 'Cocktail lunch by Potel and Chabot', 'VIP welcome and Roland-Garros gift', 'ALL Accor lounge access'],
     eventTag: 'Limitless Experiences',
     marketingTag: 'presale',
+    momenta: [ROLAND_GARROS_MOMENTUM_SLUG],
   },
   {
     id: 'evt-022',
@@ -2004,6 +2014,57 @@ export const EVENT_REGISTRY: EventData[] = [
     ],
     includedItems: ['2 loge tickets', 'Champagne on arrival', 'Gourmet lunch', 'Official towel & programme', 'VIP entrance'],
     eventTag: 'Limitless Experiences',
+    momenta: [ROLAND_GARROS_MOMENTUM_SLUG],
+  },
+  {
+    id: 'evt-112',
+    title: 'Roland Garros Quarter-Finals Hospitality',
+    description: 'Enter the Prize Draw for two hospitality passes to the quarter-finals at Stade Roland-Garros, with premium seating and Roland-Garros hospitality.',
+    date: 'June 2, 2026',
+    location: 'Stade Roland-Garros, Paris',
+    city: 'Paris',
+    pageType: 'prize-draw',
+    category: 'Sport and leisure',
+    points: 500,
+    ticketPrice: 500,
+    maxTickets: 10,
+    drawEndDate: '2026-05-28T23:59:00',
+    msLeft: 21 * 24 * 60 * 60 * 1000,
+    image: '/roland-garros-2.png',
+    heroImages: [
+      { src: '/roland-garros-2.png', alt: 'Roland-Garros stadium hospitality' },
+      { src: '/roland-garros-1.png', alt: 'Roland-Garros clay court match' },
+      { src: '/roland-garros-3.png', alt: 'Tennis on clay' },
+      ...makeHeroImages('/roland-garros-2.png', 'Roland Garros quarter-finals', 'Sport and leisure').slice(1),
+    ],
+    includedItems: ['2 quarter-final hospitality tickets', 'Premium seating area', 'Welcome reception', 'Roland-Garros programme', 'VIP entrance'],
+    eventTag: 'Limitless Experiences',
+    momenta: [ROLAND_GARROS_MOMENTUM_SLUG],
+  },
+  {
+    id: 'evt-113',
+    title: 'French Open Wheelchair Tennis Finals',
+    description: 'Support inclusive sport at Roland-Garros: enter the draw for two tickets to the wheelchair tennis finals with accessible seating and lounge access.',
+    date: 'June 6, 2026',
+    location: 'Stade Roland-Garros, Paris',
+    city: 'Paris',
+    pageType: 'prize-draw',
+    category: 'Sport and leisure',
+    points: 300,
+    ticketPrice: 300,
+    maxTickets: 10,
+    drawEndDate: '2026-06-01T23:59:00',
+    msLeft: 18 * 24 * 60 * 60 * 1000,
+    image: '/roland-garros-3.png',
+    heroImages: [
+      { src: '/roland-garros-3.png', alt: 'Wheelchair tennis at Roland-Garros' },
+      { src: '/roland-garros-1.png', alt: 'Roland-Garros clay court' },
+      { src: '/roland-garros-2.png', alt: 'Stade Roland-Garros' },
+      ...makeHeroImages('/roland-garros-3.png', 'Wheelchair tennis finals', 'Sport and leisure').slice(1),
+    ],
+    includedItems: ['2 accessible finals tickets', 'Dedicated host assistance', 'Inclusive lounge access', 'Official programme'],
+    eventTag: 'Sustainable Experience',
+    momenta: [ROLAND_GARROS_MOMENTUM_SLUG],
   },
   {
     id: 'evt-111',

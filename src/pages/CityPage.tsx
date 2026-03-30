@@ -482,10 +482,16 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
     image: e.image,
     route: getEventRoute(e),
   }));
-  const ACCOR_PLUS_EVENTS = limitVoyagerExclusivePerSection(
+  const explorerSortedForCity = sortEventsForProfileAndPointsBalance(
     cityEvents.filter((e) => isExplorerExclusiveMarketingTag(e.marketingTag)),
-    isVoyagerSubscriber,
-    1,
+    testProfileId,
+    USER_POINTS,
+    `city-${cityName}-explorer-strip`,
+  );
+  const ACCOR_PLUS_EVENTS = (
+    isVoyagerSubscriber
+      ? takeSortedWithVoyagerExclusiveCap(explorerSortedForCity, true, 6, 6)
+      : limitVoyagerExclusivePerSection(explorerSortedForCity, false, 1)
   ).map(registryToCard);
   const CONCERTS_EVENTS = limitVoyagerExclusivePerSection(
     cityEvents.filter((e) => e.category === 'Concerts and festivals'),
@@ -520,9 +526,14 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
   const topTotalPages = Math.ceil(TOP_10.length / top10PerPage);
   const topVisible = TOP_10.slice((topPage - 1) * top10PerPage, topPage * top10PerPage);
 
+  const apPerPage = isVoyagerSubscriber ? 6 : perPage;
   const [apPage, setApPage] = useState(1);
-  const apTotalPages = Math.ceil(ACCOR_PLUS_EVENTS.length / perPage);
-  const apVisible = ACCOR_PLUS_EVENTS.slice((apPage - 1) * perPage, apPage * perPage);
+  const apTotalPages = Math.ceil(ACCOR_PLUS_EVENTS.length / apPerPage) || 1;
+  const apVisible = ACCOR_PLUS_EVENTS.slice((apPage - 1) * apPerPage, apPage * apPerPage);
+
+  useEffect(() => {
+    setApPage(1);
+  }, [cityName, dateFilterActive, dateFrom, dateTo, testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
   const [cePage, setCePage] = useState(1);
   const ceTotalPages = Math.ceil(CONCERTS_EVENTS.length / perPage);
@@ -735,9 +746,17 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
       </section>
 
       {showAccorPlusEventsSection ? (
-        <EventSection title="ALL Accor Plus events" events={apVisible} favourites={favourites} onToggleFav={toggleFav}
-          page={apPage} totalPages={apTotalPages} onPrev={() => setApPage((p) => Math.max(1, p - 1))} onNext={() => setApPage((p) => Math.min(apTotalPages, p + 1))}
-          linkHash="#category/all-accor-plus-exclusives" />
+        <EventSection
+          title={isVoyagerSubscriber ? 'Explorer exclusive events' : 'ALL Accor Plus events'}
+          events={apVisible}
+          favourites={favourites}
+          onToggleFav={toggleFav}
+          page={apPage}
+          totalPages={apTotalPages}
+          onPrev={() => setApPage((p) => Math.max(1, p - 1))}
+          onNext={() => setApPage((p) => Math.min(apTotalPages, p + 1))}
+          linkHash="#category/all-accor-plus-exclusives"
+        />
       ) : null}
 
       {/* ── Categories ─────────────────────────────────────────────── */}

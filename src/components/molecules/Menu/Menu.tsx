@@ -88,6 +88,7 @@ const SIDEBAR_CATEGORIES: SidebarCategory[] = [
   { label: 'Hotel Experiences', hash: '#category/hotel-experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=96&h=96&fit=crop' },
   { label: 'Arena', hash: '#category/arena', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=96&h=96&fit=crop' },
   { label: 'Paris Saint Germain', hash: '#category/paris-saint-germain', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=96&h=96&fit=crop' },
+  { label: 'Roland Garros', hash: '#momentum/roland-garros', image: '/roland-garros-1.png' },
 ];
 
 interface SidebarSubscription {
@@ -1209,11 +1210,11 @@ export function Menu({
                 <span className="menu__comms-section-title">My Auctions</span>
 
                 <div className="menu__comms-group">
-                  <div className="menu__comms-toggle">
+                  <div className="menu__comms-toggle menu__comms-toggle--margin-bottom">
                     <div className="menu__comms-texts">
                       <span className="menu__comms-label">Higher bid</span>
                       <span className="menu__comms-desc">
-                        I want to receive an advice when when someone outbids my maximum bid.
+                        I want to receive a notification when someone outbids me.
                       </span>
                     </div>
                     <button

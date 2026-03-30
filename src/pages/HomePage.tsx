@@ -73,10 +73,10 @@ interface PlannedTrip {
 
 const PLANNED_TRIP: PlannedTrip | null = {
   city: 'Paris',
-  hotelName: 'Staying at Sofitel Le Scribe Paris',
-  dates: '12 - 15 April 2026',
-  dateFrom: '2026-04-12',
-  dateTo: '2026-04-15',
+  hotelName: 'Staying at Sofitel Le Scribe Paris Opéra',
+  dates: 'Apr 8 – Jun 9, 2026',
+  dateFrom: '2026-04-08',
+  dateTo: '2026-06-09',
   image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=200&fit=crop',
 };
 
@@ -337,6 +337,15 @@ function IconPin() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function IconCalendar() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -745,6 +754,31 @@ export default function HomePage() {
     [testProfileId, USER_POINTS, isVoyagerSubscriber, suggestedHomeCity],
   );
 
+  const explorerExclusiveSortedHome = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter(
+          (e) => isAccor(e) && isExplorerExclusiveMarketingTag(e.marketingTag),
+        ),
+        testProfileId,
+        USER_POINTS,
+        'home-explorer-exclusive',
+      ),
+    [testProfileId, USER_POINTS],
+  );
+
+  /** Discovery: Explorer subscribers — full strip higher on the page */
+  const EXPLORER_EXCLUSIVE_EVENTS = useMemo(() => {
+    if (!isVoyagerSubscriber) return [];
+    return takeSortedWithVoyagerExclusiveCap(explorerExclusiveSortedHome, true, 6, 6).map(registryToCard);
+  }, [isVoyagerSubscriber, explorerExclusiveSortedHome]);
+
+  /** Discovery: non-subscribers — same strip as subscribers, placed before Popular cities (cards still show Explorer footer / gates) */
+  const EXPLORER_EXCLUSIVE_EVENTS_TEASER = useMemo(() => {
+    if (isVoyagerSubscriber) return [];
+    return takeSortedWithVoyagerExclusiveCap(explorerExclusiveSortedHome, false, 6, 6).map(registryToCard);
+  }, [isVoyagerSubscriber, explorerExclusiveSortedHome]);
+
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -844,6 +878,21 @@ export default function HomePage() {
   const sgTotalPages = Math.ceil(SUGGESTED_FOR_YOU_EVENTS.length / perPage);
   const sgVisible = SUGGESTED_FOR_YOU_EVENTS.slice((sgPage - 1) * perPage, sgPage * perPage);
 
+  const explorerExclusivePerPage = 6;
+  const [exPage, setExPage] = useState(1);
+  const exTotalPages = Math.ceil(EXPLORER_EXCLUSIVE_EVENTS.length / explorerExclusivePerPage) || 1;
+  const exVisible = EXPLORER_EXCLUSIVE_EVENTS.slice(
+    (exPage - 1) * explorerExclusivePerPage,
+    exPage * explorerExclusivePerPage,
+  );
+
+  const [exTeaserPage, setExTeaserPage] = useState(1);
+  const exTeaserTotalPages = Math.ceil(EXPLORER_EXCLUSIVE_EVENTS_TEASER.length / perPage) || 1;
+  const exTeaserVisible = EXPLORER_EXCLUSIVE_EVENTS_TEASER.slice(
+    (exTeaserPage - 1) * perPage,
+    exTeaserPage * perPage,
+  );
+
   const [citiesPage, setCitiesPage] = useState(1);
   const citiesTotalPages = Math.ceil(POPULAR_CITIES.length / perPage);
   const citiesVisible = POPULAR_CITIES.slice((citiesPage - 1) * perPage, citiesPage * perPage);
@@ -880,15 +929,23 @@ export default function HomePage() {
     () =>
       Array.from(
         new Map(
-          [...NEXT_TRIP_EVENTS, ...SUGGESTED_FOR_YOU_EVENTS, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
+          [...NEXT_TRIP_EVENTS, ...SUGGESTED_FOR_YOU_EVENTS, ...EXPLORER_EXCLUSIVE_EVENTS, ...EXPLORER_EXCLUSIVE_EVENTS_TEASER, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
         ).values(),
       ),
-    [NEXT_TRIP_EVENTS, SUGGESTED_FOR_YOU_EVENTS, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
+    [NEXT_TRIP_EVENTS, SUGGESTED_FOR_YOU_EVENTS, EXPLORER_EXCLUSIVE_EVENTS, EXPLORER_EXCLUSIVE_EVENTS_TEASER, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
   );
 
   useEffect(() => {
     setSgPage(1);
   }, [testProfileId, USER_POINTS]);
+
+  useEffect(() => {
+    setExPage(1);
+  }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
+
+  useEffect(() => {
+    setExTeaserPage(1);
+  }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
   const menuFavourites: MenuFavouriteEvent[] = useMemo(
     () =>
@@ -1047,13 +1104,36 @@ export default function HomePage() {
       {/* ── Next trip to [city] ──────────────────────────────────────── */}
       {PLANNED_TRIP && (
         <section className="home-page__section home-page__next-trip-section">
-          <div className="home-page__section-header">
-            <h2 className="home-page__section-title">Next trip to {PLANNED_TRIP.city}</h2>
-            <button
-              type="button"
-              className="home-page__section-link"
-              onClick={() => { window.location.hash = `#city/${PLANNED_TRIP!.city.toLowerCase()}?from=${PLANNED_TRIP!.dateFrom}&to=${PLANNED_TRIP!.dateTo}`; }}
-            >See all</button>
+          <div className="home-page__next-trip-intro">
+            <div className="home-page__section-header home-page__next-trip-section-header">
+              <h2 className="home-page__section-title">Next trip to {PLANNED_TRIP.city}</h2>
+              <button
+                type="button"
+                className="home-page__section-link"
+                onClick={() => {
+                  const q = new URLSearchParams({
+                    city: PLANNED_TRIP!.city,
+                    from: PLANNED_TRIP!.dateFrom,
+                    to: PLANNED_TRIP!.dateTo,
+                  });
+                  window.location.hash = `#category/next-trip?${q.toString()}`;
+                }}
+              >See all</button>
+            </div>
+            <div className="home-page__next-trip-details">
+              <div className="home-page__next-trip-detail-row">
+                <span className="home-page__next-trip-detail-icon" aria-hidden>
+                  <IconPin />
+                </span>
+                <span className="home-page__next-trip-detail-text">{PLANNED_TRIP.hotelName}</span>
+              </div>
+              <div className="home-page__next-trip-detail-row">
+                <span className="home-page__next-trip-detail-icon" aria-hidden>
+                  <IconCalendar />
+                </span>
+                <span className="home-page__next-trip-detail-text">{PLANNED_TRIP.dates}</span>
+              </div>
+            </div>
           </div>
           <div className="home-page__scroll">
             {ntVisible.map((event) => (
@@ -1137,6 +1217,40 @@ export default function HomePage() {
         </section>
       ) : null}
 
+      {/* ── Explorer exclusive events (subscribers — upper placement) ─ */}
+      {EXPLORER_EXCLUSIVE_EVENTS.length > 0 ? (
+        <section className="home-page__section" aria-labelledby="home-explorer-exclusive-heading">
+          <div className="home-page__section-header">
+            <h2 id="home-explorer-exclusive-heading" className="home-page__section-title">
+              Explorer exclusive events
+            </h2>
+            <button
+              type="button"
+              className="home-page__section-link"
+              onClick={() => { window.location.hash = '#category/all-accor-plus-exclusives'; }}
+            >
+              See all
+            </button>
+          </div>
+          <div className="home-page__scroll">
+            {exVisible.map((event) => (
+              <EventCardCompact
+                key={event.id}
+                event={event}
+                isFav={favourites.has(event.id)}
+                onFavToggle={() => toggleFavourite(event.id)}
+              />
+            ))}
+          </div>
+          <Pagination
+            current={exPage}
+            total={exTotalPages}
+            onPrev={() => setExPage((p) => Math.max(1, p - 1))}
+            onNext={() => setExPage((p) => Math.min(exTotalPages, p + 1))}
+          />
+        </section>
+      ) : null}
+
       {/* ── Event sections (order varies by profile) ─────────────────── */}
       {(() => {
         const makeSection = (key: string, title: string, hash: string, visible: EventCard[], page: number, totalPages: number, onPrev: () => void, onNext: () => void) => (
@@ -1169,6 +1283,40 @@ export default function HomePage() {
         }
         return [auctionsSection, concertsSection, sportSection, prizeDrawSection];
       })()}
+
+      {/* ── Explorer exclusive events (non-subscribers — before cities) ─ */}
+      {EXPLORER_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (
+        <section className="home-page__section" aria-labelledby="home-explorer-exclusive-teaser-heading">
+          <div className="home-page__section-header">
+            <h2 id="home-explorer-exclusive-teaser-heading" className="home-page__section-title">
+              Explorer exclusive events
+            </h2>
+            <button
+              type="button"
+              className="home-page__section-link"
+              onClick={() => { window.location.hash = '#category/all-accor-plus-exclusives'; }}
+            >
+              See all
+            </button>
+          </div>
+          <div className="home-page__scroll">
+            {exTeaserVisible.map((event) => (
+              <EventCardCompact
+                key={event.id}
+                event={event}
+                isFav={favourites.has(event.id)}
+                onFavToggle={() => toggleFavourite(event.id)}
+              />
+            ))}
+          </div>
+          <Pagination
+            current={exTeaserPage}
+            total={exTeaserTotalPages}
+            onPrev={() => setExTeaserPage((p) => Math.max(1, p - 1))}
+            onNext={() => setExTeaserPage((p) => Math.min(exTeaserTotalPages, p + 1))}
+          />
+        </section>
+      ) : null}
 
       {/* ── Popular cities ───────────────────────────────────────────── */}
       <section className="home-page__section home-page__cities-section">

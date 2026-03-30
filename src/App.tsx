@@ -40,6 +40,12 @@ interface CategoryRouteConfig {
   defaultLocation?: string;
 }
 
+interface MomentumRouteConfig {
+  momentumSlug: string;
+  pageTitle: string;
+  breadcrumbs: BreadcrumbItem[];
+}
+
 const CATEGORY_ROUTES: Record<string, CategoryRouteConfig> = {
   '#category': { category: 'Sport and leisure', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/shows-and-culture': { category: 'Shows and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
@@ -53,9 +59,16 @@ const CATEGORY_ROUTES: Record<string, CategoryRouteConfig> = {
   '#category/arena': { category: 'Arena', breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Concerts and festivals', href: '#category/concerts-and-festivals' }] },
   '#category/all-signature-exclusives': { category: 'All Signature Exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/all-accor-plus-exclusives': { category: 'All Accor Plus Exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/next-trip-to-paris': { category: 'Shows and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }], pageTitle: 'Next trip to Paris', defaultLocation: 'Paris' },
   '#category/suggested-for-you': { category: 'Shows and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }], pageTitle: 'Suggested for you' },
   '#category/tech': { category: 'Tech', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+};
+
+const MOMENTUM_ROUTES: Record<string, MomentumRouteConfig> = {
+  '#momentum/roland-garros': {
+    momentumSlug: 'roland-garros',
+    pageTitle: 'Roland Garros',
+    breadcrumbs: [{ label: 'Homepage', href: '#' }],
+  },
 };
 
 interface CityRouteConfig {
@@ -108,7 +121,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, [onHashChange]);
 
-  const { basePath: hashBase } = parseHashParams(hash);
+  const { basePath: hashBase, params: hashParams } = parseHashParams(hash);
 
   if (hashBase === '#demo') return <Demo />;
   if (hashBase === '#email/highest-bidder') return <HighestBidderEmail />;
@@ -143,14 +156,37 @@ export default function App() {
   else if (hashBase === '#waitlist') page = <WaitlistPage />;
   else if (hashBase === '#standard') page = <StandardPage />;
   else if (hashBase === '#categories') page = <AllCategoriesPage />;
-  else if (hashBase in CATEGORY_ROUTES) {
+  else if (hashBase === '#category/next-trip') {
+    const cityName = hashParams.get('city')?.trim() || 'Paris';
+    const from = hashParams.get('from')?.trim() || undefined;
+    const to = hashParams.get('to')?.trim() || undefined;
+    page = (
+      <CategoryPage
+        defaultCategory="Shows and culture"
+        breadcrumbs={[{ label: 'Homepage', href: '#' }]}
+        pageTitle={`Next trip to ${cityName}`}
+        defaultLocation={cityName}
+        initialStayDateFrom={from}
+        initialStayDateTo={to}
+      />
+    );
+  } else if (hashBase in CATEGORY_ROUTES) {
     const route = CATEGORY_ROUTES[hashBase];
     page = <CategoryPage defaultCategory={route.category} breadcrumbs={route.breadcrumbs} pageTitle={route.pageTitle} defaultLocation={route.defaultLocation} />;
-  }   else if (hashBase in PAYMENT_ROUTES) page = <PaymentMechanismPage defaultMechanism={PAYMENT_ROUTES[hashBase]} />;
+  } else if (hashBase in MOMENTUM_ROUTES) {
+    const route = MOMENTUM_ROUTES[hashBase];
+    page = (
+      <CategoryPage
+        defaultCategory="Sport and leisure"
+        breadcrumbs={route.breadcrumbs}
+        pageTitle={route.pageTitle}
+        momentumSlug={route.momentumSlug}
+      />
+    );
+  } else if (hashBase in PAYMENT_ROUTES) page = <PaymentMechanismPage defaultMechanism={PAYMENT_ROUTES[hashBase]} />;
   else if (hashBase in CITY_ROUTES) {
-    const { params } = parseHashParams(hash);
     const route = CITY_ROUTES[hashBase];
-    page = <CityPage cityName={route.cityName} country={route.country} dateFrom={params.get('from') || undefined} dateTo={params.get('to') || undefined} />;
+    page = <CityPage cityName={route.cityName} country={route.country} dateFrom={hashParams.get('from') || undefined} dateTo={hashParams.get('to') || undefined} />;
   }
   else if (hashBase === '#auction') page = <AuctionPage />;
   else if (hashBase.startsWith('#plan/')) {

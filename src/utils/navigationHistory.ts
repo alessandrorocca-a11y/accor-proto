@@ -14,7 +14,7 @@ const HASH_LABELS: Record<string, string> = {
   '#category/arena': 'Arena',
   '#category/all-signature-exclusives': 'All Signature Exclusives',
   '#category/all-accor-plus-exclusives': 'All Accor Plus Exclusives',
-  '#category/next-trip-to-paris': 'Next trip to Paris',
+  '#category/next-trip': 'Next trip',
   '#category/suggested-for-you': 'Suggested for you',
   '#payment/auctions': 'Auctions',
   '#payment/prize-draws': 'Prize draws',
@@ -26,10 +26,11 @@ const HASH_LABELS: Record<string, string> = {
 };
 
 function labelForHash(hash: string): string {
-  if (hash in HASH_LABELS) return HASH_LABELS[hash];
+  const base = hash.split('?')[0];
+  if (base in HASH_LABELS) return HASH_LABELS[base];
 
   // Fallback: convert slug to title case  (e.g. "#category/my-slug" → "My slug")
-  const slug = hash.split('/').pop() ?? '';
+  const slug = base.split('/').pop() ?? '';
   return slug.replace(/-/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) || 'Homepage';
 }
 
