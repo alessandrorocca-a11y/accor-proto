@@ -544,7 +544,18 @@ export default function CategoryPage({
 
   const displayTitle = pageTitle ?? selectedCategory;
   const showAllCategories = !!pageTitle;
-  const filterChips = momentumSlug ? FILTER_CHIPS.filter((c) => c.label !== 'Location') : [...FILTER_CHIPS];
+
+  useEffect(() => {
+    if (showAllCategories) return;
+    setFilterCategories(new Set());
+    setActiveFilter((f) => (f === 'category' ? null : f));
+  }, [showAllCategories]);
+
+  const filterChips = (() => {
+    let chips = momentumSlug ? FILTER_CHIPS.filter((c) => c.label !== 'Location') : [...FILTER_CHIPS];
+    if (!showAllCategories) chips = chips.filter((c) => c.label !== 'Category');
+    return chips;
+  })();
 
   const paymentTypeMap: Record<string, PaymentType[]> = {
     'Standard': ['flex', 'cash'],

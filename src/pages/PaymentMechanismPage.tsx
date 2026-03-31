@@ -12,10 +12,12 @@ import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanC
 import {
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
   EVENT_REGISTRY,
+  getEffectivePointsCost,
   getEventRoute,
   formatPoints,
   formatStandardEventListPrice,
   getEventListingCategories,
+  getStandardEventFromPriceEur,
   isExplorerExclusiveMarketingTag,
   isSignatureExclusiveMarketingTag,
   type MarketingTagType,
@@ -101,7 +103,7 @@ function getFirstDayOfMonth(year: number, month: number) {
   return day === 0 ? 6 : day - 1;
 }
 
-type FilterType = 'date' | 'category' | 'location' | 'hotel' | null;
+type FilterType = 'date' | 'category' | 'price-range' | 'location' | 'hotel' | null;
 type SortOption = 'relevance' | 'price-desc' | 'price-asc' | 'date';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -125,6 +127,117 @@ function parseEventDate(dateStr: string): number {
   return new Date(dateStr).getTime() || 0;
 }
 
+/** Parse min/max € input (comma or dot decimals). */
+function parseOptionalEurBound(s: string): number | null {
+  const t = s.trim().replace(',', '.');
+  if (!t) return null;
+  const n = parseFloat(t);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+/** Parse Reward points (strip thousand separators). */
+function parseOptionalPointsBound(s: string): number | null {
+  const t = s.trim().replace(/\./g, '').replace(/\s/g, '');
+  if (!t) return null;
+  const n = parseInt(t, 10);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function getEventCashPriceEur(eventId: string): number | null {
+  const r = EVENT_REGISTRY.find((e) => e.id === eventId);
+  if (!r || r.pageType !== 'standard') return null;
+  const eur = getStandardEventFromPriceEur(r);
+  return eur > 0 ? eur : null;
+}
+
+function getEventPointsBarrier(eventId: string): number | null {
+  const r = EVENT_REGISTRY.find((e) => e.id === eventId);
+  if (!r || r.pageType === 'standard') return null;
+  if (r.pageType === 'waitlist') return r.points > 0 ? r.points : null;
+  const c = getEffectivePointsCost(r);
+  return c > 0 ? c : null;
+}
+
+const CATEGORY_PRICE_BOUNDS = (() => {
+  let maxEur = 100;
+  for (const e of EVENT_REGISTRY) {
+    if (e.pageType !== 'standard') continue;
+    const v = getStandardEventFromPriceEur(e);
+    if (Number.isFinite(v) && v > 0) {
+      const c = Math.ceil(v);
+      if (c > maxEur) maxEur = c;
+    }
+  }
+  return { min: 0, max: Math.max(100, maxEur) };
+})();
+
+const CATEGORY_POINTS_BOUNDS = (() => {
+  let maxPts = 1000;
+  for (const e of EVENT_REGISTRY) {
+    const p = getEventPointsBarrier(e.id);
+    if (p != null && p > maxPts) maxPts = p;
+  }
+  const rounded = Math.max(5000, Math.ceil(maxPts / 1000) * 1000);
+  return { min: 0, max: rounded };
+})();
+
+type DualRangeSliderProps = {
+  min: number;
+  max: number;
+  step?: number;
+  lo: number;
+  hi: number;
+  onChange: (lo: number, hi: number) => void;
+  ariaLabel: string;
+};
+
+function DualRangeSlider({ min, max, step = 1, lo, hi, onChange, ariaLabel }: DualRangeSliderProps) {
+  const span = Math.max(1, max - min);
+  const pct = (n: number) => ((Math.min(max, Math.max(min, n)) - min) / span) * 100;
+  const left = pct(lo);
+  const width = Math.max(0, pct(hi) - pct(lo));
+
+  const onMinInput = (raw: number) => {
+    const stepped = step > 0 ? Math.round(raw / step) * step : raw;
+    const v = Math.min(Math.max(min, stepped), hi);
+    onChange(v, hi);
+  };
+  const onMaxInput = (raw: number) => {
+    const stepped = step > 0 ? Math.round(raw / step) * step : raw;
+    const v = Math.max(Math.min(max, stepped), lo);
+    onChange(lo, v);
+  };
+
+  return (
+    <div className="filter-dual-slider" role="group" aria-label={ariaLabel}>
+      <div className="filter-dual-slider__track" aria-hidden>
+        <div className="filter-dual-slider__track-bg" />
+        <div className="filter-dual-slider__track-fill" style={{ left: `${left}%`, width: `${width}%` }} />
+      </div>
+      <input
+        type="range"
+        className="filter-dual-slider__thumb filter-dual-slider__thumb--min"
+        min={min}
+        max={max}
+        step={step}
+        value={lo}
+        aria-label={`${ariaLabel} minimum`}
+        onChange={(e) => onMinInput(Number(e.target.value))}
+      />
+      <input
+        type="range"
+        className="filter-dual-slider__thumb filter-dual-slider__thumb--max"
+        min={min}
+        max={max}
+        step={step}
+        value={hi}
+        aria-label={`${ariaLabel} maximum`}
+        onChange={(e) => onMaxInput(Number(e.target.value))}
+      />
+    </div>
+  );
+}
+
 function IconClose() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -144,6 +257,7 @@ function IconSearch() {
 const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
   { label: 'Category', icon: 'grid' },
+  { label: 'Price range', icon: 'price-range' },
   { label: 'Location', icon: 'location' },
   { label: 'Hotel Brand', icon: 'hotel' },
 ] as const;
@@ -218,6 +332,18 @@ function IconHotel() {
   );
 }
 
+function IconPriceRangeFilter() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M4 8h16M4 16h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="9" cy="8" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="15" cy="8" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8" cy="16" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="16" cy="16" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 function IconOrderBy() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -229,6 +355,7 @@ function IconOrderBy() {
 const filterIconMap: Record<string, () => JSX.Element> = {
   calendar: IconCalendar,
   grid: IconGrid,
+  'price-range': IconPriceRangeFilter,
   location: IconLocation,
   hotel: IconHotel,
 };
@@ -306,21 +433,82 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const [filterBrands, setFilterBrands] = useState<Set<string>>(new Set());
   const [brandSearch, setBrandSearch] = useState('');
   const [citySearch, setCitySearch] = useState('');
+  const [priceMin, setPriceMin] = useState('');
+  const [priceMax, setPriceMax] = useState('');
+  const [pointsMin, setPointsMin] = useState('');
+  const [pointsMax, setPointsMax] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [orderOpen, setOrderOpen] = useState(false);
 
-  const filteredEvents = ALL_EVENTS.filter((e) => {
-    if (selectedMechanism === 'standard') {
-      if (e.paymentType !== 'flex' && e.paymentType !== 'cash') return false;
-    } else if (e.paymentType !== selectedMechanism) return false;
-    if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
-    return true;
-  }).sort((a, b) => {
-    if (sortBy === 'price-desc') return parsePrice(b) - parsePrice(a);
-    if (sortBy === 'price-asc') return parsePrice(a) - parsePrice(b);
-    if (sortBy === 'date') return parseEventDate(a.date) - parseEventDate(b.date);
-    return 0;
-  });
+  const onPriceSliderChange = (lo: number, hi: number) => {
+    const { min, max } = CATEGORY_PRICE_BOUNDS;
+    const rLo = Math.round(lo);
+    const rHi = Math.round(hi);
+    setPriceMin(rLo <= min ? '' : String(rLo));
+    setPriceMax(rHi >= max ? '' : String(rHi));
+  };
+
+  const onPointsSliderChange = (lo: number, hi: number) => {
+    const { min, max } = CATEGORY_POINTS_BOUNDS;
+    const rLo = Math.round(lo);
+    const rHi = Math.round(hi);
+    setPointsMin(rLo <= min ? '' : formatPoints(rLo));
+    setPointsMax(rHi >= max ? '' : formatPoints(rHi));
+  };
+
+  const rawEurLo = parseOptionalEurBound(priceMin);
+  const rawEurHi = parseOptionalEurBound(priceMax);
+  const eurLoSlider = rawEurLo ?? CATEGORY_PRICE_BOUNDS.min;
+  const eurHiSlider = rawEurHi ?? CATEGORY_PRICE_BOUNDS.max;
+  const [eurLo, eurHi] = eurLoSlider <= eurHiSlider ? [eurLoSlider, eurHiSlider] : [eurHiSlider, eurLoSlider];
+
+  const rawPtsLo = parseOptionalPointsBound(pointsMin);
+  const rawPtsHi = parseOptionalPointsBound(pointsMax);
+  const ptsLoSlider = rawPtsLo ?? CATEGORY_POINTS_BOUNDS.min;
+  const ptsHiSlider = rawPtsHi ?? CATEGORY_POINTS_BOUNDS.max;
+  const [ptsLo, ptsHi] = ptsLoSlider <= ptsHiSlider ? [ptsLoSlider, ptsHiSlider] : [ptsHiSlider, ptsLoSlider];
+
+  const filteredEvents = useMemo(() => {
+    const priceFilterOn = priceMin.trim() !== '' || priceMax.trim() !== '';
+    const eurLoBound = parseOptionalEurBound(priceMin);
+    const eurHiBound = parseOptionalEurBound(priceMax);
+    const pointsFilterOn = pointsMin.trim() !== '' || pointsMax.trim() !== '';
+    const ptsLoBound = parseOptionalPointsBound(pointsMin);
+    const ptsHiBound = parseOptionalPointsBound(pointsMax);
+
+    const base = ALL_EVENTS.filter((e) => {
+      if (selectedMechanism === 'standard') {
+        if (e.paymentType !== 'flex' && e.paymentType !== 'cash') return false;
+      } else if (e.paymentType !== selectedMechanism) return false;
+      if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
+      if (priceFilterOn) {
+        const eur = getEventCashPriceEur(e.id);
+        if (eur == null) return false;
+        if (eurLoBound != null && eur < eurLoBound) return false;
+        if (eurHiBound != null && eur > eurHiBound) return false;
+      }
+      if (pointsFilterOn) {
+        const pts = getEventPointsBarrier(e.id);
+        if (pts == null) return false;
+        if (ptsLoBound != null && pts < ptsLoBound) return false;
+        if (ptsHiBound != null && pts > ptsHiBound) return false;
+      }
+      return true;
+    });
+
+    if (sortBy === 'price-desc') return [...base].sort((a, b) => parsePrice(b) - parsePrice(a));
+    if (sortBy === 'price-asc') return [...base].sort((a, b) => parsePrice(a) - parsePrice(b));
+    if (sortBy === 'date') return [...base].sort((a, b) => parseEventDate(a.date) - parseEventDate(b.date));
+    return base;
+  }, [
+    selectedMechanism,
+    filterCategories,
+    priceMin,
+    priceMax,
+    pointsMin,
+    pointsMax,
+    sortBy,
+  ]);
 
   const handleMechanismSelect = (type: MechanismOption) => {
     setSelectedMechanism(type);
@@ -366,6 +554,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     const map: Record<string, FilterType> = {
       'Date': 'date',
       'Category': 'category',
+      'Price range': 'price-range',
       'Location': 'location',
       'Hotel Brand': 'hotel',
     };
@@ -380,6 +569,12 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     e.stopPropagation();
     if (label === 'Date') setSelectedDate(null);
     if (label === 'Category') setFilterCategories(new Set());
+    if (label === 'Price range') {
+      setPriceMin('');
+      setPriceMax('');
+      setPointsMin('');
+      setPointsMax('');
+    }
     if (label === 'Hotel Brand') setFilterBrands(new Set());
   };
 
@@ -394,6 +589,33 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     if (label === 'Hotel Brand' && filterBrands.size > 0) {
       if (filterBrands.size === 1) return [...filterBrands][0];
       return `${label} (${filterBrands.size})`;
+    }
+    if (label === 'Price range') {
+      const pActive = priceMin.trim() !== '' || priceMax.trim() !== '';
+      const ptActive = pointsMin.trim() !== '' || pointsMax.trim() !== '';
+      if (!pActive && !ptActive) return label;
+      const parts: string[] = [];
+      if (pActive) {
+        const lo = parseOptionalEurBound(priceMin);
+        const hi = parseOptionalEurBound(priceMax);
+        const pp: string[] = [];
+        if (lo != null) pp.push(`${lo} €`);
+        if (hi != null) pp.push(`${hi} €`);
+        if (pp.length === 2) parts.push(`${pp[0]} – ${pp[1]}`);
+        else if (pp.length === 1) parts.push(pp[0]);
+      }
+      if (ptActive) {
+        const lo = parseOptionalPointsBound(pointsMin);
+        const hi = parseOptionalPointsBound(pointsMax);
+        const fmt = (n: number) => n.toLocaleString('de-DE');
+        const pp: string[] = [];
+        if (lo != null) pp.push(fmt(lo));
+        if (hi != null) pp.push(fmt(hi));
+        if (pp.length === 2) parts.push(`${pp[0]} – ${pp[1]} pts`);
+        else if (pp.length === 1) parts.push(`${pp[0]} pts`);
+      }
+      if (parts.length === 0) return label;
+      return parts.join(' · ');
     }
     return label;
   };
@@ -548,6 +770,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
               const isActive =
                 (chip.label === 'Date' && selectedDate !== null) ||
                 (chip.label === 'Category' && filterCategories.size > 0) ||
+                (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
                 (chip.label === 'Hotel Brand' && filterBrands.size > 0);
               return (
                 <button
@@ -771,6 +994,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Categories'}
+                {activeFilter === 'price-range' && 'Price range'}
                 {activeFilter === 'location' && 'Location'}
                 {activeFilter === 'hotel' && 'Hotel Brands'}
               </span>
@@ -826,6 +1050,104 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                       <span className="filter-check-list__label">{cat}</span>
                     </label>
                   ))}
+                </div>
+              )}
+
+              {activeFilter === 'price-range' && (
+                <div className="filter-price-range">
+                  <section className="filter-price-range__block" aria-labelledby="pm-filter-price-range-price-heading">
+                    <h2 id="pm-filter-price-range-price-heading" className="filter-price-range__section-title">Price</h2>
+                    <div className="filter-price-range__cols">
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="pm-filter-price-min">Minimum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="pm-filter-price-min"
+                            type="text"
+                            inputMode="decimal"
+                            className="filter-price-range__input"
+                            placeholder="0"
+                            value={priceMin}
+                            onChange={(e) => setPriceMin(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>€</span>
+                        </div>
+                      </div>
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="pm-filter-price-max">Maximum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="pm-filter-price-max"
+                            type="text"
+                            inputMode="decimal"
+                            className="filter-price-range__input"
+                            placeholder={String(CATEGORY_PRICE_BOUNDS.max)}
+                            value={priceMax}
+                            onChange={(e) => setPriceMax(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>€</span>
+                        </div>
+                      </div>
+                    </div>
+                    <DualRangeSlider
+                      min={CATEGORY_PRICE_BOUNDS.min}
+                      max={CATEGORY_PRICE_BOUNDS.max}
+                      step={1}
+                      lo={eurLo}
+                      hi={eurHi}
+                      onChange={onPriceSliderChange}
+                      ariaLabel="Price in euros"
+                    />
+                  </section>
+
+                  <section className="filter-price-range__block" aria-labelledby="pm-filter-price-range-points-heading">
+                    <h2 id="pm-filter-price-range-points-heading" className="filter-price-range__section-title">Points</h2>
+                    <div className="filter-price-range__cols">
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="pm-filter-points-min">Minimum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="pm-filter-points-min"
+                            type="text"
+                            inputMode="numeric"
+                            className="filter-price-range__input"
+                            placeholder="0"
+                            value={pointsMin}
+                            onChange={(e) => setPointsMin(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>pts</span>
+                        </div>
+                      </div>
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="pm-filter-points-max">Maximum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="pm-filter-points-max"
+                            type="text"
+                            inputMode="numeric"
+                            className="filter-price-range__input"
+                            placeholder={formatPoints(CATEGORY_POINTS_BOUNDS.max)}
+                            value={pointsMax}
+                            onChange={(e) => setPointsMax(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>pts</span>
+                        </div>
+                      </div>
+                    </div>
+                    <DualRangeSlider
+                      min={CATEGORY_POINTS_BOUNDS.min}
+                      max={CATEGORY_POINTS_BOUNDS.max}
+                      step={100}
+                      lo={ptsLo}
+                      hi={ptsHi}
+                      onChange={onPointsSliderChange}
+                      ariaLabel="Reward points"
+                    />
+                  </section>
                 </div>
               )}
 

@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
-import { ACCOR_PLUS_EXCLUSIVES_CATEGORY, isExplorerExclusiveMarketingTag, isSignatureExclusiveMarketingTag } from '@/data/events/eventRegistry';
+import { ACCOR_PLUS_EXCLUSIVES_CATEGORY, formatPoints, isExplorerExclusiveMarketingTag, isSignatureExclusiveMarketingTag } from '@/data/events/eventRegistry';
 import './NearYouPage.css';
 import './CategoryPage.css';
 
@@ -18,6 +18,7 @@ interface MapEventCard {
   image: string;
   paymentType: PaymentType;
   points?: string;
+  cashPrice?: string;
   hasTimer?: boolean;
   msLeft?: number;
   eventTag?: string;
@@ -95,6 +96,7 @@ const MAP_EVENTS: MapEventCard[] = [
     image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=400&fit=crop',
     paymentType: 'redeem',
     points: '9.500',
+    cashPrice: '49,00 €',
     eventTag: 'Limitless Experiences',
     route: '#standard',
   },
@@ -175,11 +177,114 @@ const FILTER_CHIPS = [
   { id: 'date', label: 'Date', icon: 'calendar' as const },
   { id: 'category', label: 'Category', icon: 'grid' as const },
   { id: 'payment', label: 'Payment', icon: 'payment' as const },
+  { id: 'price', label: 'Price range', icon: 'price-range' as const },
   { id: 'location', label: 'Location', icon: 'location' as const },
   { id: 'hotel', label: 'Hotel Brand', icon: 'hotel' as const },
 ];
 
-type FilterType = 'date' | 'category' | 'payment' | 'location' | 'hotel' | null;
+type FilterType = 'date' | 'category' | 'payment' | 'price-range' | 'location' | 'hotel' | null;
+
+function parseOptionalEurBound(s: string): number | null {
+  const t = s.trim().replace(',', '.');
+  if (!t) return null;
+  const n = parseFloat(t);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function parseOptionalPointsBound(s: string): number | null {
+  const t = s.trim().replace(/\./g, '').replace(/\s/g, '');
+  if (!t) return null;
+  const n = parseInt(t, 10);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function mapEventCashEur(e: MapEventCard): number | null {
+  if (!e.cashPrice) return null;
+  const n = parseFloat(e.cashPrice.replace(/[^\d,]/g, '').replace(',', '.'));
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function mapEventPoints(e: MapEventCard): number | null {
+  if (!e.points) return null;
+  const n = parseInt(e.points.replace(/\./g, '').replace(/\s/g, ''), 10);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+const MAP_PRICE_BOUNDS = (() => {
+  let maxEur = 100;
+  for (const e of MAP_EVENTS) {
+    const v = mapEventCashEur(e);
+    if (v != null) {
+      const c = Math.ceil(v);
+      if (c > maxEur) maxEur = c;
+    }
+  }
+  return { min: 0, max: Math.max(100, maxEur) };
+})();
+
+const MAP_POINTS_BOUNDS = (() => {
+  let maxPts = 1000;
+  for (const e of MAP_EVENTS) {
+    const p = mapEventPoints(e);
+    if (p != null && p > maxPts) maxPts = p;
+  }
+  const rounded = Math.max(5000, Math.ceil(maxPts / 1000) * 1000);
+  return { min: 0, max: rounded };
+})();
+
+type MapDualRangeSliderProps = {
+  min: number;
+  max: number;
+  step?: number;
+  lo: number;
+  hi: number;
+  onChange: (lo: number, hi: number) => void;
+  ariaLabel: string;
+};
+
+function MapDualRangeSlider({ min, max, step = 1, lo, hi, onChange, ariaLabel }: MapDualRangeSliderProps) {
+  const span = Math.max(1, max - min);
+  const pct = (n: number) => ((Math.min(max, Math.max(min, n)) - min) / span) * 100;
+  const left = pct(lo);
+  const width = Math.max(0, pct(hi) - pct(lo));
+  const onMinInput = (raw: number) => {
+    const stepped = step > 0 ? Math.round(raw / step) * step : raw;
+    onChange(Math.min(Math.max(min, stepped), hi), hi);
+  };
+  const onMaxInput = (raw: number) => {
+    const stepped = step > 0 ? Math.round(raw / step) * step : raw;
+    const v = Math.max(Math.min(max, stepped), lo);
+    onChange(lo, v);
+  };
+  return (
+    <div className="filter-dual-slider" role="group" aria-label={ariaLabel}>
+      <div className="filter-dual-slider__track" aria-hidden>
+        <div className="filter-dual-slider__track-bg" />
+        <div className="filter-dual-slider__track-fill" style={{ left: `${left}%`, width: `${width}%` }} />
+      </div>
+      <input
+        type="range"
+        className="filter-dual-slider__thumb filter-dual-slider__thumb--min"
+        min={min}
+        max={max}
+        step={step}
+        value={lo}
+        aria-label={`${ariaLabel} minimum`}
+        onChange={(e) => onMinInput(Number(e.target.value))}
+      />
+      <input
+        type="range"
+        className="filter-dual-slider__thumb filter-dual-slider__thumb--max"
+        min={min}
+        max={max}
+        step={step}
+        value={hi}
+        aria-label={`${ariaLabel} maximum`}
+        onChange={(e) => onMaxInput(Number(e.target.value))}
+      />
+    </div>
+  );
+}
 
 const CATEGORIES = [
   'Shows and culture',
@@ -270,6 +375,18 @@ function IconChipPayment() {
   );
 }
 
+function IconChipPriceRange() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M4 8h16M4 16h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="9" cy="8" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="15" cy="8" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8" cy="16" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="16" cy="16" r="3" fill="#fff" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 function IconChipLocation() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -343,6 +460,7 @@ function chipIcon(type: string) {
     case 'calendar': return <IconChipCalendar />;
     case 'grid': return <IconChipGrid />;
     case 'payment': return <IconChipPayment />;
+    case 'price-range': return <IconChipPriceRange />;
     case 'location': return <IconChipLocation />;
     case 'hotel': return <IconChipHotel />;
     default: return null;
@@ -442,7 +560,7 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
-  const [activeEventIndex, setActiveEventIndex] = useState(0);
+  const [activeFilteredIndex, setActiveFilteredIndex] = useState(0);
   const mapRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({ dragging: false, didDrag: false, startX: 0, startY: 0, scrollLeft: 0, scrollTop: 0 });
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -457,6 +575,69 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
   const [brandSearch, setBrandSearch] = useState('');
   const [citySearch, setCitySearch] = useState('');
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [priceMin, setPriceMin] = useState('');
+  const [priceMax, setPriceMax] = useState('');
+  const [pointsMin, setPointsMin] = useState('');
+  const [pointsMax, setPointsMax] = useState('');
+
+  const filteredMapEntries = useMemo(() => {
+    const priceFilterOn = priceMin.trim() !== '' || priceMax.trim() !== '';
+    const pointsFilterOn = pointsMin.trim() !== '' || pointsMax.trim() !== '';
+    const eurLo = parseOptionalEurBound(priceMin);
+    const eurHi = parseOptionalEurBound(priceMax);
+    const ptsLo = parseOptionalPointsBound(pointsMin);
+    const ptsHi = parseOptionalPointsBound(pointsMax);
+    return MAP_EVENTS.map((ev, idx) => ({ ev, idx })).filter(({ ev }) => {
+      if (priceFilterOn) {
+        const eur = mapEventCashEur(ev);
+        if (eur == null) return false;
+        if (eurLo != null && eur < eurLo) return false;
+        if (eurHi != null && eur > eurHi) return false;
+      }
+      if (pointsFilterOn) {
+        const pts = mapEventPoints(ev);
+        if (pts == null) return false;
+        if (ptsLo != null && pts < ptsLo) return false;
+        if (ptsHi != null && pts > ptsHi) return false;
+      }
+      return true;
+    });
+  }, [priceMin, priceMax, pointsMin, pointsMax]);
+
+  useEffect(() => {
+    setActiveFilteredIndex((i) => {
+      const max = Math.max(0, filteredMapEntries.length - 1);
+      return Math.min(i, max);
+    });
+  }, [filteredMapEntries.length]);
+
+  const onPriceSliderChange = (lo: number, hi: number) => {
+    const { min, max } = MAP_PRICE_BOUNDS;
+    const rLo = Math.round(lo);
+    const rHi = Math.round(hi);
+    setPriceMin(rLo <= min ? '' : String(rLo));
+    setPriceMax(rHi >= max ? '' : String(rHi));
+  };
+
+  const onPointsSliderChange = (lo: number, hi: number) => {
+    const { min, max } = MAP_POINTS_BOUNDS;
+    const rLo = Math.round(lo);
+    const rHi = Math.round(hi);
+    setPointsMin(rLo <= min ? '' : formatPoints(rLo));
+    setPointsMax(rHi >= max ? '' : formatPoints(rHi));
+  };
+
+  const rawEurLo = parseOptionalEurBound(priceMin);
+  const rawEurHi = parseOptionalEurBound(priceMax);
+  const eurLoSlider = rawEurLo ?? MAP_PRICE_BOUNDS.min;
+  const eurHiSlider = rawEurHi ?? MAP_PRICE_BOUNDS.max;
+  const [eurLo, eurHi] = eurLoSlider <= eurHiSlider ? [eurLoSlider, eurHiSlider] : [eurHiSlider, eurLoSlider];
+
+  const rawPtsLo = parseOptionalPointsBound(pointsMin);
+  const rawPtsHi = parseOptionalPointsBound(pointsMax);
+  const ptsLoSlider = rawPtsLo ?? MAP_POINTS_BOUNDS.min;
+  const ptsHiSlider = rawPtsHi ?? MAP_POINTS_BOUNDS.max;
+  const [ptsLo, ptsHi] = ptsLoSlider <= ptsHiSlider ? [ptsLoSlider, ptsHiSlider] : [ptsHiSlider, ptsLoSlider];
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -533,14 +714,16 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     if (!el) return;
     const cardWidth = 377;
     const idx = Math.round(el.scrollLeft / cardWidth);
-    setActiveEventIndex(Math.min(idx, MAP_EVENTS.length - 1));
+    setActiveFilteredIndex(Math.min(idx, Math.max(0, filteredMapEntries.length - 1)));
   };
 
   const handlePinClick = (eventIndex: number) => {
-    setActiveEventIndex(eventIndex);
+    const pos = filteredMapEntries.findIndex((x) => x.idx === eventIndex);
+    if (pos < 0) return;
+    setActiveFilteredIndex(pos);
     const el = carouselRef.current;
     if (!el) return;
-    const card = el.children[eventIndex] as HTMLElement | undefined;
+    const card = el.children[pos] as HTMLElement | undefined;
     card?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
   };
 
@@ -562,6 +745,7 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
       'Date': 'date',
       'Category': 'category',
       'Payment': 'payment',
+      'Price range': 'price-range',
       'Location': 'location',
       'Hotel Brand': 'hotel',
     };
@@ -577,6 +761,12 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     if (label === 'Date') setSelectedDate(null);
     if (label === 'Category') setFilterCategories(new Set());
     if (label === 'Payment') setFilterPayments(new Set());
+    if (label === 'Price range') {
+      setPriceMin('');
+      setPriceMax('');
+      setPointsMin('');
+      setPointsMax('');
+    }
     if (label === 'Location') setSelectedCity(null);
     if (label === 'Hotel Brand') setFilterBrands(new Set());
   };
@@ -599,6 +789,33 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     if (label === 'Hotel Brand' && filterBrands.size > 0) {
       if (filterBrands.size === 1) return [...filterBrands][0];
       return `${label} (${filterBrands.size})`;
+    }
+    if (label === 'Price range') {
+      const pActive = priceMin.trim() !== '' || priceMax.trim() !== '';
+      const ptActive = pointsMin.trim() !== '' || pointsMax.trim() !== '';
+      if (!pActive && !ptActive) return label;
+      const parts: string[] = [];
+      if (pActive) {
+        const lo = parseOptionalEurBound(priceMin);
+        const hi = parseOptionalEurBound(priceMax);
+        const pp: string[] = [];
+        if (lo != null) pp.push(`${lo} €`);
+        if (hi != null) pp.push(`${hi} €`);
+        if (pp.length === 2) parts.push(`${pp[0]} – ${pp[1]}`);
+        else if (pp.length === 1) parts.push(pp[0]);
+      }
+      if (ptActive) {
+        const lo = parseOptionalPointsBound(pointsMin);
+        const hi = parseOptionalPointsBound(pointsMax);
+        const fmt = (n: number) => n.toLocaleString('de-DE');
+        const pp: string[] = [];
+        if (lo != null) pp.push(fmt(lo));
+        if (hi != null) pp.push(fmt(hi));
+        if (pp.length === 2) parts.push(`${pp[0]} – ${pp[1]} pts`);
+        else if (pp.length === 1) parts.push(`${pp[0]} pts`);
+      }
+      if (parts.length === 0) return label;
+      return parts.join(' · ');
     }
     return label;
   };
@@ -660,6 +877,7 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
                 (chip.label === 'Date' && selectedDate !== null) ||
                 (chip.label === 'Category' && filterCategories.size > 0) ||
                 (chip.label === 'Payment' && filterPayments.size > 0) ||
+                (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
                 (chip.label === 'Location' && selectedCity !== null) ||
                 (chip.label === 'Hotel Brand' && filterBrands.size > 0);
               return (
@@ -718,7 +936,11 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
 
             <div className="near-you__pins-layer">
               {MAP_PINS.map((pin) => {
-                const isActive = pin.eventIndex != null && pin.eventIndex === activeEventIndex;
+                if (pin.eventIndex != null && !filteredMapEntries.some((x) => x.idx === pin.eventIndex)) {
+                  return null;
+                }
+                const activeOriginalIdx = filteredMapEntries[activeFilteredIndex]?.idx;
+                const isActive = pin.eventIndex != null && pin.eventIndex === activeOriginalIdx;
                 return (
                   <div
                     key={pin.id}
@@ -771,11 +993,11 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
           className="near-you__event-carousel"
           onScroll={handleCarouselScroll}
         >
-          {MAP_EVENTS.map((event, i) => (
+          {filteredMapEntries.map(({ ev: event }, i) => (
             <MapEventHorizontalCard
               key={event.id}
               event={event}
-              active={i === activeEventIndex}
+              active={i === activeFilteredIndex}
               isFav={favourites.has(event.id)}
               onFavToggle={() => toggleFav(event.id)}
               onClick={() => navigateTo(event.route ?? '#standard')}
@@ -853,6 +1075,7 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Categories'}
                 {activeFilter === 'payment' && 'Payment mechanisms'}
+                {activeFilter === 'price-range' && 'Price range'}
                 {activeFilter === 'location' && 'Location'}
                 {activeFilter === 'hotel' && 'Hotel Brands'}
               </span>
@@ -924,6 +1147,103 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
                       <span className="filter-check-list__label">{opt}</span>
                     </label>
                   ))}
+                </div>
+              )}
+
+              {activeFilter === 'price-range' && (
+                <div className="filter-price-range">
+                  <section className="filter-price-range__block" aria-labelledby="ny-map-filter-price-heading">
+                    <h2 id="ny-map-filter-price-heading" className="filter-price-range__section-title">Price</h2>
+                    <div className="filter-price-range__cols">
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="ny-map-filter-price-min">Minimum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="ny-map-filter-price-min"
+                            type="text"
+                            inputMode="decimal"
+                            className="filter-price-range__input"
+                            placeholder="0"
+                            value={priceMin}
+                            onChange={(e) => setPriceMin(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>€</span>
+                        </div>
+                      </div>
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="ny-map-filter-price-max">Maximum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="ny-map-filter-price-max"
+                            type="text"
+                            inputMode="decimal"
+                            className="filter-price-range__input"
+                            placeholder={String(MAP_PRICE_BOUNDS.max)}
+                            value={priceMax}
+                            onChange={(e) => setPriceMax(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>€</span>
+                        </div>
+                      </div>
+                    </div>
+                    <MapDualRangeSlider
+                      min={MAP_PRICE_BOUNDS.min}
+                      max={MAP_PRICE_BOUNDS.max}
+                      step={1}
+                      lo={eurLo}
+                      hi={eurHi}
+                      onChange={onPriceSliderChange}
+                      ariaLabel="Price in euros"
+                    />
+                  </section>
+                  <section className="filter-price-range__block" aria-labelledby="ny-map-filter-points-heading">
+                    <h2 id="ny-map-filter-points-heading" className="filter-price-range__section-title">Points</h2>
+                    <div className="filter-price-range__cols">
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="ny-map-filter-points-min">Minimum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="ny-map-filter-points-min"
+                            type="text"
+                            inputMode="numeric"
+                            className="filter-price-range__input"
+                            placeholder="0"
+                            value={pointsMin}
+                            onChange={(e) => setPointsMin(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>pts</span>
+                        </div>
+                      </div>
+                      <div className="filter-price-range__field">
+                        <label className="filter-price-range__label" htmlFor="ny-map-filter-points-max">Maximum</label>
+                        <div className="filter-price-range__input-wrap">
+                          <input
+                            id="ny-map-filter-points-max"
+                            type="text"
+                            inputMode="numeric"
+                            className="filter-price-range__input"
+                            placeholder={formatPoints(MAP_POINTS_BOUNDS.max)}
+                            value={pointsMax}
+                            onChange={(e) => setPointsMax(e.target.value)}
+                            autoComplete="off"
+                          />
+                          <span className="filter-price-range__suffix" aria-hidden>pts</span>
+                        </div>
+                      </div>
+                    </div>
+                    <MapDualRangeSlider
+                      min={MAP_POINTS_BOUNDS.min}
+                      max={MAP_POINTS_BOUNDS.max}
+                      step={100}
+                      lo={ptsLo}
+                      hi={ptsHi}
+                      onChange={onPointsSliderChange}
+                      ariaLabel="Reward points"
+                    />
+                  </section>
                 </div>
               )}
 
