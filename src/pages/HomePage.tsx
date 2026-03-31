@@ -657,22 +657,23 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 export default function HomePage() {
   const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
 
-  const NEXT_TRIP_EVENTS = useMemo(
-    () =>
-      takeSortedWithVoyagerExclusiveCap(
-        sortEventsForProfileAndPointsBalance(
-          EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e)),
-          testProfileId,
-          USER_POINTS,
-          'home-next-trip',
-        ),
-        isVoyagerSubscriber,
-        8,
-        /* Up to 3 Explorer-only (presale/exclusivity) cards per page so the strip is visible without a subscriber profile */
-        isVoyagerSubscriber ? 8 : 3,
-      ).map(registryToCard),
-    [testProfileId, USER_POINTS, isVoyagerSubscriber],
-  );
+  const NEXT_TRIP_EVENTS = useMemo(() => {
+    let pool = EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e));
+    if (isVoyagerSubscriber) {
+      if (testProfileId === 'goldVoyager') {
+        pool = pool.filter((e) => isExplorerExclusiveMarketingTag(e.marketingTag));
+      } else if (testProfileId === 'goldSignature') {
+        pool = pool.filter((e) => isSignatureExclusiveMarketingTag(e.marketingTag));
+      }
+    }
+    return takeSortedWithVoyagerExclusiveCap(
+      sortEventsForProfileAndPointsBalance(pool, testProfileId, USER_POINTS, 'home-next-trip'),
+      isVoyagerSubscriber,
+      8,
+      /* Up to 3 Explorer-only (presale/exclusivity) cards per page so the strip is visible without a subscriber profile */
+      isVoyagerSubscriber ? 8 : 3,
+    ).map(registryToCard);
+  }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
   const CONCERTS_EVENTS = useMemo(
     () =>
@@ -975,6 +976,10 @@ export default function HomePage() {
       ),
     [NEXT_TRIP_EVENTS, SUGGESTED_FOR_YOU_EVENTS, SIGNATURE_EXCLUSIVE_EVENTS, SIGNATURE_EXCLUSIVE_EVENTS_TEASER, EXPLORER_EXCLUSIVE_EVENTS, EXPLORER_EXCLUSIVE_EVENTS_TEASER, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
   );
+
+  useEffect(() => {
+    setNtPage(1);
+  }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
   useEffect(() => {
     setSgPage(1);

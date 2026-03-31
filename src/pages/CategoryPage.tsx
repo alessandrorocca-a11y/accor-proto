@@ -480,7 +480,7 @@ export default function CategoryPage({
   initialStayDateTo,
   momentumSlug,
 }: CategoryPageProps) {
-  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId } = useUser();
+  const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
   useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -544,6 +544,7 @@ export default function CategoryPage({
 
   const displayTitle = pageTitle ?? selectedCategory;
   const showAllCategories = !!pageTitle;
+  const isNextTripPage = Boolean(pageTitle?.startsWith('Next trip'));
 
   useEffect(() => {
     if (showAllCategories) return;
@@ -575,6 +576,13 @@ export default function CategoryPage({
 
     const base = ALL_EVENTS.filter((e) => {
       const registryEvent = getEventById(e.id);
+      if (isNextTripPage && isVoyagerSubscriber) {
+        if (testProfileId === 'goldVoyager') {
+          if (!registryEvent || !isExplorerExclusiveMarketingTag(registryEvent.marketingTag)) return false;
+        } else if (testProfileId === 'goldSignature') {
+          if (!registryEvent || !isSignatureExclusiveMarketingTag(registryEvent.marketingTag)) return false;
+        }
+      }
       if (momentumSlug) {
         if (!registryEvent || !eventBelongsToMomentum(registryEvent, momentumSlug)) return false;
       } else if (!showAllCategories && !e.categories.includes(selectedCategory)) return false;
