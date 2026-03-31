@@ -4,6 +4,7 @@ import './MarketingTag.css';
 const LABEL: Record<MarketingTagType, string> = {
   presale: 'Presale',
   exclusivity: 'Exclusivity',
+  signature: 'Exclusivity',
   'sold-out': 'Sold out',
   discount: 'Discount',
 };

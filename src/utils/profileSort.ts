@@ -3,7 +3,7 @@ import type { EventData, MarketingTagType } from '@/data/events/eventRegistry';
 import { isEventAffordableWithBalance } from '@/data/events/eventRegistry';
 
 function isVoyagerSubscriberOnlyTag(tag?: MarketingTagType): boolean {
-  return tag === 'presale' || tag === 'exclusivity';
+  return tag === 'presale' || tag === 'exclusivity' || tag === 'signature';
 }
 
 /** Deterministic seed → RNG (stable shuffle across re-renders for same inputs). */
@@ -55,7 +55,7 @@ function profileScore(event: SortableEvent, profileId: TestProfileId): number {
     return -10;
   }
 
-  // goldVoyager = Gold + Explorer subscriber (+ shared gold mechanics below when not subscriber-only)
+  // goldVoyager / goldSignature = Gold + subscriber (Explorer or ALL Signature; same mechanics below when not subscriber-only)
   if (pt === 'auction' && isLimitless) return 5;
   if (pt === 'auction') return 4;
   if (isLimitless) return 3;

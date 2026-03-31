@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
-import { ACCOR_PLUS_EXCLUSIVES_CATEGORY, isExplorerExclusiveMarketingTag } from '@/data/events/eventRegistry';
+import { ACCOR_PLUS_EXCLUSIVES_CATEGORY, isExplorerExclusiveMarketingTag, isSignatureExclusiveMarketingTag } from '@/data/events/eventRegistry';
 import './NearYouPage.css';
 import './CategoryPage.css';
 
@@ -22,7 +22,7 @@ interface MapEventCard {
   msLeft?: number;
   eventTag?: string;
   route?: string;
-  marketingTag?: 'presale' | 'exclusivity' | 'sold-out' | 'discount';
+  marketingTag?: 'presale' | 'exclusivity' | 'signature' | 'sold-out' | 'discount';
 }
 
 export interface NearYouPageProps {
@@ -423,7 +423,9 @@ function MapEventHorizontalCard({
               <LiveTimer initialMs={event.msLeft} />
             )}
           </div>
-          {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+          {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
+            <SignatureOnlyCardFooter variant="vertical" />
+          ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
             <ExplorerOnlyCardFooter variant="vertical" />
           ) : null}
         </div>

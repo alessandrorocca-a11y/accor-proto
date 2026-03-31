@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { getNearbyCities, searchCities } from '@/data/europeanCities';
 import {
@@ -9,6 +9,7 @@ import {
   formatPoints,
   formatStandardEventListPrice,
   isExplorerExclusiveMarketingTag,
+  isSignatureExclusiveMarketingTag,
   type EventData,
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
@@ -369,7 +370,9 @@ function EventCardCompact({
         >
           <IconHeart filled={isFav} />
         </button>
-        {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+        {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
+          <SignatureOnlyCardFooter variant="imageOverlay" />
+        ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
           <ExplorerOnlyCardFooter variant="imageOverlay" />
         ) : null}
       </div>
@@ -493,6 +496,17 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
       ? takeSortedWithVoyagerExclusiveCap(explorerSortedForCity, true, 6, 6)
       : limitVoyagerExclusivePerSection(explorerSortedForCity, false, 1)
   ).map(registryToCard);
+  const signatureSortedForCity = sortEventsForProfileAndPointsBalance(
+    cityEvents.filter((e) => isSignatureExclusiveMarketingTag(e.marketingTag)),
+    testProfileId,
+    USER_POINTS,
+    `city-${cityName}-signature-strip`,
+  );
+  const SIGNATURE_CITY_EVENTS = (
+    isVoyagerSubscriber
+      ? takeSortedWithVoyagerExclusiveCap(signatureSortedForCity, true, 12, 12)
+      : limitVoyagerExclusivePerSection(signatureSortedForCity, false, 1)
+  ).map(registryToCard);
   const CONCERTS_EVENTS = limitVoyagerExclusivePerSection(
     cityEvents.filter((e) => e.category === 'Concerts and festivals'),
     isVoyagerSubscriber,
@@ -531,8 +545,17 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
   const apTotalPages = Math.ceil(ACCOR_PLUS_EVENTS.length / apPerPage) || 1;
   const apVisible = ACCOR_PLUS_EVENTS.slice((apPage - 1) * apPerPage, apPage * apPerPage);
 
+  const sigPerPage = isVoyagerSubscriber ? 6 : perPage;
+  const [sigPage, setSigPage] = useState(1);
+  const sigTotalPages = Math.ceil(SIGNATURE_CITY_EVENTS.length / sigPerPage) || 1;
+  const sigVisible = SIGNATURE_CITY_EVENTS.slice((sigPage - 1) * sigPerPage, sigPage * sigPerPage);
+
   useEffect(() => {
     setApPage(1);
+  }, [cityName, dateFilterActive, dateFrom, dateTo, testProfileId, USER_POINTS, isVoyagerSubscriber]);
+
+  useEffect(() => {
+    setSigPage(1);
   }, [cityName, dateFilterActive, dateFrom, dateTo, testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
   const [cePage, setCePage] = useState(1);
@@ -756,6 +779,20 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
           onPrev={() => setApPage((p) => Math.max(1, p - 1))}
           onNext={() => setApPage((p) => Math.min(apTotalPages, p + 1))}
           linkHash="#category/all-accor-plus-exclusives"
+        />
+      ) : null}
+
+      {showAccorPlusEventsSection && SIGNATURE_CITY_EVENTS.length > 0 ? (
+        <EventSection
+          title={isVoyagerSubscriber ? 'Signature exclusive events' : 'ALL Signature exclusives'}
+          events={sigVisible}
+          favourites={favourites}
+          onToggleFav={toggleFav}
+          page={sigPage}
+          totalPages={sigTotalPages}
+          onPrev={() => setSigPage((p) => Math.max(1, p - 1))}
+          onNext={() => setSigPage((p) => Math.min(sigTotalPages, p + 1))}
+          linkHash="#category/all-signature-exclusives"
         />
       ) : null}
 

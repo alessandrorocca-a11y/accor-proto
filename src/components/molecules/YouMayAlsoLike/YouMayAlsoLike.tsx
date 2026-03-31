@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketingTag } from '@/components';
+import { ExplorerOnlyCardFooter, IconHeart, MarketingTag, SignatureOnlyCardFooter } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { useUser } from '@/context/UserContext';
 import type { EventData } from '@/data/events/eventRegistry';
@@ -10,6 +10,7 @@ import {
   getEventRoute,
   getPaymentLabel,
   isExplorerExclusiveMarketingTag,
+  isSignatureExclusiveMarketingTag,
 } from '@/data/events/eventRegistry';
 import { getRecommendedEvents } from '@/utils/recommendedEvents';
 import type { MenuFavouriteEvent } from '../Menu/Menu';
@@ -207,7 +208,9 @@ export function YouMayAlsoLike({ event = null, excludeEventId, contextCategory, 
                 >
                   <IconHeart filled={isFavourite(e.id)} />
                 </button>
-                {isExplorerExclusiveMarketingTag(card.marketingTag) ? (
+                {isSignatureExclusiveMarketingTag(card.marketingTag) ? (
+                  <SignatureOnlyCardFooter variant="imageOverlay" />
+                ) : isExplorerExclusiveMarketingTag(card.marketingTag) ? (
                   <ExplorerOnlyCardFooter variant="imageOverlay" />
                 ) : null}
               </div>

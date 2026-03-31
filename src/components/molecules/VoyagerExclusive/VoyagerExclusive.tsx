@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import explorerCard from '@/assets/explorer-card.png';
+import memberCardArt from '@/assets/all-signature-member-card.png';
 import './VoyagerExclusive.css';
 
 function IconClose() {
@@ -13,7 +13,7 @@ function IconClose() {
 export function VoyagerBadge() {
   return (
     <div className="voyager-badge">
-      <img src={explorerCard} alt="ALL+ Accor Explorer member card" className="voyager-badge__card" />
+      <img src={memberCardArt} alt="ALL Signature member card" className="voyager-badge__card" />
     </div>
   );
 }
@@ -49,7 +49,7 @@ export function VoyagerDialog({ open, onClose }: VoyagerDialogProps) {
         </div>
 
         <div className="voyager-dialog__body">
-          <img src={explorerCard} alt="ALL+ Accor Explorer member card" className="voyager-dialog__card" />
+          <img src={memberCardArt} alt="ALL Signature member card" className="voyager-dialog__card" />
 
           <div className="voyager-dialog__content">
             <p className="voyager-dialog__heading">You found an exclusive experience!</p>

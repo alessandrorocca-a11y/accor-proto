@@ -42,7 +42,7 @@ export interface UserAuctionWon {
 const DEFAULT_AUCTION_MS_LEFT = (21 * 24 * 60 + 5 * 60 + 34) * 60 * 1000;
 
 /** Test profile id for prototype: switch user type from profile menu */
-export type TestProfileId = 'silver' | 'gold' | 'goldVoyager';
+export type TestProfileId = 'silver' | 'gold' | 'goldVoyager' | 'goldSignature';
 
 /** Loyalty tier shown in header/menu (same as MarketplaceHeader) */
 export type LoyaltyTier = 'classic' | 'silver' | 'gold' | 'platinum' | 'diamond';
@@ -54,6 +54,8 @@ export const TEST_PROFILES: Record<
   silver: { points: 2500, loyaltyTier: 'silver', isVoyagerSubscriber: false },
   gold: { points: 15000, loyaltyTier: 'gold', isVoyagerSubscriber: false },
   goldVoyager: { points: 25000, loyaltyTier: 'gold', isVoyagerSubscriber: true },
+  /** Same rules as Explorer (`goldVoyager`); separate test profile for ALL Signature naming. */
+  goldSignature: { points: 25000, loyaltyTier: 'gold', isVoyagerSubscriber: true },
 };
 
 const STORAGE_KEY = 'accor-test-profile';
@@ -61,7 +63,7 @@ const STORAGE_KEY = 'accor-test-profile';
 function getStoredTestProfile(): TestProfileId {
   try {
     const s = localStorage.getItem(STORAGE_KEY);
-    if (s === 'silver' || s === 'gold' || s === 'goldVoyager') return s;
+    if (s === 'silver' || s === 'gold' || s === 'goldVoyager' || s === 'goldSignature') return s;
   } catch {
     /* ignore */
   }

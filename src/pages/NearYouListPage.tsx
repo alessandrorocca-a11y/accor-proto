@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ExplorerOnlyCardFooter,
+  SignatureOnlyCardFooter,
   IconHeart,
   MarketplaceHeader,
   Menu,
@@ -11,7 +12,9 @@ import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import {
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   isExplorerExclusiveMarketingTag,
+  isSignatureExclusiveMarketingTag,
 } from '@/data/events/eventRegistry';
 import './NearYouListPage.css';
 import './CategoryPage.css';
@@ -32,7 +35,7 @@ interface NearYouEvent {
   msLeft?: number;
   showBrandLogo?: boolean;
   route?: string;
-  marketingTag?: 'presale' | 'exclusivity' | 'sold-out' | 'discount';
+  marketingTag?: 'presale' | 'exclusivity' | 'signature' | 'sold-out' | 'discount';
 }
 
 const NEAR_YOU_EVENTS: NearYouEvent[] = [
@@ -181,6 +184,9 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
 ];
 
 function nearYouListingCategories(e: NearYouEvent): string[] {
+  if (isSignatureExclusiveMarketingTag(e.marketingTag)) {
+    return [...e.categories, ALL_SIGNATURE_EXCLUSIVES_CATEGORY];
+  }
   if (isExplorerExclusiveMarketingTag(e.marketingTag)) {
     return [...e.categories, ACCOR_PLUS_EXCLUSIVES_CATEGORY];
   }
@@ -730,7 +736,7 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
                 <div className="ny-list__card-body">
                   <span className="ny-list__card-date">{event.date}</span>
                   <h3 className="ny-list__card-title">{event.title}</h3>
-                  {(event.paymentType !== 'linkout' || isExplorerExclusiveMarketingTag(event.marketingTag)) ? (
+                  {(event.paymentType !== 'linkout' || isExplorerExclusiveMarketingTag(event.marketingTag) || isSignatureExclusiveMarketingTag(event.marketingTag)) ? (
                     <div className="ny-list__card-body-bottom">
                       {event.paymentType !== 'linkout' ? (
                         <div className="ny-list__card-payment">
@@ -746,7 +752,9 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
                           )}
                         </div>
                       ) : null}
-                      {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+                      {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
+                        <SignatureOnlyCardFooter variant="vertical" />
+                      ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
                         <ExplorerOnlyCardFooter variant="vertical" />
                       ) : null}
                     </div>

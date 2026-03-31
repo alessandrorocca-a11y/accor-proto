@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   ExplorerOnlyCardFooter,
+  SignatureOnlyCardFooter,
   IconHeart,
   MarketplaceHeader,
   Menu,
@@ -16,6 +17,7 @@ import {
   formatStandardEventListPrice,
   getEventListingCategories,
   isExplorerExclusiveMarketingTag,
+  isSignatureExclusiveMarketingTag,
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
@@ -628,7 +630,9 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                 )}
-                {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+                {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
+                  <SignatureOnlyCardFooter variant="imageOverlay" />
+                ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
                   <ExplorerOnlyCardFooter variant="imageOverlay" />
                 ) : null}
               </div>

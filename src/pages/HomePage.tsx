@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
+import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
@@ -10,6 +10,7 @@ import {
   formatPoints,
   formatStandardEventListPrice,
   isExplorerExclusiveMarketingTag,
+  isSignatureExclusiveMarketingTag,
   type EventData,
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
@@ -591,7 +592,9 @@ function EventCardCompact({
         >
           <IconHeart filled={isFav} />
         </button>
-        {isExplorerExclusiveMarketingTag(event.marketingTag) ? (
+        {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
+          <SignatureOnlyCardFooter variant="imageOverlay" />
+        ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
           <ExplorerOnlyCardFooter variant="imageOverlay" />
         ) : null}
       </div>
@@ -779,6 +782,29 @@ export default function HomePage() {
     return takeSortedWithVoyagerExclusiveCap(explorerExclusiveSortedHome, false, 6, 6).map(registryToCard);
   }, [isVoyagerSubscriber, explorerExclusiveSortedHome]);
 
+  const signatureExclusiveSortedHome = useMemo(
+    () =>
+      sortEventsForProfileAndPointsBalance(
+        EVENT_REGISTRY.filter(
+          (e) => isAccor(e) && isSignatureExclusiveMarketingTag(e.marketingTag),
+        ),
+        testProfileId,
+        USER_POINTS,
+        'home-signature-exclusive',
+      ),
+    [testProfileId, USER_POINTS],
+  );
+
+  const SIGNATURE_EXCLUSIVE_EVENTS = useMemo(() => {
+    if (!isVoyagerSubscriber) return [];
+    return takeSortedWithVoyagerExclusiveCap(signatureExclusiveSortedHome, true, 12, 12).map(registryToCard);
+  }, [isVoyagerSubscriber, signatureExclusiveSortedHome]);
+
+  const SIGNATURE_EXCLUSIVE_EVENTS_TEASER = useMemo(() => {
+    if (isVoyagerSubscriber) return [];
+    return takeSortedWithVoyagerExclusiveCap(signatureExclusiveSortedHome, false, 12, 12).map(registryToCard);
+  }, [isVoyagerSubscriber, signatureExclusiveSortedHome]);
+
   const { toggleFavourite: toggleFavCtx } = useFavourites();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
@@ -893,6 +919,21 @@ export default function HomePage() {
     exTeaserPage * perPage,
   );
 
+  const signatureExclusivePerPage = 6;
+  const [sigPage, setSigPage] = useState(1);
+  const sigTotalPages = Math.ceil(SIGNATURE_EXCLUSIVE_EVENTS.length / signatureExclusivePerPage) || 1;
+  const sigVisible = SIGNATURE_EXCLUSIVE_EVENTS.slice(
+    (sigPage - 1) * signatureExclusivePerPage,
+    sigPage * signatureExclusivePerPage,
+  );
+
+  const [sigTeaserPage, setSigTeaserPage] = useState(1);
+  const sigTeaserTotalPages = Math.ceil(SIGNATURE_EXCLUSIVE_EVENTS_TEASER.length / perPage) || 1;
+  const sigTeaserVisible = SIGNATURE_EXCLUSIVE_EVENTS_TEASER.slice(
+    (sigTeaserPage - 1) * perPage,
+    sigTeaserPage * perPage,
+  );
+
   const [citiesPage, setCitiesPage] = useState(1);
   const citiesTotalPages = Math.ceil(POPULAR_CITIES.length / perPage);
   const citiesVisible = POPULAR_CITIES.slice((citiesPage - 1) * perPage, citiesPage * perPage);
@@ -929,10 +970,10 @@ export default function HomePage() {
     () =>
       Array.from(
         new Map(
-          [...NEXT_TRIP_EVENTS, ...SUGGESTED_FOR_YOU_EVENTS, ...EXPLORER_EXCLUSIVE_EVENTS, ...EXPLORER_EXCLUSIVE_EVENTS_TEASER, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
+          [...NEXT_TRIP_EVENTS, ...SUGGESTED_FOR_YOU_EVENTS, ...SIGNATURE_EXCLUSIVE_EVENTS, ...SIGNATURE_EXCLUSIVE_EVENTS_TEASER, ...EXPLORER_EXCLUSIVE_EVENTS, ...EXPLORER_EXCLUSIVE_EVENTS_TEASER, ...CONCERTS_EVENTS, ...SPORT_EVENTS, ...PRIZE_DRAW_EVENTS, ...AUCTION_EVENTS].map((e) => [e.id, e]),
         ).values(),
       ),
-    [NEXT_TRIP_EVENTS, SUGGESTED_FOR_YOU_EVENTS, EXPLORER_EXCLUSIVE_EVENTS, EXPLORER_EXCLUSIVE_EVENTS_TEASER, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
+    [NEXT_TRIP_EVENTS, SUGGESTED_FOR_YOU_EVENTS, SIGNATURE_EXCLUSIVE_EVENTS, SIGNATURE_EXCLUSIVE_EVENTS_TEASER, EXPLORER_EXCLUSIVE_EVENTS, EXPLORER_EXCLUSIVE_EVENTS_TEASER, CONCERTS_EVENTS, SPORT_EVENTS, PRIZE_DRAW_EVENTS, AUCTION_EVENTS],
   );
 
   useEffect(() => {
@@ -945,6 +986,14 @@ export default function HomePage() {
 
   useEffect(() => {
     setExTeaserPage(1);
+  }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
+
+  useEffect(() => {
+    setSigPage(1);
+  }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
+
+  useEffect(() => {
+    setSigTeaserPage(1);
   }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
   const menuFavourites: MenuFavouriteEvent[] = useMemo(
@@ -1202,6 +1251,40 @@ export default function HomePage() {
         </section>
       ) : null}
 
+      {/* ── Signature exclusive events (subscribers) ─ */}
+      {SIGNATURE_EXCLUSIVE_EVENTS.length > 0 ? (
+        <section className="home-page__section" aria-labelledby="home-signature-exclusive-heading">
+          <div className="home-page__section-header">
+            <h2 id="home-signature-exclusive-heading" className="home-page__section-title">
+              Signature exclusive events
+            </h2>
+            <button
+              type="button"
+              className="home-page__section-link"
+              onClick={() => { window.location.hash = '#category/all-signature-exclusives'; }}
+            >
+              See all
+            </button>
+          </div>
+          <div className="home-page__scroll">
+            {sigVisible.map((event) => (
+              <EventCardCompact
+                key={event.id}
+                event={event}
+                isFav={favourites.has(event.id)}
+                onFavToggle={() => toggleFavourite(event.id)}
+              />
+            ))}
+          </div>
+          <Pagination
+            current={sigPage}
+            total={sigTotalPages}
+            onPrev={() => setSigPage((p) => Math.max(1, p - 1))}
+            onNext={() => setSigPage((p) => Math.min(sigTotalPages, p + 1))}
+          />
+        </section>
+      ) : null}
+
       {/* ── Explorer exclusive events (subscribers — upper placement) ─ */}
       {EXPLORER_EXCLUSIVE_EVENTS.length > 0 ? (
         <section className="home-page__section" aria-labelledby="home-explorer-exclusive-heading">
@@ -1268,6 +1351,40 @@ export default function HomePage() {
         }
         return [auctionsSection, concertsSection, sportSection, prizeDrawSection];
       })()}
+
+      {/* ── Signature exclusive events (non-subscribers — teaser) ─ */}
+      {SIGNATURE_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (
+        <section className="home-page__section" aria-labelledby="home-signature-exclusive-teaser-heading">
+          <div className="home-page__section-header">
+            <h2 id="home-signature-exclusive-teaser-heading" className="home-page__section-title">
+              Signature exclusive events
+            </h2>
+            <button
+              type="button"
+              className="home-page__section-link"
+              onClick={() => { window.location.hash = '#category/all-signature-exclusives'; }}
+            >
+              See all
+            </button>
+          </div>
+          <div className="home-page__scroll">
+            {sigTeaserVisible.map((event) => (
+              <EventCardCompact
+                key={event.id}
+                event={event}
+                isFav={favourites.has(event.id)}
+                onFavToggle={() => toggleFavourite(event.id)}
+              />
+            ))}
+          </div>
+          <Pagination
+            current={sigTeaserPage}
+            total={sigTeaserTotalPages}
+            onPrev={() => setSigTeaserPage((p) => Math.max(1, p - 1))}
+            onNext={() => setSigTeaserPage((p) => Math.min(sigTeaserTotalPages, p + 1))}
+          />
+        </section>
+      ) : null}
 
       {/* ── Explorer exclusive events (non-subscribers — before cities) ─ */}
       {EXPLORER_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (

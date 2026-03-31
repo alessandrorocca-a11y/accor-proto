@@ -1305,7 +1305,7 @@ export function Menu({
                   Switch user type for prototype testing. Selection is saved for this session.
                 </p>
                 <ul className="menu__list" role="radiogroup" aria-label="Test account type">
-                  {(['silver', 'gold', 'goldVoyager'] as TestProfileId[]).map((id) => {
+                  {(['silver', 'gold', 'goldVoyager', 'goldSignature'] as TestProfileId[]).map((id) => {
                     const p = TEST_PROFILES[id];
                     const isSelected = userCtx?.testProfileId === id;
                     const pts = p.points.toLocaleString('de-DE');
@@ -1314,7 +1314,9 @@ export function Menu({
                         ? `Silver — ${pts} points, no subscription`
                         : id === 'gold'
                           ? `Gold — ${pts} points, no subscription`
-                          : `Gold + Explorer — ${pts} points, Explorer subscriber`;
+                          : id === 'goldVoyager'
+                            ? `Gold + Explorer — ${pts} points, Explorer subscriber`
+                            : `Gold + ALL Signature — ${pts} points, ALL Signature subscriber`;
                     return (
                       <li key={id} className="menu__item menu__item--bordered">
                         <button

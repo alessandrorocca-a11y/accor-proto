@@ -15,7 +15,7 @@ export interface HeroImage {
   alt: string;
 }
 
-export type MarketingTagType = 'presale' | 'exclusivity' | 'sold-out' | 'discount';
+export type MarketingTagType = 'presale' | 'exclusivity' | 'signature' | 'sold-out' | 'discount';
 
 export interface EventData {
   id: string;
@@ -61,19 +61,30 @@ export function isExplorerExclusiveMarketingTag(tag?: MarketingTagType): boolean
   return tag === 'presale' || tag === 'exclusivity';
 }
 
-/** Event requires ALL+ Explorer (subscriber) when it has Presale or Exclusivity marketing tag. */
+/** ALL Signature subscription bucket (distinct strip / footer from Explorer). */
+export function isSignatureExclusiveMarketingTag(tag?: MarketingTagType): boolean {
+  return tag === 'signature';
+}
+
+/** Event requires subscriber when Presale, Exclusivity, or Signature. */
 export function isVoyagerExclusiveEvent(event: EventData | null | undefined): boolean {
-  return isExplorerExclusiveMarketingTag(event?.marketingTag);
+  const t = event?.marketingTag;
+  return isExplorerExclusiveMarketingTag(t) || isSignatureExclusiveMarketingTag(t);
 }
 
 /** Category filter / chips: ALL+ Explorer (subscription) experiences bucket. */
 export const ACCOR_PLUS_EXCLUSIVES_CATEGORY = 'All Accor Plus Exclusives' as const;
 
+/** Category filter / chips: ALL Signature exclusives. */
+export const ALL_SIGNATURE_EXCLUSIVES_CATEGORY = 'All Signature Exclusives' as const;
+
 /**
- * Primary `category` plus the ALL+ bucket when the event is Explorer-only (presale / exclusivity),
- * so it appears under “All Accor Plus Exclusives” as well as its thematic category.
+ * Primary `category` plus virtual buckets for subscriber-only marketing tags.
  */
 export function getEventListingCategories(event: Pick<EventData, 'category' | 'marketingTag'>): string[] {
+  if (isSignatureExclusiveMarketingTag(event.marketingTag)) {
+    return [event.category, ALL_SIGNATURE_EXCLUSIVES_CATEGORY];
+  }
   if (isExplorerExclusiveMarketingTag(event.marketingTag)) {
     return [event.category, ACCOR_PLUS_EXCLUSIVES_CATEGORY];
   }
@@ -2083,6 +2094,215 @@ export const EVENT_REGISTRY: EventData[] = [
     heroImages: makeHeroImages('https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1200&h=800&fit=crop', 'Jazz festival', 'Concerts and festivals'),
     includedItems: ['2 premium seats', 'VIP lounge access', 'Welcome drink', 'Parking pass', 'Festival lanyards'],
     eventTag: 'Fever Original',
+  },
+  // ═══════════════════════════════════════════════════════════
+  // ALL SIGNATURE EXCLUSIVES (evt-sig-01 — evt-sig-12)
+  // ═══════════════════════════════════════════════════════════
+  {
+    id: 'evt-sig-01',
+    title: 'Signature Nights — Sofitel Paris Le Faubourg Suite',
+    description: 'An overnight stay in a Prestige Suite with breakfast, spa access, and a private mixology session at the hotel bar.',
+    date: 'May 12, 2026',
+    location: 'Sofitel Paris Le Faubourg',
+    city: 'Paris',
+    pageType: 'redeem',
+    category: 'Hotel experiences',
+    points: 12000,
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop', 'Sofitel suite', 'Hotel experiences'),
+    includedItems: ['1 night Prestige Suite', 'Breakfast for two', 'Spa access', 'Mixology experience'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-02',
+    title: 'Pullman Bercy — Executive Floor & Arena Transfer',
+    description: 'Two nights on the executive floor with lounge access and private transfer to Accor Arena events.',
+    date: 'June 3, 2026',
+    location: 'Pullman Paris Centre Bercy',
+    city: 'Paris',
+    pageType: 'standard',
+    category: 'Hotel experiences',
+    points: 8900,
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&h=800&fit=crop', 'Pullman Bercy', 'Hotel experiences'),
+    includedItems: ['2 nights executive room', 'Lounge access', 'Return transfer to Arena'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-03',
+    title: 'Novotel Paris Centre Tour Eiffel — Family Signature',
+    description: 'Connecting rooms with Eiffel views, kids\u2019 welcome pack, and skip-the-line tower tickets.',
+    date: 'July 18, 2026',
+    location: 'Novotel Paris Centre Tour Eiffel',
+    city: 'Paris',
+    pageType: 'redeem',
+    category: 'Visits',
+    points: 6500,
+    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=800&fit=crop', 'Paris Eiffel', 'Visits'),
+    includedItems: ['2 connecting rooms', 'Tower tickets', 'Kids welcome pack'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-04',
+    title: 'Mercure Paris Opera — Chef\u2019s Table & Show',
+    description: 'Dinner at the chef\u2019s table followed by premium seats at a major Paris cabaret.',
+    date: 'April 22, 2026',
+    location: 'Mercure Paris Opera Garnier',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Food and drinks',
+    points: 5500,
+    currentBid: 5500,
+    bidChips: [6000, 6500, 7000, 7500],
+    msLeft: 20 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&h=800&fit=crop', 'Fine dining', 'Food and drinks'),
+    includedItems: ['Chef\u2019s table for two', '2 premium show tickets', 'Champagne pairing'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-05',
+    title: 'Accor Arena — Signature Lounge Season Pass',
+    description: 'Season access to the Signature lounge for selected Accor Arena shows with dedicated host.',
+    date: 'September 1, 2026',
+    location: 'Accor Arena, Paris',
+    city: 'Paris',
+    pageType: 'prize-draw',
+    category: 'Concerts and festivals',
+    points: 800,
+    ticketPrice: 800,
+    maxTickets: 20,
+    drawEndDate: '2026-08-15T23:59:00',
+    msLeft: 90 * 24 * 60 * 60 * 1000,
+    image: 'https://limitlessexperiences.accor.com/media/wysiwyg/Accor-Arena-760x524.jpg',
+    heroImages: makeHeroImages('https://limitlessexperiences.accor.com/media/wysiwyg/Accor-Arena-760x524.jpg', 'Accor Arena', 'Concerts and festivals'),
+    includedItems: ['Lounge season pass', 'Dedicated host', 'Welcome drinks'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-06',
+    title: 'Roland-Garros — Signature Terrace Brunch',
+    description: 'Brunch on a private terrace overlooking the courts with grounds passes for two.',
+    date: 'May 28, 2026',
+    location: 'Stade Roland-Garros, Paris',
+    city: 'Paris',
+    pageType: 'redeem',
+    category: 'Sport and leisure',
+    points: 14000,
+    image: '/roland-garros-1.png',
+    heroImages: makeHeroImages('/roland-garros-1.png', 'Roland-Garros', 'Sport and leisure'),
+    includedItems: ['Terrace brunch for two', 'Grounds passes', 'Official programme'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-07',
+    title: 'Wellness Signature — Spa NUXE x Accor',
+    description: 'Full day spa circuit, signature massage, and light lunch at a flagship NUXE spa partner hotel.',
+    date: 'March 30, 2026',
+    location: 'Paris',
+    city: 'Paris',
+    pageType: 'standard',
+    category: 'Wellness',
+    points: 4200,
+    image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&h=800&fit=crop', 'Spa wellness', 'Wellness'),
+    includedItems: ['Day spa access', '60 min massage', 'Lunch'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-08',
+    title: 'Louvre After Hours — Signature Private Tour',
+    description: 'After-hours guided tour of selected wings with an art historian and champagne pause.',
+    date: 'October 14, 2026',
+    location: 'Musée du Louvre, Paris',
+    city: 'Paris',
+    pageType: 'auction',
+    category: 'Visits',
+    points: 9500,
+    currentBid: 9500,
+    bidChips: [10000, 11000, 12000, 13000],
+    msLeft: 60 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1200&h=800&fit=crop', 'Louvre', 'Visits'),
+    includedItems: ['Private tour for two', 'Champagne', 'Audio guide keepsake'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-09',
+    title: 'Tech & Innovation — Station F Executive Breakfast',
+    description: 'Networking breakfast inside Station F with a curated startup visit and ALL Signature gift.',
+    date: 'November 8, 2026',
+    location: 'Station F, Paris',
+    city: 'Paris',
+    pageType: 'redeem',
+    category: 'Tech',
+    points: 3200,
+    image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=800&fit=crop', 'Tech hub', 'Tech'),
+    includedItems: ['Executive breakfast', 'Startup tour', 'Gift bag'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-10',
+    title: 'Philharmonie de Paris — Signature Box',
+    description: 'Private box for a headline classical evening with intermission canapés and valet parking.',
+    date: 'February 11, 2027',
+    location: 'Philharmonie de Paris',
+    city: 'Paris',
+    pageType: 'prize-draw',
+    category: 'Shows and culture',
+    points: 1200,
+    ticketPrice: 1200,
+    maxTickets: 15,
+    drawEndDate: '2027-01-20T23:59:00',
+    msLeft: 200 * 24 * 60 * 60 * 1000,
+    image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1503095396549-807759245b35?w=1200&h=800&fit=crop', 'Concert hall', 'Shows and culture'),
+    includedItems: ['Private box (4 guests)', 'Canapés', 'Valet parking'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-11',
+    title: 'Seine Dinner Cruise — Signature Wine Pairing',
+    description: 'Private table on a glass boat with five-course menu and sommelier-selected wines.',
+    date: 'August 24, 2026',
+    location: 'Seine, Paris',
+    city: 'Paris',
+    pageType: 'standard',
+    category: 'Food and drinks',
+    points: 7800,
+    image: 'https://images.unsplash.com/photo-1431274172761-fca41d930114?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1431274172761-fca41d930114?w=1200&h=800&fit=crop', 'Seine cruise', 'Food and drinks'),
+    includedItems: ['5-course dinner', 'Wine pairing', 'Private table'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
+  },
+  {
+    id: 'evt-sig-12',
+    title: 'Raffles Le Royal Monceau — Cinema & Stay',
+    description: 'One night in a suite, private screening in the hotel cinema, and breakfast at Matsuhisa Paris.',
+    date: 'December 5, 2026',
+    location: 'Raffles Paris Le Royal Monceau',
+    city: 'Paris',
+    pageType: 'redeem',
+    category: 'Hotel experiences',
+    points: 22000,
+    image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=720&h=720&fit=crop',
+    heroImages: makeHeroImages('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&h=800&fit=crop', 'Luxury hotel', 'Hotel experiences'),
+    includedItems: ['Suite night', 'Private cinema', 'Breakfast at Matsuhisa'],
+    eventTag: 'Limitless Experiences',
+    marketingTag: 'signature',
   },
 ];
 
