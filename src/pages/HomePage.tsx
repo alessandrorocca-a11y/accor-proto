@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
+import { ExclusiveFlatStrip, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
@@ -593,9 +593,9 @@ function EventCardCompact({
           <IconHeart filled={isFav} />
         </button>
         {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
-          <SignatureOnlyCardFooter variant="imageOverlay" />
+          <ExclusiveFlatStrip kind="signature" variant="imageOverlay" />
         ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
-          <ExplorerOnlyCardFooter variant="imageOverlay" />
+          <ExclusiveFlatStrip kind="explorer" variant="imageOverlay" />
         ) : null}
       </div>
       <div className="home-page__event-card-body">

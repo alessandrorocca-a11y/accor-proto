@@ -1,0 +1,42 @@
+/* Figma 7589:44263 — flat primary bar, white label (listing card image bottom) */
+
+.exclusive-flat-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-height: 24px;
+  padding: 4px 8px;
+  background: var(--wel-sem-color-primary, #050033);
+  color: var(--wel-sem-color-on-loyalty, #ffffff);
+  font-family: var(--wel-sem-fontfamilies-label, 'Roboto', sans-serif);
+  font-size: var(--wel-sem-fontsizes-label-sm, 12px);
+  font-weight: 400;
+  line-height: var(--wel-sem-lineheights-label-sm, 16px);
+  letter-spacing: var(--wel-sem-letterspacing-label, 0);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.exclusive-flat-strip--imageOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  border-radius: 0 0 var(--wel-sem-borderradius-surface, 6px) var(--wel-sem-borderradius-surface, 6px);
+  pointer-events: none;
+}
+
+.exclusive-flat-strip--horizontal {
+  margin-top: auto;
+  padding-top: var(--wel-sem-spacingstatic-stack-xs, 8px);
+  border-radius: 0 0 var(--wel-sem-borderradius-surface, 6px) var(--wel-sem-borderradius-surface, 6px);
+}
+
+.exclusive-flat-strip--vertical {
+  margin-top: var(--wel-sem-spacingstatic-stack-xs, 8px);
+  border-radius: var(--wel-sem-borderradius-surface, 6px);
+}
