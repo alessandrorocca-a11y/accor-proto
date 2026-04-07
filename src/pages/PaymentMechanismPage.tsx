@@ -13,6 +13,7 @@ import {
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
   EVENT_REGISTRY,
   getEffectivePointsCost,
+  getEventById,
   getEventRoute,
   formatPoints,
   formatStandardEventListPrice,
@@ -68,6 +69,8 @@ const CATEGORIES = [
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
 
+const SUBSCRIPTION_OPTIONS = ['Explorer', 'Signature'] as const;
+
 const CITY_NAME = 'Homepage';
 
 const paymentTypeMap: Record<string, PaymentType> = {
@@ -103,7 +106,7 @@ function getFirstDayOfMonth(year: number, month: number) {
   return day === 0 ? 6 : day - 1;
 }
 
-type FilterType = 'date' | 'category' | 'price-range' | 'location' | 'hotel' | null;
+type FilterType = 'date' | 'category' | 'subscription' | 'price-range' | 'location' | 'hotel' | null;
 type SortOption = 'relevance' | 'price-desc' | 'price-asc' | 'date';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -257,6 +260,7 @@ function IconSearch() {
 const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
   { label: 'Category', icon: 'grid' },
+  { label: 'Subscription', icon: 'subscription' },
   { label: 'Price range', icon: 'price-range' },
   { label: 'Location', icon: 'location' },
   { label: 'Hotel Brand', icon: 'hotel' },
@@ -303,6 +307,15 @@ function IconGrid() {
       <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
       <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
       <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function IconSubscription() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M7 10h10M7 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -355,6 +368,7 @@ function IconOrderBy() {
 const filterIconMap: Record<string, () => JSX.Element> = {
   calendar: IconCalendar,
   grid: IconGrid,
+  subscription: IconSubscription,
   'price-range': IconPriceRangeFilter,
   location: IconLocation,
   hotel: IconHotel,
@@ -430,6 +444,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
 
   const [filterCategories, setFilterCategories] = useState<Set<string>>(new Set());
+  const [filterSubscriptions, setFilterSubscriptions] = useState<Set<string>>(new Set());
   const [filterBrands, setFilterBrands] = useState<Set<string>>(new Set());
   const [brandSearch, setBrandSearch] = useState('');
   const [citySearch, setCitySearch] = useState('');
@@ -481,6 +496,18 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
         if (e.paymentType !== 'flex' && e.paymentType !== 'cash') return false;
       } else if (e.paymentType !== selectedMechanism) return false;
       if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
+      if (filterSubscriptions.size > 0) {
+        const registryEvent = getEventById(e.id);
+        const matchesExplorer =
+          filterSubscriptions.has('Explorer') &&
+          registryEvent != null &&
+          isExplorerExclusiveMarketingTag(registryEvent.marketingTag);
+        const matchesSignature =
+          filterSubscriptions.has('Signature') &&
+          registryEvent != null &&
+          isSignatureExclusiveMarketingTag(registryEvent.marketingTag);
+        if (!matchesExplorer && !matchesSignature) return false;
+      }
       if (priceFilterOn) {
         const eur = getEventCashPriceEur(e.id);
         if (eur == null) return false;
@@ -503,6 +530,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   }, [
     selectedMechanism,
     filterCategories,
+    filterSubscriptions,
     priceMin,
     priceMax,
     pointsMin,
@@ -554,6 +582,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     const map: Record<string, FilterType> = {
       'Date': 'date',
       'Category': 'category',
+      'Subscription': 'subscription',
       'Price range': 'price-range',
       'Location': 'location',
       'Hotel Brand': 'hotel',
@@ -569,6 +598,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     e.stopPropagation();
     if (label === 'Date') setSelectedDate(null);
     if (label === 'Category') setFilterCategories(new Set());
+    if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
       setPriceMin('');
       setPriceMax('');
@@ -585,6 +615,10 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
     if (label === 'Category' && filterCategories.size > 0) {
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
+    }
+    if (label === 'Subscription' && filterSubscriptions.size > 0) {
+      if (filterSubscriptions.size === 1) return [...filterSubscriptions][0];
+      return `${label} (${filterSubscriptions.size})`;
     }
     if (label === 'Hotel Brand' && filterBrands.size > 0) {
       if (filterBrands.size === 1) return [...filterBrands][0];
@@ -770,6 +804,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
               const isActive =
                 (chip.label === 'Date' && selectedDate !== null) ||
                 (chip.label === 'Category' && filterCategories.size > 0) ||
+                (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
                 (chip.label === 'Hotel Brand' && filterBrands.size > 0);
               return (
@@ -994,6 +1029,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Categories'}
+                {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
                 {activeFilter === 'location' && 'Location'}
                 {activeFilter === 'hotel' && 'Hotel Brands'}
@@ -1048,6 +1084,22 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
                         onChange={() => toggleSetItem(setFilterCategories, cat)}
                       />
                       <span className="filter-check-list__label">{cat}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {activeFilter === 'subscription' && (
+                <div className="filter-check-list">
+                  {SUBSCRIPTION_OPTIONS.map((opt) => (
+                    <label key={opt} className="filter-check-list__item">
+                      <input
+                        type="checkbox"
+                        className="filter-check-list__checkbox"
+                        checked={filterSubscriptions.has(opt)}
+                        onChange={() => toggleSetItem(setFilterSubscriptions, opt)}
+                      />
+                      <span className="filter-check-list__label">{opt}</span>
                     </label>
                   ))}
                 </div>

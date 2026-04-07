@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import {
-  ExplorerOnlyCardFooter,
-  SignatureOnlyCardFooter,
+  ExclusiveFlatStrip,
   IconHeart,
   MarketplaceHeader,
   Menu,
@@ -82,6 +81,7 @@ const ALL_EVENTS: CategoryEvent[] = EVENT_REGISTRY.map((e) => ({
 }));
 
 const PAYMENT_OPTIONS = ['Standard', 'Auctions', 'Prize Draws', 'Redeem now', 'Waitlist'];
+const SUBSCRIPTION_OPTIONS = ['Explorer', 'Signature'] as const;
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
 const DAYS_OF_WEEK = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -96,7 +96,7 @@ function getFirstDayOfMonth(year: number, month: number) {
   return day === 0 ? 6 : day - 1;
 }
 
-type FilterType = 'date' | 'category' | 'payment' | 'price-range' | 'location' | 'hotel' | null;
+type FilterType = 'date' | 'category' | 'payment' | 'subscription' | 'price-range' | 'location' | 'hotel' | null;
 type SortOption = 'relevance' | 'price-desc' | 'price-asc' | 'date';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
@@ -208,6 +208,7 @@ const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
   { label: 'Category', icon: 'grid' },
   { label: 'Payment', icon: 'payment' },
+  { label: 'Subscription', icon: 'subscription' },
   { label: 'Price range', icon: 'price-range' },
   { label: 'Location', icon: 'location' },
   { label: 'Hotel Brand', icon: 'hotel' },
@@ -273,6 +274,15 @@ function IconPayment() {
   );
 }
 
+function IconSubscription() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M7 10h10M7 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function IconLocation() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -322,6 +332,7 @@ const filterIconMap: Record<string, () => JSX.Element> = {
   calendar: IconCalendar,
   grid: IconGrid,
   payment: IconPayment,
+  subscription: IconSubscription,
   'price-range': IconPriceRangeFilter,
   location: IconLocation,
   hotel: IconHotel,
@@ -503,6 +514,7 @@ export default function CategoryPage({
 
   const [filterCategories, setFilterCategories] = useState<Set<string>>(new Set());
   const [filterPayments, setFilterPayments] = useState<Set<string>>(new Set());
+  const [filterSubscriptions, setFilterSubscriptions] = useState<Set<string>>(new Set());
   const [filterBrands, setFilterBrands] = useState<Set<string>>(new Set());
   const [brandSearch, setBrandSearch] = useState('');
   const [citySearch, setCitySearch] = useState('');
@@ -590,6 +602,17 @@ export default function CategoryPage({
       if (filterPayments.size > 0) {
         const allowed = [...filterPayments].flatMap((p) => paymentTypeMap[p] ?? []);
         if (!allowed.includes(e.paymentType)) return false;
+      }
+      if (filterSubscriptions.size > 0) {
+        const matchesExplorer =
+          filterSubscriptions.has('Explorer') &&
+          registryEvent != null &&
+          isExplorerExclusiveMarketingTag(registryEvent.marketingTag);
+        const matchesSignature =
+          filterSubscriptions.has('Signature') &&
+          registryEvent != null &&
+          isSignatureExclusiveMarketingTag(registryEvent.marketingTag);
+        if (!matchesExplorer && !matchesSignature) return false;
       }
       if (priceFilterOn) {
         const eur = getEventCashPriceEur(e.id);
@@ -704,6 +727,7 @@ export default function CategoryPage({
       'Date': 'date',
       'Category': 'category',
       'Payment': 'payment',
+      'Subscription': 'subscription',
       'Price range': 'price-range',
       'Location': 'location',
       'Hotel Brand': 'hotel',
@@ -724,6 +748,7 @@ export default function CategoryPage({
     }
     if (label === 'Category') setFilterCategories(new Set());
     if (label === 'Payment') setFilterPayments(new Set());
+    if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
       setPriceMin('');
       setPriceMax('');
@@ -748,6 +773,10 @@ export default function CategoryPage({
     if (label === 'Payment' && filterPayments.size > 0) {
       if (filterPayments.size === 1) return [...filterPayments][0];
       return `${label} (${filterPayments.size})`;
+    }
+    if (label === 'Subscription' && filterSubscriptions.size > 0) {
+      if (filterSubscriptions.size === 1) return [...filterSubscriptions][0];
+      return `${label} (${filterSubscriptions.size})`;
     }
     if (label === 'Location' && selectedCity) {
       return selectedCity;
@@ -982,6 +1011,7 @@ export default function CategoryPage({
                 (chip.label === 'Date' && ((stayDateFrom && stayDateTo) || selectedDate !== null)) ||
                 (chip.label === 'Category' && filterCategories.size > 0) ||
                 (chip.label === 'Payment' && filterPayments.size > 0) ||
+                (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
                 (chip.label === 'Location' && selectedCity !== null) ||
                 (chip.label === 'Hotel Brand' && filterBrands.size > 0);
@@ -1034,7 +1064,8 @@ export default function CategoryPage({
 
         <div className="category-page__list">
           {filteredEvents.map((event) => {
-            const registryEvent = EVENT_REGISTRY.find((e) => e.id === event.id);
+            const registryEvent = getEventById(event.id);
+            const cardMarketingTag = registryEvent?.marketingTag ?? event.marketingTag;
             const href = registryEvent ? getEventRoute(registryEvent) : '#';
             return (
             <article
@@ -1050,7 +1081,7 @@ export default function CategoryPage({
                   loading="lazy"
                   style={event.imagePosition ? { objectPosition: event.imagePosition } : undefined}
                 />
-                {event.marketingTag && <MarketingTag type={event.marketingTag} className="category-page__card-marketing-tag" />}
+                {cardMarketingTag && <MarketingTag type={cardMarketingTag} className="category-page__card-marketing-tag" />}
                 <button
                   type="button"
                   className="category-page__card-fav"
@@ -1067,10 +1098,10 @@ export default function CategoryPage({
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                 )}
-                {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
-                  <SignatureOnlyCardFooter variant="imageOverlay" />
-                ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
-                  <ExplorerOnlyCardFooter variant="imageOverlay" />
+                {isSignatureExclusiveMarketingTag(cardMarketingTag) ? (
+                  <ExclusiveFlatStrip kind="signature" variant="imageOverlay" />
+                ) : isExplorerExclusiveMarketingTag(cardMarketingTag) ? (
+                  <ExclusiveFlatStrip kind="explorer" variant="imageOverlay" />
                 ) : null}
               </div>
 
@@ -1209,6 +1240,7 @@ export default function CategoryPage({
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Categories'}
                 {activeFilter === 'payment' && 'Payment mechanisms'}
+                {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
                 {activeFilter === 'location' && 'Location'}
                 {activeFilter === 'hotel' && 'Hotel Brands'}
@@ -1284,6 +1316,22 @@ export default function CategoryPage({
                         className="filter-check-list__checkbox"
                         checked={filterPayments.has(opt)}
                         onChange={() => toggleSetItem(setFilterPayments, opt)}
+                      />
+                      <span className="filter-check-list__label">{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {activeFilter === 'subscription' && (
+                <div className="filter-check-list">
+                  {SUBSCRIPTION_OPTIONS.map((opt) => (
+                    <label key={opt} className="filter-check-list__item">
+                      <input
+                        type="checkbox"
+                        className="filter-check-list__checkbox"
+                        checked={filterSubscriptions.has(opt)}
+                        onChange={() => toggleSetItem(setFilterSubscriptions, opt)}
                       />
                       <span className="filter-check-list__label">{opt}</span>
                     </label>
