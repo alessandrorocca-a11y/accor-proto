@@ -1122,6 +1122,20 @@
   color: var(--wel-sem-color-primary, #050033);
 }
 
+.loyalty-sheet__value--points {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wel-sem-spacingstatic-inline-2xs, 4px);
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
+}
+
+.loyalty-sheet__points-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
+}
+
 .loyalty-sheet__value--gold {
   color: #af913a;
 }
