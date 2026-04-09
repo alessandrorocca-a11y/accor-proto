@@ -54,21 +54,21 @@ Failure to complete payment may result in forfeiture of the Auction Item and/or 
 };
 
 const REDEEM_CONTENT: TermsContent = {
-  intro: `The Redeem experience (the "Experience") is organized by ACCOR (the "Organizer"), or any of its affiliated entities, through the ALL – Accor Live Limitless loyalty programme.
+  intro: `The Instant purchase experience (the "Experience") is organized by ACCOR (the "Organizer"), or any of its affiliated entities, through the ALL – Accor Live Limitless loyalty programme.
 
 Participation is open to ALL programme members aged 18 years or older (or the legal age of majority in their jurisdiction) who hold a sufficient Reward Points balance. Employees of ACCOR, its affiliates, partners, and their immediate family members may be excluded, unless otherwise stated.
 
-All experiences, items, or packages available for redemption are described to the best of the Organizer's knowledge and are subject to availability. The Organizer reserves the right to modify, substitute, or withdraw any offer at its discretion.`,
+All experiences, items, or packages available for instant purchase with Reward points are described to the best of the Organizer's knowledge and are subject to availability. The Organizer reserves the right to modify, substitute, or withdraw any offer at its discretion.`,
   sections: [
     {
-      heading: 'Points Redemption',
+      heading: 'Reward points payment',
       body: `Reward Points will be deducted from the member's account at the time of purchase confirmation.
-All redemptions are final. Points used for a redemption cannot be refunded or re-credited except at the sole discretion of the Organizer.
-Members must ensure they have a sufficient points balance before completing a redemption.`,
+All instant purchases with points are final. Points used for an instant purchase cannot be refunded or re-credited except at the sole discretion of the Organizer.
+Members must ensure they have a sufficient points balance before completing an instant purchase.`,
     },
     {
       heading: 'Tickets and Delivery',
-      body: `Upon successful redemption, confirmation details and any applicable tickets or vouchers will be sent to the email address associated with your ALL account.
+      body: `Upon successful instant purchase, confirmation details and any applicable tickets or vouchers will be sent to the email address associated with your ALL account.
 Tickets are personal and non-transferable unless otherwise stated.
 The Organizer is not responsible for emails not received due to incorrect email addresses or spam filters.`,
     },
@@ -81,16 +81,16 @@ Some experiences may require a minimum age, specific attire, or physical ability
     {
       heading: 'Cancellation and Modifications',
       body: `The Organizer reserves the right to cancel, postpone, or modify an Experience at any time due to unforeseen circumstances, including force majeure events, without liability.
-In the event of cancellation by the Organizer, members will be re-credited with the full points amount used for the redemption.
+In the event of cancellation by the Organizer, members will be re-credited with the full points amount used for the instant purchase.
 Cancellations initiated by the member are subject to the cancellation policy stated on the experience page.`,
     },
     {
       heading: 'Liability',
-      body: 'To the maximum extent permitted by law, ACCOR shall not be liable for any loss, damage, injury, or disappointment suffered by any participant as a result of redeeming or attending any Experience.',
+      body: 'To the maximum extent permitted by law, ACCOR shall not be liable for any loss, damage, injury, or disappointment suffered by any participant as a result of completing an instant purchase or attending any Experience.',
     },
     {
       heading: 'Acceptance of Terms',
-      body: 'Completing a redemption constitutes full and unconditional acceptance of these Terms & Conditions.',
+      body: 'Completing an instant purchase constitutes full and unconditional acceptance of these Terms & Conditions.',
     },
   ],
 };
@@ -179,7 +179,7 @@ const CONTENT_MAP: Record<TermsVariant, TermsContent> = {
 
 const TITLE_MAP: Record<TermsVariant, string> = {
   auction: 'Terms & Conditions (Auctions)',
-  redeem: 'Terms & Conditions (Redeem)',
+  redeem: 'Terms & Conditions (Instant purchase)',
   'prize-draw': 'Terms & Conditions (Prize Draw)',
   standard: 'Terms & Conditions',
   waitlist: 'Terms & Conditions',

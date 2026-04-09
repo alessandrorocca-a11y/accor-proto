@@ -298,7 +298,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
           <div className="prize-draw__ticket-row">
             <div className="prize-draw__radio-label">
               <span className="prize-draw__radio-dot" />
-              <span className="prize-draw__radio-text">Prize Draw ticket</span>
+              <span className="prize-draw__radio-text">Prize draw ticket</span>
             </div>
             <span className="prize-draw__ticket-price">{formatPoints(TICKET_PRICE)} Points</span>
           </div>
@@ -335,7 +335,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               className="prize-draw__buy-btn"
               onClick={handleBuyTicket}
             >
-              Get it - {formatPoints(totalPrice)} Points
+              Join the draw - {formatPoints(totalPrice)} Points
             </Button>
           </div>
         </>
@@ -556,7 +556,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
           ))}
         </div>
         <div className="auction-page__hero-label-container">
-          <span className="auction-page__hero-auction-badge prize-draw__badge">Prize Draw</span>
+          <span className="auction-page__hero-auction-badge prize-draw__badge">Prize draw</span>
         </div>
       </section>
 
@@ -597,8 +597,8 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable Experience</span>
-              <span className="auction-page__tag">Limitless Experience</span>
+              <span className="auction-page__tag">Sustainable experience</span>
+              <span className="auction-page__tag">Limitless experience</span>
             </div>
 
             {isVoyagerExclusive && <VoyagerBadge />}
@@ -681,7 +681,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
 
         <aside className="auction-page__sidebar">
           <div className="auction-page__bid-card prize-draw__sidebar-card">
-            <div className="auction-page__bid-card-badge prize-draw__badge">Prize Draw</div>
+            <div className="auction-page__bid-card-badge prize-draw__badge">Prize draw</div>
             {ticketSection('sidebar')}
           </div>
         </aside>
@@ -696,7 +696,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
             className="prize-draw__buy-btn"
             onClick={handleBuyTicket}
           >
-            {formatPoints(totalPrice)} Points – Get it
+            {formatPoints(totalPrice)} Points – Join the draw
           </Button>
         </div>
       )}
@@ -736,11 +736,11 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
-                <span className="recap-page__redeem-badge">Prize Draw</span>
+                <span className="recap-page__redeem-badge">Prize draw</span>
                 <p className="recap-page__event-name">
                   {EVENT_TITLE} – {ticketCount} ticket{ticketCount > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
             </div>
 
@@ -778,7 +778,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                   <span className="recap-page__detail-label">Tickets and Add-ons</span>
                 </div>
                 <div className="recap-page__detail-row">
-                  <span className="recap-page__detail-row-label">{ticketCount}x Prize Draw tickets</span>
+                  <span className="recap-page__detail-row-label">{ticketCount}x Prize draw tickets</span>
                   <span className="recap-page__detail-row-value">{formatPoints(totalPrice)} Points</span>
                 </div>
               </div>
@@ -864,11 +864,11 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
-                <span className="recap-page__redeem-badge">Prize Draw</span>
+                <span className="recap-page__redeem-badge">Prize draw</span>
                 <p className="recap-page__event-name">
                   {EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
             </div>
 
@@ -907,7 +907,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                 </div>
                 <div className="recap-page__detail-row">
                   <span className="recap-page__detail-row-label">
-                    {confirmedTickets}x Prize Draw tickets
+                    {confirmedTickets}x Prize draw tickets
                   </span>
                   <span className="recap-page__detail-row-value">{formatPoints(confirmedTotal)} Points</span>
                 </div>

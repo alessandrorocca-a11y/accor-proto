@@ -98,11 +98,16 @@ function registryToYmlCard(e: EventData): YmlCardModel {
 function paymentLabel(type: PaymentType): string {
   switch (type) {
     case 'prize-draw':
-      return 'Prize Draw';
+      return 'Prize draw';
     case 'redeem':
-      return 'Redeem';
+      return 'Instant purchase';
     case 'auction':
       return 'Current bid';
+    case 'waitlist':
+      return 'Waitlist';
+    case 'cash':
+    case 'flex':
+      return 'Instant purchase';
     default:
       return '';
   }

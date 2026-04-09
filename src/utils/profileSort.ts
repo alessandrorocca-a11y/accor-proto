@@ -40,7 +40,7 @@ interface SortableEvent {
 
 function profileScore(event: SortableEvent, profileId: TestProfileId): number {
   const pt = event.pageType ?? event.paymentType ?? '';
-  const isLimitless = event.eventTag === 'Limitless Experiences';
+  const isLimitless = event.eventTag === 'Limitless experience';
   const voyagerOnly = isVoyagerSubscriberOnlyTag(event.marketingTag);
 
   if (profileId === 'silver') {

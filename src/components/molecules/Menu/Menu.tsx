@@ -79,13 +79,13 @@ interface SidebarCategory {
 }
 
 const SIDEBAR_CATEGORIES: SidebarCategory[] = [
-  { label: 'Shows and culture', hash: '#category/shows-and-culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=96&h=96&fit=crop' },
+  { label: 'Arts and culture', hash: '#category/arts-and-culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=96&h=96&fit=crop' },
   { label: 'Concerts and festivals', hash: '#category/concerts-and-festivals', image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=96&h=96&fit=crop' },
-  { label: 'Sport and leisure', hash: '#category/sport-and-leisure', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=96&h=96&fit=crop' },
-  { label: 'Food and drinks', hash: '#category/food-and-drinks', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=96&h=96&fit=crop' },
+  { label: 'Sports and activities', hash: '#category/sports-and-activities', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=96&h=96&fit=crop' },
+  { label: 'Food and drink', hash: '#category/food-and-drink', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=96&h=96&fit=crop' },
   { label: 'Wellness', hash: '#category/wellness', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=96&h=96&fit=crop' },
   { label: 'Visits', hash: '#category/visits', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=96&h=96&fit=crop' },
-  { label: 'Hotel Experiences', hash: '#category/hotel-experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=96&h=96&fit=crop' },
+  { label: 'Hotel experiences', hash: '#category/hotel-experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=96&h=96&fit=crop' },
   { label: 'Arena', hash: '#category/arena', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=96&h=96&fit=crop' },
   { label: 'Paris Saint Germain', hash: '#category/paris-saint-germain', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=96&h=96&fit=crop' },
   { label: 'Roland Garros', hash: '#momentum/roland-garros', image: '/roland-garros-1.png' },
@@ -98,8 +98,8 @@ interface SidebarSubscription {
 }
 
 const SIDEBAR_SUBSCRIPTIONS: SidebarSubscription[] = [
-  { label: 'ALL Signature Exclusives', hash: '#category/all-signature-exclusives', image: '/all-signature.png' },
-  { label: 'ALL Accor+ Exclusives', hash: '#category/all-accor-plus-exclusives', image: '/all-accorplus.png' },
+  { label: 'ALL Signature exclusives', hash: '#category/all-signature-exclusives', image: '/all-signature.png' },
+  { label: 'ALL Accor+ exclusives', hash: '#category/all-accor-plus-exclusives', image: '/all-accorplus.png' },
 ];
 
 interface SidebarPayment {
@@ -108,10 +108,10 @@ interface SidebarPayment {
 }
 
 const SIDEBAR_PAYMENTS: SidebarPayment[] = [
-  { label: 'Flexible payment', hash: '#payment/flex' },
-  { label: 'Redeem now', hash: '#payment/redeem' },
-  { label: 'Auctions', hash: '#payment/auctions' },
-  { label: 'Prize draws', hash: '#payment/prize-draws' },
+  { label: 'Instant purchase', hash: '#payment/flex' },
+  { label: 'Auction', hash: '#payment/auctions' },
+  { label: 'Prize draw', hash: '#payment/prize-draws' },
+  { label: 'Waitlist', hash: '#payment/waitlist' },
 ];
 
 /* ── Icons ────────────────────────────────────────────────────────────── */
@@ -295,7 +295,7 @@ const FAVOURITE_EVENTS: FavouriteEvent[] = [
     image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
     date: 'April 1, 2026',
     title: 'Andrea Bocelli – 2 Tickets',
-    eventTag: 'Limitless Experiences',
+    eventTag: 'Limitless experience',
     paymentLabel: 'Current bid',
     points: '18.000 Reward Points',
     countdown: '43d 12h 00m 00s',
@@ -305,7 +305,7 @@ const FAVOURITE_EVENTS: FavouriteEvent[] = [
     image: 'https://limitlessexperiences.accor.com/media/catalog/product/R/o/Rosalia_2026_Affiche_01_032b.jpg',
     date: 'March 20, 2026',
     title: 'Rosalía – VIP Suite & Night at Pullman',
-    eventTag: 'Limitless Experiences',
+    eventTag: 'Limitless experience',
     paymentLabel: 'Current bid',
     points: '20.000 Reward Points',
     countdown: '14d 08h 00m 00s',
@@ -315,8 +315,8 @@ const FAVOURITE_EVENTS: FavouriteEvent[] = [
     image: '/roland-garros-1.png',
     date: 'May 25-29, 2026',
     title: 'Roland-Garros Prize Draw – One Point Away',
-    eventTag: 'Limitless Experiences',
-    paymentLabel: 'Prize Draw',
+    eventTag: 'Limitless experience',
+    paymentLabel: 'Prize draw',
     points: '40 Reward Points',
     countdown: '80d 00h 00m 00s',
   },
@@ -325,7 +325,7 @@ const FAVOURITE_EVENTS: FavouriteEvent[] = [
     image: 'https://limitlessexperiences.accor.com/media/catalog/product/W/u/Wu_Tang_Clan_500x500_510c.jpg',
     date: 'March 28, 2026',
     title: 'Wu-Tang Clan – 2x Suite Tickets',
-    eventTag: 'Limitless Experiences',
+    eventTag: 'Limitless experience',
     paymentLabel: 'Current bid',
     points: '8.000 Reward Points',
     countdown: '22d 16h 00m 00s',
@@ -451,8 +451,19 @@ export function Menu({
   let userCtx: ReturnType<typeof useUser> | null = null;
   try { userCtx = useUser(); } catch { /* Menu might render outside UserProvider */ }
 
-  /** Signature / Accor+ exclusives nav — Explorer (ALL+) subscribers only when user context is available */
-  const showSubscriptionsSection = !userCtx || userCtx.isVoyagerSubscriber;
+  /** One row per active subscription; section hidden if none (silver/gold or no UserProvider). */
+  const visibleSidebarSubscriptions = useMemo((): SidebarSubscription[] => {
+    if (!userCtx?.isVoyagerSubscriber) return [];
+    if (userCtx.testProfileId === 'goldSignature') {
+      return SIDEBAR_SUBSCRIPTIONS.filter((s) => s.hash === '#category/all-signature-exclusives');
+    }
+    if (userCtx.testProfileId === 'goldVoyager') {
+      return SIDEBAR_SUBSCRIPTIONS.filter((s) => s.hash === '#category/all-accor-plus-exclusives');
+    }
+    return [];
+  }, [userCtx?.isVoyagerSubscriber, userCtx?.testProfileId]);
+
+  const showSubscriptionsSection = visibleSidebarSubscriptions.length > 0;
 
   const UPCOMING_ORDERS: OrderEvent[] = useMemo(() => {
     if (!userCtx) return [];
@@ -713,7 +724,7 @@ export function Menu({
                 )}
               </div>
 
-              {/* Subscriptions accordion — Explorer (ALL+) only */}
+              {/* Subscriptions accordion — only the user’s plan (Explorer vs Signature); hidden if none */}
               {showSubscriptionsSection ? (
                 <div className="menu__sidebar-section">
                   <button
@@ -728,7 +739,7 @@ export function Menu({
 
                   {subscriptionsExpanded && (
                     <div className="menu__accordion-body">
-                      {SIDEBAR_SUBSCRIPTIONS.map((sub) => (
+                      {visibleSidebarSubscriptions.map((sub) => (
                         <button
                           key={sub.hash}
                           type="button"
@@ -757,7 +768,7 @@ export function Menu({
                   onClick={() => setPaymentsExpanded(!paymentsExpanded)}
                   aria-expanded={paymentsExpanded}
                 >
-                  <span className="menu__accordion-label">Payment mechanisms</span>
+                  <span className="menu__accordion-label">Payment methods</span>
                   {paymentsExpanded ? <IconChevronUp /> : <IconChevronDown />}
                 </button>
 

@@ -498,8 +498,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable Experience</span>
-              <span className="auction-page__tag">Limitless Experience</span>
+              <span className="auction-page__tag">Sustainable experience</span>
+              <span className="auction-page__tag">Limitless experience</span>
             </div>
 
             {isVoyagerExclusive && <VoyagerBadge />}
@@ -527,7 +527,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
             <div className="auction-page__clock-wrap">
               <div className="auction-page__time-box">
                 <p className="auction-page__time-label">
-                  Time left: {endDate.toLocaleString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  {auctionEnded ? 'Ended' : 'Ends'}{' '}
+                  {endDate.toLocaleString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
               {!auctionEnded && (
@@ -681,7 +682,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
               <div className="auction-page__clock-wrap">
                 <div className="auction-page__time-box">
                   <p className="auction-page__time-label">
-                    Time left: {endDate.toLocaleString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    {auctionEnded ? 'Ended' : 'Ends'}{' '}
+                    {endDate.toLocaleString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
                 {!auctionEnded && (
@@ -797,7 +799,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
               <div className="confirm-bid__info">
                 <div className="confirm-bid__time-row">
                   <span className="confirm-bid__time-left">
-                    Time left:{' '}
+                    Ends in{' '}
                     <strong>
                       {(() => {
                         const diff = Math.max(0, Math.floor((endDate.getTime() - Date.now()) / 1000));
@@ -815,7 +817,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
                 </div>
 
                 <div className="confirm-bid__actual">
-                  <span className="confirm-bid__actual-label">Actual bid:</span>
+                  <span className="confirm-bid__actual-label">Current bid:</span>
                   <span className="confirm-bid__actual-value">{formatChipPoints(currentBid)} points</span>
                 </div>
               </div>

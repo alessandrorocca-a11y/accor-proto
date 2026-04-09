@@ -5,7 +5,7 @@ const EVENT = {
   image: 'https://limitlessexperiences.accor.com/media/catalog/product/A/n/Andrea_Bocelli_2026_affiche_aa_0727.jpg',
   title: 'Rio de Janeiro Carnival 2026 - ALL Accor Lounge at the Alma Rio Box - 2 tickets',
   location: 'Rio de Janeiro, Brasil',
-  badge: 'Sustainable Experience',
+  badge: 'Sustainable experience',
 };
 
 const DETAILS = {

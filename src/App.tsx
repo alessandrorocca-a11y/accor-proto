@@ -47,19 +47,25 @@ interface MomentumRouteConfig {
 }
 
 const CATEGORY_ROUTES: Record<string, CategoryRouteConfig> = {
-  '#category': { category: 'Sport and leisure', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/shows-and-culture': { category: 'Shows and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category': { category: 'Sports and activities', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/arts-and-culture': { category: 'Arts and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/shows-and-culture': { category: 'Arts and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/concerts-and-festivals': { category: 'Concerts and festivals', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/sport-and-leisure': { category: 'Sport and leisure', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/food-and-drinks': { category: 'Food and drinks', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/sports-and-activities': { category: 'Sports and activities', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/sport-and-leisure': { category: 'Sports and activities', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/food-and-drink': { category: 'Food and drink', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/food-and-drinks': { category: 'Food and drink', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/wellness': { category: 'Wellness', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/visits': { category: 'Visits', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/hotel-experiences': { category: 'Hotel experiences', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/paris-saint-germain': { category: 'Paris Saint Germain', breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Sport and leisure', href: '#category/sport-and-leisure' }] },
+  '#category/paris-saint-germain': {
+    category: 'Paris Saint Germain',
+    breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Sports and activities', href: '#category/sports-and-activities' }],
+  },
   '#category/arena': { category: 'Arena', breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Concerts and festivals', href: '#category/concerts-and-festivals' }] },
-  '#category/all-signature-exclusives': { category: 'All Signature Exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/all-accor-plus-exclusives': { category: 'All Accor Plus Exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
-  '#category/suggested-for-you': { category: 'Shows and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }], pageTitle: 'Suggested for you' },
+  '#category/all-signature-exclusives': { category: 'ALL Signature exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/all-accor-plus-exclusives': { category: 'ALL Accor+ exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
+  '#category/suggested-for-you': { category: 'Arts and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }], pageTitle: 'Suggested for you' },
   '#category/tech': { category: 'Tech', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
 };
 
@@ -162,7 +168,7 @@ export default function App() {
     const to = hashParams.get('to')?.trim() || undefined;
     page = (
       <CategoryPage
-        defaultCategory="Shows and culture"
+        defaultCategory="Arts and culture"
         breadcrumbs={[{ label: 'Homepage', href: '#' }]}
         pageTitle={`Next trip to ${cityName}`}
         defaultLocation={cityName}
@@ -177,7 +183,7 @@ export default function App() {
     const route = MOMENTUM_ROUTES[hashBase];
     page = (
       <CategoryPage
-        defaultCategory="Sport and leisure"
+        defaultCategory="Sports and activities"
         breadcrumbs={route.breadcrumbs}
         pageTitle={route.pageTitle}
         momentumSlug={route.momentumSlug}

@@ -252,7 +252,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             <hr className="auction-page__divider" aria-hidden />
             <section className="auction-page__bid-section">
               <div className="auction-page__time-left-row">
-                <span className="auction-page__time-left-label">Time left</span>
+                <span className="auction-page__time-left-label">Ends in</span>
               </div>
               <Countdown endDate={endDate} onEnd={() => setAuctionEnded(true)} />
               <div className="auction-page__bid-info">
@@ -307,7 +307,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             <hr className="auction-page__divider" aria-hidden />
             <section className="draw-page__section">
               <div className="auction-page__time-left-row">
-                <span className="auction-page__time-left-label">Time left</span>
+                <span className="auction-page__time-left-label">Closes in</span>
               </div>
               <Countdown endDate={endDate} />
               {!hasEntered ? (
@@ -325,7 +325,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
                     <span className="draw-page__total">{formatPoints((plan.ticketPrice || 0) * ticketCount)} Reward Points</span>
                   </div>
                   <Button variant="primary" fullWidth onClick={() => setHasEntered(true)}>
-                    Enter Prize Draw
+                    Join the draw
                   </Button>
                 </>
               ) : (
@@ -361,7 +361,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
                     <span className="redeem-page__total">{formatPoints((plan.ticketPrice || 0) * redeemCount)} Reward Points</span>
                   </div>
                   <Button variant="primary" fullWidth onClick={() => setHasRedeemed(true)}>
-                    Redeem with Points
+                    Instant purchase
                   </Button>
                 </>
               ) : (
@@ -370,7 +370,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
                     <circle cx="12" cy="12" r="10" fill="#00513f" />
                     <path d="M8 12l3 3 5-5" stroke="#e0f5ec" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <p>Successfully redeemed {redeemCount} ticket{redeemCount > 1 ? 's' : ''}!</p>
+                  <p>Purchase complete — {redeemCount} ticket{redeemCount > 1 ? 's' : ''}.</p>
                 </div>
               )}
             </section>
@@ -439,7 +439,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             </div>
             {!hasEntered && (
               <Button variant="primary" fullWidth onClick={() => setHasEntered(true)}>
-                Enter Prize Draw
+                Join the draw
               </Button>
             )}
           </div>
@@ -453,7 +453,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             </div>
             {!hasRedeemed && (
               <Button variant="primary" fullWidth onClick={() => setHasRedeemed(true)}>
-                Redeem with Points
+                Instant purchase
               </Button>
             )}
           </div>
@@ -484,7 +484,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
               Book Now
               <IconArrowRight />
             </a>
-            <p className="linkout__sidebar-disclaimer">You will be transferred to an external provider</p>
+            <p className="linkout__sidebar-disclaimer">You&apos;ll continue on an external partner site.</p>
           </div>
         );
 
@@ -496,7 +496,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
               className={`waitlist__sidebar-cta-btn${hasJoined ? ' waitlist__sidebar-cta-btn--joined' : ''}`}
               onClick={handleJoinWaitlist}
             >
-              {hasJoined ? 'Joined' : 'Join Waitlist'}
+              {hasJoined ? 'Joined' : 'Join the waitlist'}
             </button>
             <p className="waitlist__sidebar-disclaimer">
               Join the waitlist and get exclusive access to pre-sale tickets before they go on sale to the general public!
@@ -525,7 +525,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
                 Book Now
                 <IconArrowRight />
               </a>
-              <p className="linkout__cta-disclaimer">You will be transferred to an external provider</p>
+              <p className="linkout__cta-disclaimer">You&apos;ll continue on an external partner site.</p>
             </div>
             <div className="linkout__cta-spacer" />
           </>
@@ -540,7 +540,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
                 className={`waitlist__cta-btn${hasJoined ? ' waitlist__cta-btn--joined' : ''}`}
                 onClick={handleJoinWaitlist}
               >
-                {hasJoined ? 'Joined' : 'Join Waitlist'}
+                {hasJoined ? 'Joined' : 'Join the waitlist'}
               </button>
               <p className="waitlist__cta-disclaimer">
                 Join the waitlist and get exclusive access to pre-sale tickets before they go on sale to the general public!
@@ -570,7 +570,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
               </button>
             </div>
             <div className="auction-page__confirm-body">
-              <p className="auction-page__confirm-actual">Actual bid: {formatPoints(currentBid)} points</p>
+              <p className="auction-page__confirm-actual">Current bid: {formatPoints(currentBid)} points</p>
               <p className="auction-page__confirm-your-bid">{formatPoints(Number(bidValue))}</p>
               <p className="auction-page__confirm-your-bid-label">Your bid</p>
             </div>
@@ -599,7 +599,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
           <div className="linkout__loader-content">
             <div className="linkout__spinner" aria-label="Loading" />
             <p className="linkout__loader-text">
-              We're redirecting you to <strong>{plan.providerName || 'ALL Accor'}</strong> website.
+              Taking you to <strong>{plan.providerName || 'ALL Accor'}</strong>…
             </p>
           </div>
         </div>
@@ -791,13 +791,13 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             </span>
           )}
           {plan.paymentType === 'prize-draw' && (
-            <span className="auction-page__hero-auction-badge draw-page__badge">Prize Draw</span>
+            <span className="auction-page__hero-auction-badge draw-page__badge">Prize draw</span>
           )}
           {plan.paymentType === 'waitlist' && (
             <span className="auction-page__hero-auction-badge waitlist__badge">Waitlist</span>
           )}
           {plan.paymentType === 'redeem' && (
-            <span className="auction-page__hero-auction-badge redeem-page__badge">Redeem</span>
+            <span className="auction-page__hero-auction-badge redeem-page__badge">Instant purchase</span>
           )}
           {plan.eventTag && (
             <span className="auction-page__hero-event-tag">{plan.eventTag}</span>

@@ -11,8 +11,8 @@ export interface ExclusiveFlatStripProps {
 }
 
 const LABELS: Record<ExclusiveFlatStripKind, string> = {
-  explorer: 'Explorer',
-  signature: 'Signature',
+  explorer: 'ALL Accor+ Explorer',
+  signature: 'ALL Signature',
 };
 
 export function ExclusiveFlatStrip({ kind, variant = 'imageOverlay' }: ExclusiveFlatStripProps) {

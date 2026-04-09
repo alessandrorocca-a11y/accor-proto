@@ -275,7 +275,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
           className="redeem__buy-btn"
           onClick={handleBuyTicket}
         >
-          Get it - {formatPoints(totalPrice)} Points
+          Instant purchase - {formatPoints(totalPrice)} Points
         </Button>
       </div>
     </section>
@@ -494,7 +494,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
           ))}
         </div>
         <div className="auction-page__hero-label-container">
-          <span className="auction-page__hero-auction-badge redeem__badge">Redeem</span>
+          <span className="auction-page__hero-auction-badge redeem__badge">Instant purchase</span>
         </div>
       </section>
 
@@ -535,7 +535,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable Experience</span>
+              <span className="auction-page__tag">Sustainable experience</span>
             </div>
           </section>
 
@@ -606,7 +606,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
 
         <aside className="auction-page__sidebar">
           <div className="auction-page__bid-card redeem__sidebar-card">
-            <div className="auction-page__bid-card-badge redeem__badge">Redeem</div>
+            <div className="auction-page__bid-card-badge redeem__badge">Instant purchase</div>
             {ticketSection('sidebar')}
           </div>
         </aside>
@@ -621,7 +621,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
             className="redeem__buy-btn"
             onClick={handleBuyTicket}
           >
-            {formatPoints(totalPrice)} Points – Get it
+            {formatPoints(totalPrice)} Points – Instant purchase
           </Button>
         </div>
       )}
@@ -661,11 +661,11 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
-                <span className="recap-page__redeem-badge redeem__recap-badge">Redeem</span>
+                <span className="recap-page__redeem-badge redeem__recap-badge">Instant purchase</span>
                 <p className="recap-page__event-name">
                   {EVENT_TITLE} – {ticketCount} ticket{ticketCount > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
             </div>
 
@@ -789,11 +789,11 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                 className="recap-page__event-thumb"
               />
               <div className="recap-page__event-info">
-                <span className="recap-page__redeem-badge redeem__recap-badge">Redeem</span>
+                <span className="recap-page__redeem-badge redeem__recap-badge">Instant purchase</span>
                 <p className="recap-page__event-name">
                   {EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
                 </p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
             </div>
 

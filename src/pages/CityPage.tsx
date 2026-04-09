@@ -162,9 +162,12 @@ function LiveTimer({ initialMs }: { initialMs: number }) {
 
 function paymentLabel(type: PaymentType): string {
   switch (type) {
-    case 'prize-draw': return 'Prize Draw';
-    case 'redeem': return 'Redeem';
+    case 'prize-draw': return 'Prize draw';
+    case 'redeem': return 'Instant purchase';
     case 'auction': return 'Current bid';
+    case 'waitlist': return 'Waitlist';
+    case 'cash':
+    case 'flex': return 'Instant purchase';
     default: return '';
   }
 }
@@ -513,7 +516,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
     1,
   ).map(registryToCard);
   const SPORT_EVENTS = limitVoyagerExclusivePerSection(
-    cityEvents.filter((e) => e.category === 'Sport and leisure'),
+    cityEvents.filter((e) => e.category === 'Sports and activities'),
     isVoyagerSubscriber,
     1,
   ).map(registryToCard);
@@ -528,7 +531,7 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
     1,
   ).map(registryToCard);
   const PSG_EVENTS = limitVoyagerExclusivePerSection(
-    cityEvents.filter((e) => e.category === 'Sport and leisure' && e.title.toLowerCase().includes('psg')),
+    cityEvents.filter((e) => e.category === 'Sports and activities' && e.title.toLowerCase().includes('psg')),
     isVoyagerSubscriber,
     1,
   ).map(registryToCard);
@@ -824,10 +827,10 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         const concertsSection = <EventSection key="concerts" title="Concerts and festivals" events={ceVisible} favourites={favourites} onToggleFav={toggleFav}
           page={cePage} totalPages={ceTotalPages} onPrev={() => setCePage((p) => Math.max(1, p - 1))} onNext={() => setCePage((p) => Math.min(ceTotalPages, p + 1))}
           linkHash="#category/concerts-and-festivals" />;
-        const sportSection = <EventSection key="sport" title="Sport and leisure" events={spVisible} favourites={favourites} onToggleFav={toggleFav}
+        const sportSection = <EventSection key="sport" title="Sports and activities" events={spVisible} favourites={favourites} onToggleFav={toggleFav}
           page={spPage} totalPages={spTotalPages} onPrev={() => setSpPage((p) => Math.max(1, p - 1))} onNext={() => setSpPage((p) => Math.min(spTotalPages, p + 1))}
           linkHash="#category/sport-and-leisure" />;
-        const prizeDrawSection = <EventSection key="prize-draw" title="Prize Draw" events={pdVisible} favourites={favourites} onToggleFav={toggleFav}
+        const prizeDrawSection = <EventSection key="prize-draw" title="Prize draw" events={pdVisible} favourites={favourites} onToggleFav={toggleFav}
           page={pdPage} totalPages={pdTotalPages} onPrev={() => setPdPage((p) => Math.max(1, p - 1))} onNext={() => setPdPage((p) => Math.min(pdTotalPages, p + 1))}
           linkHash="#payment/prize-draws" />;
         const auctionsSection = <EventSection key="auctions" title="Auctions" events={auVisible} favourites={favourites} onToggleFav={toggleFav}

@@ -10,6 +10,7 @@ import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import {
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   EVENT_REGISTRY,
   eventBelongsToMomentum,
   getEffectivePointsCost,
@@ -47,19 +48,26 @@ interface CategoryEvent {
 }
 
 const CATEGORIES = [
-  'Shows and culture',
+  'Arts and culture',
   'Concerts and festivals',
-  'Sport and leisure',
-  'Food and drinks',
+  'Sports and activities',
+  'Food and drink',
   'Wellness',
   'Visits',
   'Hotel experiences',
   'Tech',
   'Paris Saint Germain',
   'Arena',
-  'All Signature Exclusives',
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
+
+/** Stable hash slugs for category picker (+ and special names). */
+function categoryToSlugPath(category: string): string {
+  if (category === ACCOR_PLUS_EXCLUSIVES_CATEGORY) return 'all-accor-plus-exclusives';
+  if (category === ALL_SIGNATURE_EXCLUSIVES_CATEGORY) return 'all-signature-exclusives';
+  return category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and');
+}
 
 const categoryPaymentTypeMap: Record<string, PaymentType> = {
   auction: 'auction', 'prize-draw': 'prize-draw', redeem: 'redeem', standard: 'cash', waitlist: 'waitlist',
@@ -80,7 +88,7 @@ const ALL_EVENTS: CategoryEvent[] = EVENT_REGISTRY.map((e) => ({
   marketingTag: e.marketingTag,
 }));
 
-const PAYMENT_OPTIONS = ['Standard', 'Auctions', 'Prize Draws', 'Redeem now', 'Waitlist'];
+const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Waitlist'];
 const SUBSCRIPTION_OPTIONS = ['Explorer', 'Signature'] as const;
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
@@ -206,12 +214,12 @@ function IconSearch() {
 
 const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
-  { label: 'Category', icon: 'grid' },
-  { label: 'Payment', icon: 'payment' },
+  { label: 'Experience type', icon: 'grid' },
+  { label: 'Payment method', icon: 'payment' },
   { label: 'Subscription', icon: 'subscription' },
   { label: 'Price range', icon: 'price-range' },
-  { label: 'Location', icon: 'location' },
-  { label: 'Hotel Brand', icon: 'hotel' },
+  { label: 'City', icon: 'location' },
+  { label: 'Hotel brand', icon: 'hotel' },
 ] as const;
 
 function IconChevronLeft() {
@@ -455,12 +463,13 @@ function LiveTimer({ initialMs }: { initialMs: number }) {
 
 function paymentLabel(type: PaymentType): string {
   switch (type) {
-    case 'prize-draw': return 'Prize Draw';
-    case 'redeem': return 'Redeem';
+    case 'prize-draw': return 'Prize draw';
+    case 'redeem': return 'Instant purchase';
     case 'auction': return 'Current bid';
     case 'waitlist': return 'Waitlist';
     case 'linkout': return '';
-    case 'cash': return '';
+    case 'cash': return 'Instant purchase';
+    case 'flex': return 'Instant purchase';
     default: return '';
   }
 }
@@ -483,7 +492,7 @@ interface CategoryPageProps {
 }
 
 export default function CategoryPage({
-  defaultCategory = 'Sport and leisure',
+  defaultCategory = 'Sports and activities',
   breadcrumbs = [{ label: 'Homepage', href: '#' }],
   pageTitle,
   defaultLocation,
@@ -565,16 +574,15 @@ export default function CategoryPage({
   }, [showAllCategories]);
 
   const filterChips = (() => {
-    let chips = momentumSlug ? FILTER_CHIPS.filter((c) => c.label !== 'Location') : [...FILTER_CHIPS];
-    if (!showAllCategories) chips = chips.filter((c) => c.label !== 'Category');
+    let chips = momentumSlug ? FILTER_CHIPS.filter((c) => c.label !== 'City') : [...FILTER_CHIPS];
+    if (!showAllCategories) chips = chips.filter((c) => c.label !== 'Experience type');
     return chips;
   })();
 
   const paymentTypeMap: Record<string, PaymentType[]> = {
-    'Standard': ['flex', 'cash'],
-    'Auctions': ['auction'],
-    'Prize Draws': ['prize-draw'],
-    'Redeem now': ['redeem'],
+    'Instant purchase': ['flex', 'cash', 'redeem'],
+    'Auction': ['auction'],
+    'Prize draw': ['prize-draw'],
     'Waitlist': ['waitlist'],
   };
 
@@ -672,8 +680,7 @@ export default function CategoryPage({
 
   const handleCategorySelect = (category: string) => {
     setCategoriesOpen(false);
-    const slug = category.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and');
-    window.location.hash = `#category/${slug}`;
+    window.location.hash = `#category/${categoryToSlugPath(category)}`;
   };
 
   const toggleFavourite = (id: string) => {
@@ -700,11 +707,12 @@ export default function CategoryPage({
         title: e.title,
         eventTag: e.eventTag ?? '',
         paymentLabel: e.paymentType === 'auction' ? 'Current bid'
-          : e.paymentType === 'prize-draw' ? 'Prize Draw'
-          : e.paymentType === 'redeem' ? 'Redeem'
-          : e.paymentType === 'flex' ? 'Flex'
+          : e.paymentType === 'prize-draw' ? 'Prize draw'
+          : e.paymentType === 'redeem' ? 'Instant purchase'
+          : e.paymentType === 'flex' ? 'Instant purchase'
           : e.paymentType === 'waitlist' ? 'Waitlist'
           : e.paymentType === 'linkout' ? ''
+          : e.paymentType === 'cash' ? 'Instant purchase'
           : '',
         points: e.points ? String(e.points) : e.cashPrice ?? '',
         countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
@@ -725,16 +733,16 @@ export default function CategoryPage({
   const handleFilterChipClick = (label: string) => {
     const map: Record<string, FilterType> = {
       'Date': 'date',
-      'Category': 'category',
-      'Payment': 'payment',
+      'Experience type': 'category',
+      'Payment method': 'payment',
       'Subscription': 'subscription',
       'Price range': 'price-range',
-      'Location': 'location',
-      'Hotel Brand': 'hotel',
+      'City': 'location',
+      'Hotel brand': 'hotel',
     };
     setActiveFilter(map[label] ?? null);
-    if (label === 'Hotel Brand') setBrandSearch('');
-    if (label === 'Location') setCitySearch('');
+    if (label === 'Hotel brand') setBrandSearch('');
+    if (label === 'City') setCitySearch('');
   };
 
   const closeFilter = () => setActiveFilter(null);
@@ -746,8 +754,8 @@ export default function CategoryPage({
       setStayDateFrom(null);
       setStayDateTo(null);
     }
-    if (label === 'Category') setFilterCategories(new Set());
-    if (label === 'Payment') setFilterPayments(new Set());
+    if (label === 'Experience type') setFilterCategories(new Set());
+    if (label === 'Payment method') setFilterPayments(new Set());
     if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
       setPriceMin('');
@@ -755,8 +763,8 @@ export default function CategoryPage({
       setPointsMin('');
       setPointsMax('');
     }
-    if (label === 'Location') setSelectedCity(null);
-    if (label === 'Hotel Brand') setFilterBrands(new Set());
+    if (label === 'City') setSelectedCity(null);
+    if (label === 'Hotel brand') setFilterBrands(new Set());
   };
 
   const getChipLabel = (label: string): string => {
@@ -766,11 +774,11 @@ export default function CategoryPage({
     if (label === 'Date' && selectedDate !== null) {
       return `${selectedDate} ${MONTH_NAMES[calMonth].slice(0, 3)}`;
     }
-    if (label === 'Category' && filterCategories.size > 0) {
+    if (label === 'Experience type' && filterCategories.size > 0) {
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
     }
-    if (label === 'Payment' && filterPayments.size > 0) {
+    if (label === 'Payment method' && filterPayments.size > 0) {
       if (filterPayments.size === 1) return [...filterPayments][0];
       return `${label} (${filterPayments.size})`;
     }
@@ -778,10 +786,10 @@ export default function CategoryPage({
       if (filterSubscriptions.size === 1) return [...filterSubscriptions][0];
       return `${label} (${filterSubscriptions.size})`;
     }
-    if (label === 'Location' && selectedCity) {
+    if (label === 'City' && selectedCity) {
       return selectedCity;
     }
-    if (label === 'Hotel Brand' && filterBrands.size > 0) {
+    if (label === 'Hotel brand' && filterBrands.size > 0) {
       if (filterBrands.size === 1) return [...filterBrands][0];
       return `${label} (${filterBrands.size})`;
     }
@@ -1009,12 +1017,12 @@ export default function CategoryPage({
               const FilterIcon = filterIconMap[chip.icon];
               const isActive =
                 (chip.label === 'Date' && ((stayDateFrom && stayDateTo) || selectedDate !== null)) ||
-                (chip.label === 'Category' && filterCategories.size > 0) ||
-                (chip.label === 'Payment' && filterPayments.size > 0) ||
+                (chip.label === 'Experience type' && filterCategories.size > 0) ||
+                (chip.label === 'Payment method' && filterPayments.size > 0) ||
                 (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
-                (chip.label === 'Location' && selectedCity !== null) ||
-                (chip.label === 'Hotel Brand' && filterBrands.size > 0);
+                (chip.label === 'City' && selectedCity !== null) ||
+                (chip.label === 'Hotel brand' && filterBrands.size > 0);
               return (
                 <button
                   key={chip.label}
@@ -1183,10 +1191,10 @@ export default function CategoryPage({
       {/* Category title picker (from chevron) */}
       {categoriesOpen && (
         <div className="filter-sheet__backdrop" onClick={() => setCategoriesOpen(false)}>
-          <div className="filter-sheet" role="dialog" aria-modal aria-label="Categories" onClick={(e) => e.stopPropagation()}>
+          <div className="filter-sheet" role="dialog" aria-modal aria-label="Experience type" onClick={(e) => e.stopPropagation()}>
             <div className="filter-sheet__nav">
               <span className="filter-sheet__spacer" />
-              <span className="filter-sheet__title">Categories</span>
+              <span className="filter-sheet__title">Experience type</span>
               <button type="button" className="filter-sheet__close" onClick={() => setCategoriesOpen(false)} aria-label="Close"><IconClose /></button>
             </div>
             <div className="filter-sheet__body">
@@ -1238,12 +1246,12 @@ export default function CategoryPage({
               <span className="filter-sheet__spacer" />
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
-                {activeFilter === 'category' && 'Categories'}
-                {activeFilter === 'payment' && 'Payment mechanisms'}
+                {activeFilter === 'category' && 'Experience type'}
+                {activeFilter === 'payment' && 'Payment method'}
                 {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
-                {activeFilter === 'location' && 'Location'}
-                {activeFilter === 'hotel' && 'Hotel Brands'}
+                {activeFilter === 'location' && 'City'}
+                {activeFilter === 'hotel' && 'Hotel brand'}
               </span>
               <button type="button" className="filter-sheet__close" onClick={closeFilter} aria-label="Close"><IconClose /></button>
             </div>

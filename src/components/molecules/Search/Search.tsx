@@ -9,10 +9,10 @@ export interface SearchProps {
 }
 
 const SUGGESTION_CHIPS = [
-  'Food and drinks',
-  'Shows and culture',
+  'Food and drink',
+  'Arts and culture',
   'Wellness',
-  'Sport and leisure',
+  'Sports and activities',
   'Concerts and festivals',
 ];
 
@@ -90,7 +90,7 @@ interface BrowseCategory {
 
 const BROWSE_CATEGORIES: BrowseCategory[] = [
   {
-    name: 'Sport and leisure',
+    name: 'Sports and activities',
     image: 'https://images.unsplash.com/photo-1461896836934-bd45ba24e9c4?w=128&h=128&fit=crop',
   },
   {

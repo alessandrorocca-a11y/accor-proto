@@ -102,8 +102,8 @@ export default function Demo() {
               points={3000}
               loyaltyTier="gold"
               avatarSrc={null}
-              paymentLabel="Redeem now"
-              eventLabel="Sustainable Experience"
+              paymentLabel="Instant purchase"
+              eventLabel="Sustainable experience"
               isFavourite={headerFav}
               onFavouriteToggle={() => setHeaderFav(!headerFav)}
               onMenu={() => {}}

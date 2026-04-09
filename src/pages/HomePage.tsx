@@ -104,7 +104,7 @@ function registryToCard(e: EventData): EventCard {
   };
 }
 
-const isAccor = (e: EventData) => e.eventTag === 'Limitless Experiences';
+const isAccor = (e: EventData) => e.eventTag === 'Limitless experience';
 
 const TOP_EXPERIENCES: TopExperience[] = [
   {
@@ -150,9 +150,9 @@ const TOP_EXPERIENCES: TopExperience[] = [
 ];
 
 const CATEGORIES: Category[] = [
-  { label: 'Shows & culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=350&h=200&fit=crop', hash: '#category/shows-and-culture' },
-  { label: 'Food & drinks', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=350&h=200&fit=crop', hash: '#category/food-and-drinks' },
-  { label: 'Sports & leisure', image: '/psg-stadium.jpg', hash: '#category/sport-and-leisure' },
+  { label: 'Arts and culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=350&h=200&fit=crop', hash: '#category/arts-and-culture' },
+  { label: 'Food and drink', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=350&h=200&fit=crop', hash: '#category/food-and-drink' },
+  { label: 'Sports and activities', image: '/psg-stadium.jpg', hash: '#category/sports-and-activities' },
   { label: 'Wellness', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=350&h=200&fit=crop', hash: '#category/wellness' },
   { label: 'Concerts & festivals', image: 'https://limitlessexperiences.accor.com/media/wysiwyg/Accor-Arena-760x524.jpg', hash: '#category/concerts-and-festivals' },
   { label: 'Visits', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=350&h=200&fit=crop', hash: '#category/visits' },
@@ -300,9 +300,12 @@ function LiveTimer({ initialMs }: { initialMs: number }) {
 
 function paymentLabel(type: PaymentType): string {
   switch (type) {
-    case 'prize-draw': return 'Prize Draw';
-    case 'redeem': return 'Redeem';
+    case 'prize-draw': return 'Prize draw';
+    case 'redeem': return 'Instant purchase';
     case 'auction': return 'Current bid';
+    case 'waitlist': return 'Waitlist';
+    case 'cash':
+    case 'flex': return 'Instant purchase';
     default: return '';
   }
 }
@@ -701,7 +704,7 @@ export default function HomePage() {
     () =>
       takeSortedWithVoyagerExclusiveCap(
         sortEventsForProfileAndPointsBalance(
-          EVENT_REGISTRY.filter((e) => e.category === 'Sport and leisure' && isAccor(e)),
+          EVENT_REGISTRY.filter((e) => e.category === 'Sports and activities' && isAccor(e)),
           testProfileId,
           USER_POINTS,
           'home-sport',
@@ -1353,9 +1356,9 @@ export default function HomePage() {
         );
 
         const concertsSection = makeSection('concerts', 'Concerts and festivals', '#category/concerts-and-festivals', cfVisible, cfPage, cfTotalPages, () => setCfPage((p) => Math.max(1, p - 1)), () => setCfPage((p) => Math.min(cfTotalPages, p + 1)));
-        const sportSection = makeSection('sport', 'Sport and leisure', '#category/sport-and-leisure', slVisible, slPage, slTotalPages, () => setSlPage((p) => Math.max(1, p - 1)), () => setSlPage((p) => Math.min(slTotalPages, p + 1)));
-        const prizeDrawSection = makeSection('prize-draw', 'Prize Draw', '#payment/prize-draws', pdVisible, pdPage, pdTotalPages, () => setPdPage((p) => Math.max(1, p - 1)), () => setPdPage((p) => Math.min(pdTotalPages, p + 1)));
-        const auctionsSection = makeSection('auctions', 'Auctions', '#payment/auctions', auVisible, auPage, auTotalPages, () => setAuPage((p) => Math.max(1, p - 1)), () => setAuPage((p) => Math.min(auTotalPages, p + 1)));
+        const sportSection = makeSection('sport', 'Sports and activities', '#category/sports-and-activities', slVisible, slPage, slTotalPages, () => setSlPage((p) => Math.max(1, p - 1)), () => setSlPage((p) => Math.min(slTotalPages, p + 1)));
+        const prizeDrawSection = makeSection('prize-draw', 'Prize draw', '#payment/prize-draws', pdVisible, pdPage, pdTotalPages, () => setPdPage((p) => Math.max(1, p - 1)), () => setPdPage((p) => Math.min(pdTotalPages, p + 1)));
+        const auctionsSection = makeSection('auctions', 'Auction', '#payment/auctions', auVisible, auPage, auTotalPages, () => setAuPage((p) => Math.max(1, p - 1)), () => setAuPage((p) => Math.min(auTotalPages, p + 1)));
 
         if (testProfileId === 'silver') {
           return [prizeDrawSection, concertsSection, sportSection, auctionsSection];
@@ -1587,7 +1590,7 @@ export default function HomePage() {
               </li>
               <li className="home-page__banner-check">
                 <IconCheck />
-                <span>Earn &amp; redeem points in 100+ ways</span>
+                <span>Earn &amp; use points in 100+ ways</span>
               </li>
               <li className="home-page__banner-check">
                 <IconCheck />

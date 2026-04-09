@@ -333,7 +333,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable Experience</span>
+              <span className="auction-page__tag">Sustainable experience</span>
             </div>
           </section>
 
@@ -347,7 +347,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
               Get ready to samba, celebrate, and experience the greatest show in the world with all the comfort and exclusivity that only ALL Accor can offer.
             </p>
             <p className="auction-page__body">
-              On {EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.
+              On {EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to complete an instant purchase with Reward points and enjoy the Special Group parades up close.
             </p>
             <img
               src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src}
@@ -423,7 +423,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
               <IconArrowRight />
             </a>
             <p className="linkout__sidebar-disclaimer">
-              You will be transferred to an external provider
+              You&apos;ll continue on an external partner site.
             </p>
           </div>
         </aside>
@@ -441,7 +441,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
           <IconArrowRight />
         </a>
         <p className="linkout__cta-disclaimer">
-          You will be transferred to an external provider
+          You&apos;ll continue on an external partner site.
         </p>
       </div>
       <div className="linkout__cta-spacer" />
@@ -451,7 +451,7 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
           <div className="linkout__loader-content">
             <div className="linkout__spinner" aria-label="Loading" />
             <p className="linkout__loader-text">
-              We're redirecting you to <strong>{EXTERNAL_PROVIDER_NAME}</strong> website.
+              Taking you to <strong>{EXTERNAL_PROVIDER_NAME}</strong>…
             </p>
           </div>
           <svg className="linkout__loader-logo" width="38" height="32" viewBox="0 0 38 32" fill="none" aria-label="ALL Accor">

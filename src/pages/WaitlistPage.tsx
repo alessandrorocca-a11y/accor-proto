@@ -349,7 +349,7 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable Experience</span>
+              <span className="auction-page__tag">Sustainable experience</span>
             </div>
           </section>
 
@@ -433,7 +433,7 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
               className={`waitlist__sidebar-cta-btn${hasJoined ? ' waitlist__sidebar-cta-btn--joined' : ''}`}
               onClick={handleJoinWaitlist}
             >
-              {hasJoined ? 'Joined' : 'Join Waitlist'}
+              {hasJoined ? 'Joined' : 'Join the waitlist'}
             </button>
             <p className="waitlist__sidebar-disclaimer">
               Join the waitlist and get exclusive access to pre-sale tickets before they go on sale to the general public!
@@ -448,7 +448,7 @@ export default function WaitlistPage({ eventId }: { eventId?: string }) {
           className={`waitlist__cta-btn${hasJoined ? ' waitlist__cta-btn--joined' : ''}`}
           onClick={handleJoinWaitlist}
         >
-          {hasJoined ? 'Joined' : 'Join Waitlist'}
+          {hasJoined ? 'Joined' : 'Join the waitlist'}
         </button>
         <p className="waitlist__cta-disclaimer">
           Join the waitlist and get exclusive access to pre-sale tickets before they go on sale to the general public!

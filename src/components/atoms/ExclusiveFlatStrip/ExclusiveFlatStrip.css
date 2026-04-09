@@ -28,6 +28,9 @@
   z-index: 10;
   border-radius: 0 0 var(--wel-sem-borderradius-surface, 6px) var(--wel-sem-borderradius-surface, 6px);
   pointer-events: none;
+  white-space: normal;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .exclusive-flat-strip--horizontal {

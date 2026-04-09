@@ -2,9 +2,9 @@ import type { MarketingTagType } from '@/data/events/eventRegistry';
 import './MarketingTag.css';
 
 const LABEL: Record<MarketingTagType, string> = {
-  presale: 'Presale',
-  exclusivity: 'Exclusivity',
-  signature: 'Exclusivity',
+  presale: 'Pre-sale',
+  exclusivity: 'ALL Accor+ exclusives',
+  signature: 'ALL Signature exclusives',
   'sold-out': 'Sold out',
   discount: 'Discount',
 };

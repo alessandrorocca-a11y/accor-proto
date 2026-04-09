@@ -283,8 +283,6 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const [rewardsPointsUsed, setRewardsPointsUsed] = useState(0);
   const [rewardsStepperValue, setRewardsStepperValue] = useState(0);
   const POINTS_PER_EUR = STANDARD_POINTS_PER_EUR;
-  const rewardsSliderMax = Math.max(USER_POINTS, 1);
-  const rewardsSliderPct = (rewardsStepperValue / rewardsSliderMax) * 100;
   const [showVoucher, setShowVoucher] = useState(false);
   const [voucherCode, setVoucherCode] = useState('');
   const [voucherApplied, setVoucherApplied] = useState(false);
@@ -330,6 +328,21 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const totalTickets = useMemo(() => {
     return Object.values(zoneQty).reduce((s, v) => s + v, 0);
   }, [zoneQty]);
+
+  /** Slider covers up to this order balance (after voucher); default = half → 50% points / 50% cash. */
+  const { rewardsSliderMax, defaultRewardsSplitPoints } = useMemo(() => {
+    const balanceEur = Math.max(0, totalPriceEur - (voucherApplied ? VOUCHER_DISCOUNT : 0));
+    const coverPts = Math.ceil(balanceEur * POINTS_PER_EUR);
+    const maxPts = Math.min(USER_POINTS, coverPts);
+    const maxSnapped = Math.floor(maxPts / 10) * 10;
+    const half =
+      maxSnapped <= 0
+        ? 0
+        : Math.min(maxSnapped, Math.round(maxSnapped / 2 / 10) * 10);
+    return { rewardsSliderMax: maxSnapped, defaultRewardsSplitPoints: half };
+  }, [totalPriceEur, voucherApplied, USER_POINTS, POINTS_PER_EUR]);
+
+  const rewardsSliderPct = rewardsSliderMax > 0 ? (rewardsStepperValue / rewardsSliderMax) * 100 : 0;
 
   const handleZoneQtyChange = (id: string, delta: number) => {
     setZoneQty((prev) => {
@@ -681,7 +694,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           disabled={totalTickets === 0}
           onClick={handleBuyTicket}
         >
-          Get it - {formatEur(totalPriceEur)}
+          Book now - {formatEur(totalPriceEur)}
         </Button>
         <p className="standard__reward-points-alt">
           or {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
@@ -808,8 +821,8 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
             <h1 className="auction-page__title">{EVENT_TITLE}</h1>
             <p className="auction-page__location"><IconPin /> {EVENT_LOCATION}</p>
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable Experience</span>
-              <span className="auction-page__tag">Limitless Experience</span>
+              <span className="auction-page__tag">Sustainable experience</span>
+              <span className="auction-page__tag">Limitless experience</span>
             </div>
             {eventData?.pageType === 'standard' ? (
               <p className="standard__listing-from">Tickets from {formatEur(standardFromWholeEur)}</p>
@@ -824,7 +837,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           <section className="auction-page__section auction-page__section--description">
             <p className="auction-page__body">{EVENT_DESCRIPTION}</p>
             <p className="auction-page__body">Get ready to samba, celebrate, and experience the greatest show in the world with all the comfort and exclusivity that only ALL Accor can offer.</p>
-            <p className="auction-page__body">On {_EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to redeem this experience with Reward points and enjoy the Special Group parades up close.</p>
+            <p className="auction-page__body">On {_EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to complete an instant purchase with Reward points and enjoy the Special Group parades up close.</p>
             <img src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src} alt={EVENT_TITLE} className="auction-page__section-img" />
           </section>
 
@@ -876,7 +889,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
       {showStickyBar && !showRecap && !showConfirmation && !isEventSoldOut && totalTickets > 0 && (
         <div className="standard__sticky-bar">
           <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handleBuyTicket}>
-            Get it - {formatEur(totalPriceEur)}
+            Book now - {formatEur(totalPriceEur)}
           </Button>
           <p className="standard__reward-points-alt">
             or {Math.round(totalPriceEur * 100).toLocaleString('de-DE')} Reward points
@@ -908,7 +921,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
               <div className="recap-page__event-info">
                 <p className="recap-page__event-name">{EVENT_TITLE} – {totalTickets} ticket{totalTickets > 1 ? 's' : ''}</p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
             </div>
             <hr className="recap-page__divider" aria-hidden />
@@ -969,7 +982,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                     </svg>
                     <span className="recap-page__rewards-applied-title">ALL Rewards Points</span>
                   </div>
-                  <div className="recap-page__rewards-chip" onClick={() => { setRewardsStepperValue(rewardsPointsUsed); setShowRewardsSheet(true); }}>
+                  <div className="recap-page__rewards-chip" onClick={() => { setRewardsStepperValue(Math.min(rewardsPointsUsed, rewardsSliderMax)); setShowRewardsSheet(true); }}>
                     <span className="recap-page__rewards-chip-label">{rewardsPointsUsed.toLocaleString('de-DE')} Points</span>
                     <button
                       type="button"
@@ -984,7 +997,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                   </div>
                 </div>
               ) : (
-                <button type="button" className="recap-page__rewards-link" onClick={() => { setRewardsStepperValue(1000); setShowRewardsSheet(true); }}>
+                <button type="button" className="recap-page__rewards-link" onClick={() => { setRewardsStepperValue(defaultRewardsSplitPoints); setShowRewardsSheet(true); }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
                     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
@@ -1206,7 +1219,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                     <span className="recap-page__rewards-badge-text">You have {USER_POINTS.toLocaleString('de-DE')} Reward points available</span>
                   </div>
 
-                  <p className="recap-page__rewards-sheet-desc">Choose the number of Reward Points you'd like to redeem for a discount on this purchase</p>
+                  <p className="recap-page__rewards-sheet-desc">Choose how many Reward points to use toward this instant purchase</p>
 
                   <div className="recap-page__rewards-inputs">
                     <div className="recap-page__rewards-input-group">
@@ -1217,7 +1230,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                         value={rewardsStepperValue === 0 ? '0' : rewardsStepperValue.toLocaleString('de-DE')}
                         onChange={(e) => {
                           const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
-                          setRewardsStepperValue(Math.min(num, USER_POINTS));
+                          setRewardsStepperValue(Math.min(num, rewardsSliderMax));
                         }}
                         inputMode="numeric"
                       />
@@ -1232,7 +1245,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                           const raw = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
                           const euros = parseFloat(raw) || 0;
                           const pts = Math.round(euros * POINTS_PER_EUR);
-                          setRewardsStepperValue(Math.min(pts, USER_POINTS));
+                          setRewardsStepperValue(Math.min(pts, rewardsSliderMax));
                         }}
                         inputMode="decimal"
                       />
@@ -1244,11 +1257,12 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
                       type="range"
                       className="recap-page__rewards-slider"
                       min={0}
-                      max={rewardsSliderMax}
+                      max={rewardsSliderMax > 0 ? rewardsSliderMax : 1}
                       step={10}
-                      value={rewardsStepperValue}
-                      onChange={(e) => setRewardsStepperValue(Number(e.target.value))}
-                      onInput={(e) => setRewardsStepperValue(Number(e.currentTarget.value))}
+                      value={rewardsSliderMax > 0 ? Math.min(rewardsStepperValue, rewardsSliderMax) : 0}
+                      disabled={rewardsSliderMax <= 0}
+                      onChange={(e) => setRewardsStepperValue(Math.min(Number(e.target.value), rewardsSliderMax))}
+                      onInput={(e) => setRewardsStepperValue(Math.min(Number(e.currentTarget.value), rewardsSliderMax))}
                       style={
                         {
                           '--recap-rewards-slider-pct': `${rewardsSliderPct}%`,
@@ -1302,7 +1316,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
               <div className="recap-page__event-info">
                 <p className="recap-page__event-name">{EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}</p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless Experience'}</span>
+                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
             </div>
             <hr className="recap-page__divider" aria-hidden />

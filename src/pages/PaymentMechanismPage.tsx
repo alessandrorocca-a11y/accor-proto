@@ -11,6 +11,7 @@ import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
 import {
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   EVENT_REGISTRY,
   getEffectivePointsCost,
   getEventById,
@@ -48,24 +49,23 @@ interface PaymentEvent {
 type MechanismOption = PaymentType | 'standard';
 
 const PAYMENT_MECHANISMS: { label: string; type: MechanismOption }[] = [
-  { label: 'Standard', type: 'standard' },
-  { label: 'Auctions', type: 'auction' },
-  { label: 'Prize Draws', type: 'prize-draw' },
-  { label: 'Redeem now', type: 'redeem' },
+  { label: 'Instant purchase', type: 'standard' },
+  { label: 'Auction', type: 'auction' },
+  { label: 'Prize draw', type: 'prize-draw' },
   { label: 'Waitlist', type: 'waitlist' },
 ];
 
 const CATEGORIES = [
-  'Shows and culture',
+  'Arts and culture',
   'Concerts and festivals',
-  'Sport and leisure',
-  'Food and drinks',
+  'Sports and activities',
+  'Food and drink',
   'Wellness',
   'Visits',
   'Hotel experiences',
   'Paris Saint Germain',
   'Arena',
-  'All Signature Exclusives',
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
 
@@ -259,11 +259,11 @@ function IconSearch() {
 
 const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
-  { label: 'Category', icon: 'grid' },
+  { label: 'Experience type', icon: 'grid' },
   { label: 'Subscription', icon: 'subscription' },
   { label: 'Price range', icon: 'price-range' },
-  { label: 'Location', icon: 'location' },
-  { label: 'Hotel Brand', icon: 'hotel' },
+  { label: 'City', icon: 'location' },
+  { label: 'Hotel brand', icon: 'hotel' },
 ] as const;
 
 function IconChevronLeft() {
@@ -411,18 +411,19 @@ function LiveTimer({ initialMs }: { initialMs: number }) {
 
 function paymentLabel(type: PaymentType): string {
   switch (type) {
-    case 'prize-draw': return 'Prize Draw';
-    case 'redeem': return 'Redeem';
+    case 'prize-draw': return 'Prize draw';
+    case 'redeem': return 'Instant purchase';
     case 'auction': return 'Current bid';
     case 'waitlist': return 'Waitlist';
     case 'linkout': return '';
-    case 'cash': return '';
+    case 'cash': return 'Instant purchase';
+    case 'flex': return 'Instant purchase';
     default: return '';
   }
 }
 
 function mechanismLabel(type: MechanismOption): string {
-  if (type === 'standard' || type === 'flex' || type === 'cash') return 'Standard';
+  if (type === 'standard' || type === 'flex' || type === 'cash' || type === 'redeem') return 'Instant purchase';
   return PAYMENT_MECHANISMS.find((m) => m.type === type)?.label ?? '';
 }
 
@@ -434,7 +435,9 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [mechanismsOpen, setMechanismsOpen] = useState(false);
   const [selectedMechanism, setSelectedMechanism] = useState<MechanismOption>(
-    defaultMechanism === 'flex' || defaultMechanism === 'cash' ? 'standard' : defaultMechanism,
+    defaultMechanism === 'flex' || defaultMechanism === 'cash' || defaultMechanism === 'redeem'
+      ? 'standard'
+      : defaultMechanism,
   );
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
@@ -493,7 +496,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
 
     const base = ALL_EVENTS.filter((e) => {
       if (selectedMechanism === 'standard') {
-        if (e.paymentType !== 'flex' && e.paymentType !== 'cash') return false;
+        if (e.paymentType !== 'flex' && e.paymentType !== 'cash' && e.paymentType !== 'redeem') return false;
       } else if (e.paymentType !== selectedMechanism) return false;
       if (filterCategories.size > 0 && !e.categories.some((c) => filterCategories.has(c))) return false;
       if (filterSubscriptions.size > 0) {
@@ -561,7 +564,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
         date: e.date,
         title: e.title,
         eventTag: e.eventTag ?? '',
-        paymentLabel: paymentLabel(e.paymentType) || (e.paymentType === 'flex' ? 'Flex' : ''),
+        paymentLabel: paymentLabel(e.paymentType) || '',
         points: e.points ? String(e.points) : e.cashPrice ?? '',
         countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
         hideRewardsIcon: e.paymentType === 'cash',
@@ -581,15 +584,15 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const handleFilterChipClick = (label: string) => {
     const map: Record<string, FilterType> = {
       'Date': 'date',
-      'Category': 'category',
+      'Experience type': 'category',
       'Subscription': 'subscription',
       'Price range': 'price-range',
-      'Location': 'location',
-      'Hotel Brand': 'hotel',
+      'City': 'location',
+      'Hotel brand': 'hotel',
     };
     setActiveFilter(map[label] ?? null);
-    if (label === 'Hotel Brand') setBrandSearch('');
-    if (label === 'Location') setCitySearch('');
+    if (label === 'Hotel brand') setBrandSearch('');
+    if (label === 'City') setCitySearch('');
   };
 
   const closeFilter = () => setActiveFilter(null);
@@ -597,7 +600,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const clearFilter = (label: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (label === 'Date') setSelectedDate(null);
-    if (label === 'Category') setFilterCategories(new Set());
+    if (label === 'Experience type') setFilterCategories(new Set());
     if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
       setPriceMin('');
@@ -605,14 +608,14 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
       setPointsMin('');
       setPointsMax('');
     }
-    if (label === 'Hotel Brand') setFilterBrands(new Set());
+    if (label === 'Hotel brand') setFilterBrands(new Set());
   };
 
   const getChipLabel = (label: string): string => {
     if (label === 'Date' && selectedDate !== null) {
       return `${selectedDate} ${MONTH_NAMES[calMonth].slice(0, 3)}`;
     }
-    if (label === 'Category' && filterCategories.size > 0) {
+    if (label === 'Experience type' && filterCategories.size > 0) {
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
     }
@@ -620,7 +623,7 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
       if (filterSubscriptions.size === 1) return [...filterSubscriptions][0];
       return `${label} (${filterSubscriptions.size})`;
     }
-    if (label === 'Hotel Brand' && filterBrands.size > 0) {
+    if (label === 'Hotel brand' && filterBrands.size > 0) {
       if (filterBrands.size === 1) return [...filterBrands][0];
       return `${label} (${filterBrands.size})`;
     }
@@ -803,10 +806,10 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
               const FilterIcon = filterIconMap[chip.icon];
               const isActive =
                 (chip.label === 'Date' && selectedDate !== null) ||
-                (chip.label === 'Category' && filterCategories.size > 0) ||
+                (chip.label === 'Experience type' && filterCategories.size > 0) ||
                 (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
-                (chip.label === 'Hotel Brand' && filterBrands.size > 0);
+                (chip.label === 'Hotel brand' && filterBrands.size > 0);
               return (
                 <button
                   key={chip.label}
@@ -973,10 +976,10 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
       {/* Payment mechanism title picker */}
       {mechanismsOpen && (
         <div className="filter-sheet__backdrop" onClick={() => setMechanismsOpen(false)}>
-          <div className="filter-sheet" role="dialog" aria-modal aria-label="Payment mechanisms" onClick={(e) => e.stopPropagation()}>
+          <div className="filter-sheet" role="dialog" aria-modal aria-label="Payment method" onClick={(e) => e.stopPropagation()}>
             <div className="filter-sheet__nav">
               <span className="filter-sheet__spacer" />
-              <span className="filter-sheet__title">Payment mechanisms</span>
+              <span className="filter-sheet__title">Payment method</span>
               <button type="button" className="filter-sheet__close" onClick={() => setMechanismsOpen(false)} aria-label="Close"><IconClose /></button>
             </div>
             <div className="filter-sheet__body">
@@ -1028,11 +1031,11 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
               <span className="filter-sheet__spacer" />
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
-                {activeFilter === 'category' && 'Categories'}
+                {activeFilter === 'category' && 'Experience type'}
                 {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
-                {activeFilter === 'location' && 'Location'}
-                {activeFilter === 'hotel' && 'Hotel Brands'}
+                {activeFilter === 'location' && 'City'}
+                {activeFilter === 'hotel' && 'Hotel brand'}
               </span>
               <button type="button" className="filter-sheet__close" onClick={closeFilter} aria-label="Close"><IconClose /></button>
             </div>

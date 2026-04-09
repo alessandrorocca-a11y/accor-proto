@@ -3,20 +3,20 @@ import { Avatar, IconHeart } from '@/components/atoms';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
 
-/** Payment / offer type label (e.g. Redeem now, Auction) */
+/** Payment / offer type label (e.g. Instant purchase, Auction) */
 export type PaymentLabelType =
-  | 'Redeem now'
+  | 'Instant purchase'
   | 'Auction'
-  | 'Prize Draw'
+  | 'Prize draw'
   | 'Waitlist'
   | 'Linkout';
 
 /** Event / experience category label */
 export type EventLabelType =
-  | 'Sustainable Experience'
+  | 'Sustainable experience'
   | 'Fever Original'
-  | 'Limitless Experience'
-  | 'Brand Hotel Experience'
+  | 'Limitless experience'
+  | 'Brand Hotel experience'
   | string;
 
 /** Loyalty tier for points badge styling */
@@ -57,9 +57,9 @@ export interface MarketplaceHeaderProps {
 }
 
 const PAYMENT_LABELS: PaymentLabelType[] = [
-  'Redeem now',
+  'Instant purchase',
   'Auction',
-  'Prize Draw',
+  'Prize draw',
   'Waitlist',
   'Linkout',
 ];

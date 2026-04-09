@@ -45,8 +45,8 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Roland Garros VIP 2026',
     date: 'March 7, 2026',
     image: '/roland-garros-1.png',
-    categories: ['Sport and leisure'],
-    eventTag: 'Limitless Experiences',
+    categories: ['Sports and activities'],
+    eventTag: 'Limitless experience',
     paymentType: 'prize-draw',
     points: '1.000.000',
     hasTimer: true,
@@ -58,7 +58,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Candlelight: Best of Hans Zimmer',
     date: 'March 7, 2026',
     image: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop',
-    categories: ['Shows and culture', 'Concerts and festivals'],
+    categories: ['Arts and culture', 'Concerts and festivals'],
     eventTag: 'Fever Original',
     paymentType: 'redeem',
     points: '1.000.000',
@@ -72,7 +72,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     date: 'March 7, 2026',
     image: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=400&fit=crop',
     categories: ['Concerts and festivals'],
-    eventTag: 'Limitless Experiences',
+    eventTag: 'Limitless experience',
     paymentType: 'auction',
     points: '1.000.000',
     hasTimer: true,
@@ -85,7 +85,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     date: 'March 7, 2026',
     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=400&fit=crop',
     categories: ['Wellness'],
-    eventTag: 'Hotel Experience',
+    eventTag: 'Hotel experience',
     paymentType: 'redeem',
     points: '1.000.000',
     showBrandLogo: true,
@@ -96,8 +96,8 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Exclusive Wine Tasting at Fairmont Le Montreux Palace',
     date: 'March 7, 2026',
     image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&h=400&fit=crop',
-    categories: ['Food and drinks'],
-    eventTag: 'Hotel Experience',
+    categories: ['Food and drink'],
+    eventTag: 'Hotel experience',
     paymentType: 'auction',
     points: '1.000.000',
     hasTimer: true,
@@ -110,7 +110,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Immersive Van Gogh Experience',
     date: 'May 1, 2026',
     image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=400&fit=crop',
-    categories: ['Shows and culture'],
+    categories: ['Arts and culture'],
     eventTag: 'Fever Original',
     paymentType: 'redeem',
     points: '9.500',
@@ -121,7 +121,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Seine River Jazz Cruise',
     date: 'June 2, 2026',
     image: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=400&h=400&fit=crop',
-    categories: ['Shows and culture', 'Concerts and festivals'],
+    categories: ['Arts and culture', 'Concerts and festivals'],
     paymentType: 'redeem',
     points: '12.000',
     route: '#redeem',
@@ -131,7 +131,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Monaco Grand Prix Fairmont Hairpin Experience',
     date: 'March 7, 2026',
     image: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&h=400&fit=crop',
-    categories: ['Sport and leisure'],
+    categories: ['Sports and activities'],
     eventTag: 'Fever Original',
     paymentType: 'cash',
     cashPrice: '1.250,00 €',
@@ -142,7 +142,7 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'PSG Match Day VIP at Parc des Princes',
     date: 'March 7, 2026',
     image: '/psg-stadium.jpg',
-    categories: ['Sport and leisure'],
+    categories: ['Sports and activities'],
     paymentType: 'linkout',
     route: '#linkout',
   },
@@ -151,8 +151,8 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Tour de France VIP Finish Line Experience',
     date: 'March 7, 2026',
     image: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=400&fit=crop',
-    categories: ['Sport and leisure'],
-    eventTag: 'Limitless Experiences',
+    categories: ['Sports and activities'],
+    eventTag: 'Limitless experience',
     paymentType: 'prize-draw',
     points: '200.000',
     hasTimer: true,
@@ -164,8 +164,8 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Paris Marathon VIP Cheer Zone',
     date: 'April 12, 2026',
     image: 'https://images.unsplash.com/photo-1513593771513-7b58b6c4af38?w=400&h=400&fit=crop',
-    categories: ['Sport and leisure'],
-    eventTag: 'Sustainable Experience',
+    categories: ['Sports and activities'],
+    eventTag: 'Sustainable experience',
     paymentType: 'redeem',
     points: '35.000',
     showBrandLogo: true,
@@ -176,8 +176,8 @@ const NEAR_YOU_EVENTS: NearYouEvent[] = [
     title: 'Moulin Rouge Dinner & Show Experience',
     date: 'April 5, 2026',
     image: 'https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?w=400&h=400&fit=crop',
-    categories: ['Shows and culture'],
-    eventTag: 'Limitless Experiences',
+    categories: ['Arts and culture'],
+    eventTag: 'Limitless experience',
     paymentType: 'cash',
     cashPrice: '350,00 €',
     route: '#standard',
@@ -195,20 +195,20 @@ function nearYouListingCategories(e: NearYouEvent): string[] {
 }
 
 const CATEGORIES = [
-  'Shows and culture',
+  'Arts and culture',
   'Concerts and festivals',
-  'Sport and leisure',
-  'Food and drinks',
+  'Sports and activities',
+  'Food and drink',
   'Wellness',
   'Visits',
   'Hotel experiences',
   'Paris Saint Germain',
   'Arena',
-  'All Signature Exclusives',
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
 
-const PAYMENT_OPTIONS = ['Standard', 'Auctions', 'Prize Draws', 'Redeem now', 'Waitlist'];
+const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Waitlist'];
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
 const DAYS_OF_WEEK = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -366,11 +366,11 @@ function IconSearch() {
 
 const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
-  { label: 'Category', icon: 'grid' },
-  { label: 'Payment', icon: 'payment' },
+  { label: 'Experience type', icon: 'grid' },
+  { label: 'Payment method', icon: 'payment' },
   { label: 'Price range', icon: 'price-range' },
-  { label: 'Location', icon: 'location' },
-  { label: 'Hotel Brand', icon: 'hotel' },
+  { label: 'City', icon: 'location' },
+  { label: 'Hotel brand', icon: 'hotel' },
 ] as const;
 
 function IconChevronLeft() {
@@ -508,10 +508,12 @@ function LiveTimer({ initialMs }: { initialMs: number }) {
 
 function paymentLabel(type: PaymentType): string {
   switch (type) {
-    case 'prize-draw': return 'Prize Draw';
-    case 'redeem': return 'Redeem';
+    case 'prize-draw': return 'Prize draw';
+    case 'redeem': return 'Instant purchase';
     case 'auction': return 'Current bid';
     case 'waitlist': return 'Waitlist';
+    case 'cash':
+    case 'flex': return 'Instant purchase';
     default: return '';
   }
 }
@@ -548,10 +550,9 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
   const citySlug = cityName.toLowerCase();
 
   const paymentTypeMap: Record<string, PaymentType[]> = {
-    'Standard': ['flex', 'cash'],
-    'Auctions': ['auction'],
-    'Prize Draws': ['prize-draw'],
-    'Redeem now': ['redeem'],
+    'Instant purchase': ['flex', 'cash', 'redeem'],
+    'Auction': ['auction'],
+    'Prize draw': ['prize-draw'],
     'Waitlist': ['waitlist'],
   };
 
@@ -632,7 +633,7 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
         date: e.date,
         title: e.title,
         eventTag: e.eventTag ?? '',
-        paymentLabel: paymentLabel(e.paymentType) || (e.paymentType === 'cash' ? 'Cash' : ''),
+        paymentLabel: paymentLabel(e.paymentType) || '',
         points: e.points ? String(e.points) : e.cashPrice ?? '',
         countdown: e.msLeft ? formatTimeLeft(e.msLeft) : '',
       })),
@@ -650,15 +651,15 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
   const handleFilterChipClick = (label: string) => {
     const map: Record<string, FilterType> = {
       'Date': 'date',
-      'Category': 'category',
-      'Payment': 'payment',
+      'Experience type': 'category',
+      'Payment method': 'payment',
       'Price range': 'price-range',
-      'Location': 'location',
-      'Hotel Brand': 'hotel',
+      'City': 'location',
+      'Hotel brand': 'hotel',
     };
     setActiveFilter(map[label] ?? null);
-    if (label === 'Hotel Brand') setBrandSearch('');
-    if (label === 'Location') setCitySearch('');
+    if (label === 'Hotel brand') setBrandSearch('');
+    if (label === 'City') setCitySearch('');
   };
 
   const closeFilter = () => setActiveFilter(null);
@@ -666,30 +667,30 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
   const clearFilter = (label: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (label === 'Date') setSelectedDate(null);
-    if (label === 'Category') setFilterCategories(new Set());
-    if (label === 'Payment') setFilterPayments(new Set());
+    if (label === 'Experience type') setFilterCategories(new Set());
+    if (label === 'Payment method') setFilterPayments(new Set());
     if (label === 'Price range') {
       setPriceMin('');
       setPriceMax('');
       setPointsMin('');
       setPointsMax('');
     }
-    if (label === 'Location') setSelectedCity(null);
-    if (label === 'Hotel Brand') setFilterBrands(new Set());
+    if (label === 'City') setSelectedCity(null);
+    if (label === 'Hotel brand') setFilterBrands(new Set());
   };
 
   const getChipLabel = (label: string): string => {
     if (label === 'Date' && selectedDate !== null) return `${selectedDate} ${MONTH_NAMES[calMonth].slice(0, 3)}`;
-    if (label === 'Category' && filterCategories.size > 0) {
+    if (label === 'Experience type' && filterCategories.size > 0) {
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
     }
-    if (label === 'Payment' && filterPayments.size > 0) {
+    if (label === 'Payment method' && filterPayments.size > 0) {
       if (filterPayments.size === 1) return [...filterPayments][0];
       return `${label} (${filterPayments.size})`;
     }
-    if (label === 'Location' && selectedCity) return selectedCity;
-    if (label === 'Hotel Brand' && filterBrands.size > 0) {
+    if (label === 'City' && selectedCity) return selectedCity;
+    if (label === 'Hotel brand' && filterBrands.size > 0) {
       if (filterBrands.size === 1) return [...filterBrands][0];
       return `${label} (${filterBrands.size})`;
     }
@@ -854,11 +855,11 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
               const FilterIcon = filterIconMap[chip.icon];
               const isActive =
                 (chip.label === 'Date' && selectedDate !== null) ||
-                (chip.label === 'Category' && filterCategories.size > 0) ||
-                (chip.label === 'Payment' && filterPayments.size > 0) ||
+                (chip.label === 'Experience type' && filterCategories.size > 0) ||
+                (chip.label === 'Payment method' && filterPayments.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
-                (chip.label === 'Location' && selectedCity !== null) ||
-                (chip.label === 'Hotel Brand' && filterBrands.size > 0);
+                (chip.label === 'City' && selectedCity !== null) ||
+                (chip.label === 'Hotel brand' && filterBrands.size > 0);
               return (
                 <button
                   key={chip.label}
@@ -1014,11 +1015,11 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
               <span className="filter-sheet__spacer" />
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
-                {activeFilter === 'category' && 'Categories'}
-                {activeFilter === 'payment' && 'Payment mechanisms'}
+                {activeFilter === 'category' && 'Experience type'}
+                {activeFilter === 'payment' && 'Payment method'}
                 {activeFilter === 'price-range' && 'Price range'}
-                {activeFilter === 'location' && 'Location'}
-                {activeFilter === 'hotel' && 'Hotel Brands'}
+                {activeFilter === 'location' && 'City'}
+                {activeFilter === 'hotel' && 'Hotel brand'}
               </span>
               <button type="button" className="filter-sheet__close" onClick={closeFilter} aria-label="Close"><IconClose /></button>
             </div>
