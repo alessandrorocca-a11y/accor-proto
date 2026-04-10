@@ -206,20 +206,31 @@ export function MarketplaceHeader({
       className={`marketplace-header marketplace-header--${theme}${hidden ? ' marketplace-header--hidden' : ''}${transparentOnTop && atTop ? ' marketplace-header--transparent' : ''} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
-      <div
-        className="marketplace-header__bar"
-        data-has-menu={onMenu ? 'true' : 'false'}
-      >
-        {onMenu && (
-          <button
-            type="button"
-            className="marketplace-header__menu-btn"
-            onClick={onMenu}
-            aria-label="Menu"
-          >
-            <IconMenu className="marketplace-header__menu-icon" />
-            <span className="marketplace-header__menu-label">MENU</span>
-          </button>
+      <div className="marketplace-header__bar">
+        {(onMenu || !hideSearch) && (
+          <div className="marketplace-header__left-cluster">
+            {onMenu && (
+              <button
+                type="button"
+                className="marketplace-header__menu-btn"
+                onClick={onMenu}
+                aria-label="Menu"
+              >
+                <IconMenu className="marketplace-header__menu-icon" />
+                <span className="marketplace-header__menu-label">MENU</span>
+              </button>
+            )}
+            {!hideSearch && (
+              <button
+                type="button"
+                className="marketplace-header__icon-btn"
+                onClick={handleSearchClick}
+                aria-label="Search"
+              >
+                <IconSearch />
+              </button>
+            )}
+          </div>
         )}
 
         <div className="marketplace-header__logo-slot">
@@ -264,16 +275,6 @@ export function MarketplaceHeader({
             )
           )}
           <div className="marketplace-header__icon-group">
-            {!hideSearch && (
-              <button
-                type="button"
-                className="marketplace-header__icon-btn"
-                onClick={handleSearchClick}
-                aria-label="Search"
-              >
-                <IconSearch />
-              </button>
-            )}
             {!isLoggedIn && (onAccount || onMenu) && (
               <button
                 type="button"
