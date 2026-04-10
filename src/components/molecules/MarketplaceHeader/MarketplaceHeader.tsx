@@ -206,8 +206,23 @@ export function MarketplaceHeader({
       className={`marketplace-header marketplace-header--${theme}${hidden ? ' marketplace-header--hidden' : ''}${transparentOnTop && atTop ? ' marketplace-header--transparent' : ''} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
-      <div className="marketplace-header__bar">
-        <div className="marketplace-header__start">
+      <div
+        className="marketplace-header__bar"
+        data-has-menu={onMenu ? 'true' : 'false'}
+      >
+        {onMenu && (
+          <button
+            type="button"
+            className="marketplace-header__menu-btn"
+            onClick={onMenu}
+            aria-label="Menu"
+          >
+            <IconMenu className="marketplace-header__menu-icon" />
+            <span className="marketplace-header__menu-label">MENU</span>
+          </button>
+        )}
+
+        <div className="marketplace-header__logo-slot">
           {onLogoClick ? (
             <button
               type="button"
@@ -220,7 +235,9 @@ export function MarketplaceHeader({
           ) : (
             <div className="marketplace-header__logo">{logoContent}</div>
           )}
+        </div>
 
+        <div className="marketplace-header__mobile-trailing">
           {isLoggedIn && points != null && (
             onPointsClick ? (
               <button
@@ -246,6 +263,38 @@ export function MarketplaceHeader({
               </div>
             )
           )}
+          <div className="marketplace-header__icon-group">
+            {!hideSearch && (
+              <button
+                type="button"
+                className="marketplace-header__icon-btn"
+                onClick={handleSearchClick}
+                aria-label="Search"
+              >
+                <IconSearch />
+              </button>
+            )}
+            {!isLoggedIn && (onAccount || onMenu) && (
+              <button
+                type="button"
+                className="marketplace-header__icon-btn"
+                onClick={onMenu ?? onAccount}
+                aria-label="Account"
+              >
+                <IconAccount />
+              </button>
+            )}
+            {isLoggedIn && (
+              <Avatar
+                src={avatarSrc ?? undefined}
+                initials={avatarSrc ? undefined : '?'}
+                size="md"
+                className="marketplace-header__avatar"
+                onClick={onAvatarClick ?? onMenu}
+                style={{ cursor: (onAvatarClick ?? onMenu) ? 'pointer' : undefined }}
+              />
+            )}
+          </div>
         </div>
 
         {!hideSearch && (
@@ -280,50 +329,6 @@ export function MarketplaceHeader({
             )}
           </div>
         )}
-
-        <div className="marketplace-header__end">
-          {!hideSearch && (
-            <button
-              type="button"
-              className="marketplace-header__icon-btn"
-              onClick={handleSearchClick}
-              aria-label="Search"
-            >
-              <IconSearch />
-            </button>
-          )}
-          {!isLoggedIn && (onAccount || onMenu) && (
-            <button
-              type="button"
-              className="marketplace-header__icon-btn"
-              onClick={onMenu ?? onAccount}
-              aria-label="Account"
-            >
-              <IconAccount />
-            </button>
-          )}
-          {isLoggedIn && (
-            <Avatar
-              src={avatarSrc ?? undefined}
-              initials={avatarSrc ? undefined : '?'}
-              size="md"
-              className="marketplace-header__avatar"
-              onClick={onAvatarClick ?? onMenu}
-              style={{ cursor: (onAvatarClick ?? onMenu) ? 'pointer' : undefined }}
-            />
-          )}
-          {onMenu && (
-            <button
-              type="button"
-              className="marketplace-header__menu-btn"
-              onClick={onMenu}
-              aria-label="Menu"
-            >
-              <IconMenu className="marketplace-header__menu-icon" />
-              <span className="marketplace-header__menu-label">MENU</span>
-            </button>
-          )}
-        </div>
       </div>
 
       {(paymentLabel || eventLabel || onFavouriteToggle) && (
