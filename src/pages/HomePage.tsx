@@ -37,6 +37,8 @@ interface EventCard {
   cashPrice?: string;
   hasTimer?: boolean;
   msLeft?: number;
+  /** Prize draw: static end date for listing (dd/mm/yyyy); replaces live countdown. */
+  prizeDrawEndsDateDdMmYyyy?: string;
   eventTag?: string;
   marketingTag?: MarketingTagType;
 }
@@ -85,10 +87,30 @@ const PLANNED_TRIP: PlannedTrip | null = {
 
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200&h=800&fit=crop';
 
+function formatDateDdMmYyyy(d: Date): string {
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function prizeDrawEndDateDdMmYyyy(e: EventData): string | undefined {
+  if (e.pageType !== 'prize-draw') return undefined;
+  const end =
+    e.drawEndDate != null && e.drawEndDate !== ''
+      ? new Date(e.drawEndDate)
+      : e.msLeft != null
+        ? new Date(Date.now() + e.msLeft)
+        : undefined;
+  if (!end || Number.isNaN(end.getTime())) return undefined;
+  return formatDateDdMmYyyy(end);
+}
+
 function registryToCard(e: EventData): EventCard {
   const ptMap: Record<string, PaymentType> = {
     auction: 'auction', 'prize-draw': 'prize-draw', redeem: 'redeem', standard: 'cash', waitlist: 'waitlist',
   };
+  const prizeDrawEnds = e.pageType === 'prize-draw' ? prizeDrawEndDateDdMmYyyy(e) : undefined;
   return {
     id: e.id,
     title: e.title,
@@ -97,8 +119,12 @@ function registryToCard(e: EventData): EventCard {
     paymentType: ptMap[e.pageType] ?? 'cash',
     points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
     cashPrice: e.pageType === 'standard' ? formatStandardEventListPrice(e) : undefined,
-    hasTimer: !!e.msLeft,
+    hasTimer:
+      e.pageType === 'prize-draw'
+        ? !!(e.drawEndDate || e.msLeft != null)
+        : !!e.msLeft,
     msLeft: e.msLeft,
+    prizeDrawEndsDateDdMmYyyy: prizeDrawEnds,
     eventTag: e.eventTag,
     marketingTag: e.marketingTag,
   };
@@ -635,7 +661,12 @@ function EventCardCompact({
               ) : null}
             </div>
           ) : null}
-          {event.hasTimer && event.msLeft != null ? (
+          {event.paymentType === 'prize-draw' && event.prizeDrawEndsDateDdMmYyyy ? (
+            <div className="home-page__event-card-timer">
+              <span className="home-page__event-card-timer-label">Ends:</span>
+              <span className="home-page__event-card-timer-value">{event.prizeDrawEndsDateDdMmYyyy}</span>
+            </div>
+          ) : event.hasTimer && event.msLeft != null ? (
             <LiveTimer initialMs={event.msLeft} />
           ) : null}
         </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
+import { ExclusiveFlatStrip, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { getNearbyCities, searchCities } from '@/data/europeanCities';
 import {
@@ -31,14 +31,17 @@ interface EventCard {
   title: string;
   date: string;
   image: string;
-  paymentType?: PaymentType;
+  paymentType: PaymentType;
   points?: string;
   cashPrice?: string;
   hasTimer?: boolean;
   msLeft?: number;
+  /** Prize draw: static end date for listing (dd/mm/yyyy); replaces live countdown in card. */
+  prizeDrawEndsDateDdMmYyyy?: string;
   eventTag?: string;
   route?: string;
   marketingTag?: MarketingTagType;
+  imagePosition?: string;
 }
 
 interface CityConfig {
@@ -201,12 +204,32 @@ function formatFilterDate(isoDate: string): string {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
 }
 
+function formatDateDdMmYyyy(d: Date): string {
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function prizeDrawEndDateDdMmYyyy(e: EventData): string | undefined {
+  if (e.pageType !== 'prize-draw') return undefined;
+  const end =
+    e.drawEndDate != null && e.drawEndDate !== ''
+      ? new Date(e.drawEndDate)
+      : e.msLeft != null
+        ? new Date(Date.now() + e.msLeft)
+        : undefined;
+  if (!end || Number.isNaN(end.getTime())) return undefined;
+  return formatDateDdMmYyyy(end);
+}
+
 /* ── Registry-derived event helpers ─────────────────────────────────── */
 
 function registryToCard(e: EventData): EventCard {
   const ptMap: Record<string, PaymentType> = {
     auction: 'auction', 'prize-draw': 'prize-draw', redeem: 'redeem', standard: 'cash', waitlist: 'waitlist',
   };
+  const prizeDrawEnds = e.pageType === 'prize-draw' ? prizeDrawEndDateDdMmYyyy(e) : undefined;
   return {
     id: e.id,
     title: e.title,
@@ -215,12 +238,23 @@ function registryToCard(e: EventData): EventCard {
     paymentType: ptMap[e.pageType] ?? 'cash',
     points: e.pageType !== 'standard' ? formatPoints(e.points) : undefined,
     cashPrice: e.pageType === 'standard' ? formatStandardEventListPrice(e) : undefined,
-    hasTimer: !!e.msLeft,
+    hasTimer:
+      e.pageType === 'prize-draw'
+        ? !!(e.drawEndDate || e.msLeft != null)
+        : !!e.msLeft,
     msLeft: e.msLeft,
+    prizeDrawEndsDateDdMmYyyy: prizeDrawEnds,
     eventTag: e.eventTag,
     route: getEventRoute(e),
     marketingTag: e.marketingTag,
+    imagePosition: e.imagePosition,
   };
+}
+
+function getCardRoute(event: EventCard): string {
+  const registryEvent = EVENT_REGISTRY.find((ev) => ev.id === event.id);
+  if (registryEvent) return getEventRoute(registryEvent);
+  return PAYMENT_ROUTE_MAP[event.paymentType] ?? '#';
 }
 
 function getEventsForCity(cityName: string): EventData[] {
@@ -352,11 +386,10 @@ function EventCardCompact({
   isFav: boolean;
   onFavToggle: () => void;
 }) {
-  const label = event.paymentType ? paymentLabel(event.paymentType) : '';
+  const label = paymentLabel(event.paymentType);
 
   const handleCardClick = () => {
-    const hash = event.route ?? (event.paymentType ? PAYMENT_ROUTE_MAP[event.paymentType] : undefined) ?? '#';
-    window.location.hash = hash;
+    window.location.hash = getCardRoute(event);
   };
 
   return (
@@ -374,9 +407,9 @@ function EventCardCompact({
           <IconHeart filled={isFav} />
         </button>
         {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
-          <SignatureOnlyCardFooter variant="imageOverlay" />
+          <ExclusiveFlatStrip kind="signature" variant="imageOverlay" />
         ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
-          <ExplorerOnlyCardFooter variant="imageOverlay" />
+          <ExclusiveFlatStrip kind="explorer" variant="imageOverlay" />
         ) : null}
       </div>
       <div className="city-page__event-card-body">
@@ -407,7 +440,12 @@ function EventCardCompact({
               ) : null}
             </div>
           ) : null}
-          {event.hasTimer && event.msLeft != null ? (
+          {event.paymentType === 'prize-draw' && event.prizeDrawEndsDateDdMmYyyy ? (
+            <div className="city-page__event-card-timer">
+              <span className="city-page__event-card-timer-label">Ends:</span>
+              <span className="city-page__event-card-timer-value">{event.prizeDrawEndsDateDdMmYyyy}</span>
+            </div>
+          ) : event.hasTimer && event.msLeft != null ? (
             <LiveTimer initialMs={event.msLeft} />
           ) : null}
         </div>

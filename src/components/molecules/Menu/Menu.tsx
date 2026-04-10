@@ -86,7 +86,7 @@ const SIDEBAR_CATEGORIES: SidebarCategory[] = [
   { label: 'Wellness', hash: '#category/wellness', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=96&h=96&fit=crop' },
   { label: 'Visits', hash: '#category/visits', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=96&h=96&fit=crop' },
   { label: 'Hotel experiences', hash: '#category/hotel-experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=96&h=96&fit=crop' },
-  { label: 'Arena', hash: '#category/arena', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=96&h=96&fit=crop' },
+  { label: 'Accor arena', hash: '#category/arena', image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=96&h=96&fit=crop' },
   { label: 'Paris Saint Germain', hash: '#category/paris-saint-germain', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=96&h=96&fit=crop' },
   { label: 'Roland Garros', hash: '#momentum/roland-garros', image: '/roland-garros-1.png' },
 ];

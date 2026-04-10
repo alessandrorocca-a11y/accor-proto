@@ -342,6 +342,7 @@ button.city-page__numbered-card {
   padding: var(--wel-sem-spacingstatic-insetsquish-xs-v, 4px) var(--wel-sem-spacingstatic-inset-xs, 8px);
   border-radius: var(--wel-sem-borderradius-element-static-sm, 2px);
   overflow: hidden;
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
 }
 
 .city-page__event-card-points svg {

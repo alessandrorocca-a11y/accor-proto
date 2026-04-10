@@ -14,7 +14,7 @@ const HASH_LABELS: Record<string, string> = {
   '#category/visits': 'Visits',
   '#category/hotel-experiences': 'Hotel experiences',
   '#category/paris-saint-germain': 'Paris Saint Germain',
-  '#category/arena': 'Arena',
+  '#category/arena': 'Accor arena',
   '#category/all-signature-exclusives': 'ALL Signature exclusives',
   '#category/all-accor-plus-exclusives': 'ALL Accor+ exclusives',
   '#category/next-trip': 'Next trip',

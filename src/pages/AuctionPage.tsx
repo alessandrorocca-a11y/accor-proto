@@ -59,6 +59,21 @@ function formatChipPoints(n: number) {
   return rest === 0 ? `${k}.000` : `${k}.${String(rest).padStart(3, '0')}`;
 }
 
+/** When exactly two tags are shown and one is Limitless, show Limitless first. */
+function orderEventTagsForDisplay(tags: readonly string[]): string[] {
+  if (tags.length !== 2) return [...tags];
+  const [a, b] = tags;
+  const bLimitless = /limitless/i.test(b);
+  const aLimitless = /limitless/i.test(a);
+  if (bLimitless && !aLimitless) return [b, a];
+  return [...tags];
+}
+
+const AUCTION_HERO_EVENT_TAGS = orderEventTagsForDisplay([
+  'Sustainable experience',
+  'Limitless experience',
+]);
+
 function IconBell({ filled }: { filled: boolean }) {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill={filled ? '#2D4CD5' : 'none'} aria-hidden>
@@ -498,8 +513,11 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable experience</span>
-              <span className="auction-page__tag">Limitless experience</span>
+              {AUCTION_HERO_EVENT_TAGS.map((tag) => (
+                <span key={tag} className="auction-page__tag">
+                  {tag}
+                </span>
+              ))}
             </div>
 
             {isVoyagerExclusive && <VoyagerBadge />}

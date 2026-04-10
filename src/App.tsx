@@ -62,7 +62,11 @@ const CATEGORY_ROUTES: Record<string, CategoryRouteConfig> = {
     category: 'Paris Saint Germain',
     breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Sports and activities', href: '#category/sports-and-activities' }],
   },
-  '#category/arena': { category: 'Arena', breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Concerts and festivals', href: '#category/concerts-and-festivals' }] },
+  '#category/arena': {
+    category: 'Arena',
+    pageTitle: 'Accor arena',
+    breadcrumbs: [{ label: 'Homepage', href: '#' }, { label: 'Concerts and festivals', href: '#category/concerts-and-festivals' }],
+  },
   '#category/all-signature-exclusives': { category: 'ALL Signature exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/all-accor-plus-exclusives': { category: 'ALL Accor+ exclusives', breadcrumbs: [{ label: 'Homepage', href: '#' }] },
   '#category/suggested-for-you': { category: 'Arts and culture', breadcrumbs: [{ label: 'Homepage', href: '#' }], pageTitle: 'Suggested for you' },
