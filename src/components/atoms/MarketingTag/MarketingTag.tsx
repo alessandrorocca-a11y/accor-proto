@@ -3,8 +3,8 @@ import './MarketingTag.css';
 
 const LABEL: Record<MarketingTagType, string> = {
   presale: 'Pre-sale',
-  exclusivity: 'ALL Accor+ exclusives',
-  signature: 'ALL Signature exclusives',
+  exclusivity: 'Exclusive',
+  signature: 'Exclusive',
   'sold-out': 'Sold out',
   discount: 'Discount',
 };
