@@ -88,7 +88,7 @@ const ALL_EVENTS: CategoryEvent[] = EVENT_REGISTRY.map((e) => ({
   marketingTag: e.marketingTag,
 }));
 
-const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Waitlist'];
+const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Standard'];
 const SUBSCRIPTION_OPTIONS = ['Explorer', 'Signature'] as const;
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
@@ -583,7 +583,7 @@ export default function CategoryPage({
     'Instant purchase': ['flex', 'cash', 'redeem'],
     'Auction': ['auction'],
     'Prize draw': ['prize-draw'],
-    'Waitlist': ['waitlist'],
+    'Standard': ['cash'],
   };
 
   const filteredEvents = (() => {

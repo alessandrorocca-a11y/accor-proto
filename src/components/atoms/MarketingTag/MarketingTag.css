@@ -10,24 +10,25 @@
   line-height: 16px;
 }
 
+/* Figma All-Accor-Marketplace iris.marketing-tag / 💠 web.badge (node 2909:57095) */
+
 .marketing-tag--presale {
-  background: #d6d3ff;
-  color: #3a34ab;
+  background: var(--wel-sem-color-loyalty-container-hi, #d6d3ff);
+  color: var(--wel-sem-color-on-loyalty-container-hi, #3a34ab);
 }
 
 .marketing-tag--exclusivity,
 .marketing-tag--signature {
-  /* Match Figma iris.marketing-tag / loyalty-container-hi (same family as Presale) */
-  background: #d6d3ff;
-  color: #3a34ab;
+  background: var(--ads-colors-loyalty-container-low, #f3efff);
+  color: var(--wel-sem-color-on-loyalty-container-low, #3a34ab);
 }
 
 .marketing-tag--sold-out {
-  background: #be003c;
-  color: #fff;
+  background: var(--wel-sem-color-danger, #be003c);
+  color: var(--wel-sem-color-on-danger, #fff);
 }
 
 .marketing-tag--discount {
-  background: #ffd4ea;
-  color: #b40875;
+  background: var(--wel-sem-color-offer-container-hi, #ffd4ea);
+  color: var(--wel-sem-color-on-offer-container-low, #b40875);
 }
