@@ -133,6 +133,7 @@ export default function App() {
   }, [onHashChange]);
 
   const { basePath: hashBase, params: hashParams } = parseHashParams(hash);
+  const isHomeRoot = hashBase === '' || hashBase === '#';
 
   if (hashBase === '#demo') return <Demo />;
   if (hashBase === '#email/highest-bidder') return <HighestBidderEmail />;
@@ -224,7 +225,7 @@ export default function App() {
     <UserProvider>
       <FavouritesProvider>
         {page}
-        <BottomTabBar />
+        {!isHomeRoot ? <BottomTabBar /> : null}
       </FavouritesProvider>
     </UserProvider>
   );

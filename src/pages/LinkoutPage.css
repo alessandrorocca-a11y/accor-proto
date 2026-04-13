@@ -76,37 +76,13 @@
   color: var(--wel-sem-color-on-surface-hi, #232136);
   margin: 0;
   letter-spacing: 0.5px;
-  padding: 0 24px;
+  padding: 0;
 }
 
-.linkout__recommendations-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
-  margin-left: 24px;
-}
-
-.linkout__recommendations-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-/* You may also like — same compact cards as home / city (home-page__event-card + HomePage.css) */
+/* Horizontal strip: shares .home-page__scroll (snap, touch-action, padding-right gutter) with HomePage carousels */
 .linkout__recommendations-scroll a.home-page__event-card {
   text-decoration: none;
   color: inherit;
-}
-
-@media (min-width: 1024px) {
-  .linkout__recommendations-title {
-    padding: 0 40px;
-  }
-
-  .linkout__recommendations-scroll {
-    margin-left: 40px;
-  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════

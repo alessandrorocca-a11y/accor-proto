@@ -182,7 +182,7 @@ export function YouMayAlsoLike({ event = null, excludeEventId, contextCategory, 
   return (
     <section className="linkout__recommendations" aria-label="You may also like">
       <h2 className="linkout__recommendations-title">You may also like</h2>
-      <div className="linkout__recommendations-scroll">
+      <div className="home-page__scroll linkout__recommendations-scroll">
         {items.map((e) => {
           const route = getEventRoute(e);
           const fav = toMenuFavourite(e);

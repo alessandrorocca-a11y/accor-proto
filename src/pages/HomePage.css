@@ -1696,8 +1696,8 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
     margin: 0 64px;
   }
 
-  /* ── Scroll → Grid on desktop ────────────────────────────────────── */
-  .home-page__scroll {
+  /* ── Scroll → Grid on desktop (home only — embedded YML carousels stay horizontal) ─ */
+  .home-page .home-page__scroll {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
@@ -1708,11 +1708,11 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
     padding-bottom: 0;
   }
 
-  .home-page__section > .home-page__scroll {
+  .home-page .home-page__section > .home-page__scroll {
     margin-left: 0;
   }
 
-  .home-page__scroll > *:nth-child(n+5) {
+  .home-page .home-page__scroll > *:nth-child(n+5) {
     display: none;
   }
 
