@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ExplorerOnlyCardFooter,
   SignatureOnlyCardFooter,
@@ -17,6 +18,7 @@ import {
   isExplorerExclusiveMarketingTag,
   isSignatureExclusiveMarketingTag,
 } from '@/data/events/eventRegistry';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useScrollLock } from '@/utils/useScrollLock';
 import './NearYouListPage.css';
 import './CategoryPage.css';
@@ -459,15 +461,6 @@ function IconOrderBy() {
   );
 }
 
-function IconMapPin() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
 const filterIconMap: Record<string, () => JSX.Element> = {
   calendar: IconCalendar,
   grid: IconGrid,
@@ -546,11 +539,13 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [orderOpen, setOrderOpen] = useState(false);
 
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
+
   useScrollLock(Boolean(orderOpen || activeFilter || loyaltyOpen));
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const citySlug = cityName.toLowerCase();
+  const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
 
   const paymentTypeMap: Record<string, PaymentType[]> = {
     'Instant purchase': ['flex', 'cash', 'redeem'],
@@ -745,6 +740,32 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
   };
 
   const navigateTo = (hash: string) => { window.location.hash = hash; };
+
+  const mapViewFloating = (() => {
+    const mapViewButton = (
+      <button
+        type="button"
+        className="category-page__map-view-btn"
+        onClick={() => navigateTo(`#near-you/${citySlug}`)}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8 2v16M16 6v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Map view
+      </button>
+    );
+    return overlayPortalTarget
+      ? createPortal(
+          <div className="category-page__map-view-btn-wrap">{mapViewButton}</div>,
+          overlayPortalTarget,
+        )
+      : (
+          <div className="category-page__map-view-btn-wrap category-page__map-view-btn-wrap--viewport-fixed">
+            {mapViewButton}
+          </div>
+        );
+  })();
 
   return (
     <div className="category-page ny-list-page">
@@ -974,16 +995,6 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
           })}
         </div>
       </div>
-
-      {/* Map view floating button */}
-      <button
-        type="button"
-        className="ny-list__map-view-btn"
-        onClick={() => navigateTo(`#near-you/${citySlug}`)}
-      >
-        <IconMapPin />
-        <span>Map view</span>
-      </button>
 
       {/* Order by dialog */}
       {orderOpen && (
@@ -1230,6 +1241,8 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
           </div>
         </div>
       )}
+
+      {mapViewFloating}
     </div>
   );
 }

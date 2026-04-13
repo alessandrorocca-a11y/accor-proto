@@ -128,15 +128,14 @@
   width: 100%;
 }
 
+/* Slot itself ignores hits so empty areas fall through to the scroll viewport.
+ * Do NOT set `> * { pointer-events: auto }` — it overrides pass-through wrappers
+ * (e.g. .category-page__map-view-btn-wrap uses none + button auto). */
 .device-preview-frame__overlay-slot {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 1100;
-}
-
-.device-preview-frame__overlay-slot > * {
-  pointer-events: auto;
 }
 
 /* ── iOS status area + Dynamic Island ─────────────────────────────────── */

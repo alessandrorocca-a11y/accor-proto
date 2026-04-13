@@ -186,40 +186,6 @@
   font-weight: 400;
 }
 
-/* ── Map view floating button ──────────────────────────────────── */
-
-.ny-list__map-view-btn {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
-  border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
-  border-radius: 100px;
-  background: linear-gradient(252deg, var(--wel-comp-btn-primary-bg-gradient-end, #524f81) 6%, var(--wel-comp-btn-primary-bg-gradient-start, #050033) 92%);
-  color: var(--wel-comp-btn-primary-fg-color, #f9f9ff);
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  cursor: pointer;
-  white-space: nowrap;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.ny-list__map-view-btn:hover {
-  background: linear-gradient(90deg, rgba(232,198,232,0.6), rgba(198,198,240,0.6));
-  color: #050033;
-}
-
-.ny-list__map-view-btn svg {
-  flex-shrink: 0;
-}
-
 /* ── Tablet ────────────────────────────────────────────────────── */
 
 @media (min-width: 768px) {  html:not(.device-preview-frame-active) .ny-list__cards{
@@ -253,6 +219,4 @@
   }  html:not(.device-preview-frame-active) .ny-list__card-timer{
     font-size: 14px;
     line-height: 20px;
-  }  html:not(.device-preview-frame-active) .ny-list__map-view-btn{
-    bottom: 40px;
   }}

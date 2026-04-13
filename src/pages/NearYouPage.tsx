@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { ExplorerOnlyCardFooter, IconHeart, MarketplaceHeader, Menu, MarketingTag, SignatureOnlyCardFooter } from '@/components';
+import { IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import { useUser } from '@/context/UserContext';
 import { CURRENT_COUNTRY, getNearbyCities, searchCities } from '@/data/europeanCities';
@@ -212,7 +212,6 @@ const MAP_EVENTS: MapEventCard[] = [
 const FILTER_CHIPS = [
   { id: 'date', label: 'Date', icon: 'calendar' as const },
   { id: 'category', label: 'Experience type', icon: 'grid' as const },
-  { id: 'experience', label: 'Experience', icon: 'experience' as const },
   { id: 'payment', label: 'Ways to book', icon: 'payment' as const },
   { id: 'subscription', label: 'Subscription', icon: 'subscription' as const },
   { id: 'price', label: 'Price range', icon: 'price-range' as const },
@@ -223,7 +222,6 @@ const FILTER_CHIPS = [
 type FilterType =
   | 'date'
   | 'category'
-  | 'experience'
   | 'payment'
   | 'subscription'
   | 'price-range'
@@ -351,10 +349,6 @@ const CATEGORIES = [
 const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Standard'] as const;
 const SUBSCRIPTION_OPTIONS = ['Explorer', 'Signature'] as const;
 
-const EXPERIENCE_OPTIONS = Array.from(
-  new Set(MAP_EVENTS.map((e) => e.eventTag).filter((t): t is string => Boolean(t))),
-).sort((a, b) => a.localeCompare(b));
-
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
 
 const PAYMENT_TYPE_MAP: Record<string, PaymentType[]> = {
@@ -455,19 +449,6 @@ function IconChipSubscription() {
   );
 }
 
-function IconChipExperience() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M12 2l1.8 5.5h5.7l-4.6 3.3 1.8 5.5L12 14.9 7.3 16.3l1.8-5.5L4.5 7.5h5.7L12 2z"
-        stroke="currentColor"
-        strokeWidth="1.3"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function IconChipPriceRange() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -524,14 +505,6 @@ function IconStar() {
   );
 }
 
-function IconBreadcrumbChevron() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function IconClose() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -552,7 +525,6 @@ function chipIcon(type: string) {
   switch (type) {
     case 'calendar': return <IconChipCalendar />;
     case 'grid': return <IconChipGrid />;
-    case 'experience': return <IconChipExperience />;
     case 'payment': return <IconChipPayment />;
     case 'subscription': return <IconChipSubscription />;
     case 'price-range': return <IconChipPriceRange />;
@@ -620,27 +592,26 @@ function MapEventHorizontalCard({
       <div className="near-you__event-card-body">
         <span className="near-you__event-card-date">{event.date}</span>
         <h3 className="near-you__event-card-title">{event.title}</h3>
-        {event.eventTag && (
-          <span className="near-you__event-card-tag">{event.eventTag}</span>
-        )}
         <div className="near-you__event-card-body-bottom">
           <div className="near-you__event-card-payment">
-            {label && <span className="near-you__event-card-payment-label">{label}</span>}
-            {event.points && (
-              <div className="near-you__event-card-points">
-                <IconStar />
-                <span>{event.points}</span>
-              </div>
-            )}
-            {event.hasTimer && event.msLeft != null && (
-              <LiveTimer initialMs={event.msLeft} />
-            )}
+            {[
+              event.eventTag ? (
+                <span key="tag" className="near-you__event-card-tag">{event.eventTag}</span>
+              ) : null,
+              label ? (
+                <span key="label" className="near-you__event-card-payment-label">{label}</span>
+              ) : null,
+              event.points ? (
+                <div key="points" className="near-you__event-card-points">
+                  <IconStar />
+                  <span>{event.points}</span>
+                </div>
+              ) : null,
+              event.hasTimer && event.msLeft != null ? (
+                <LiveTimer key="timer" initialMs={event.msLeft} />
+              ) : null,
+            ].filter(Boolean)}
           </div>
-          {isSignatureExclusiveMarketingTag(event.marketingTag) ? (
-            <SignatureOnlyCardFooter variant="vertical" />
-          ) : isExplorerExclusiveMarketingTag(event.marketingTag) ? (
-            <ExplorerOnlyCardFooter variant="vertical" />
-          ) : null}
         </div>
       </div>
     </article>
@@ -665,7 +636,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
   const [calYear, setCalYear] = useState(2026);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [filterCategories, setFilterCategories] = useState<Set<string>>(new Set());
-  const [filterExperiences, setFilterExperiences] = useState<Set<string>>(new Set());
   const [filterPayments, setFilterPayments] = useState<Set<string>>(new Set());
   const [filterSubscriptions, setFilterSubscriptions] = useState<Set<string>>(new Set());
   const [filterBrands, setFilterBrands] = useState<Set<string>>(new Set());
@@ -690,9 +660,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
       }
       if (filterCategories.size > 0 && !ev.categories.some((c) => filterCategories.has(c))) {
         return false;
-      }
-      if (filterExperiences.size > 0) {
-        if (!ev.eventTag || !filterExperiences.has(ev.eventTag)) return false;
       }
       if (filterPayments.size > 0) {
         const allowed = [...filterPayments].flatMap((p) => PAYMENT_TYPE_MAP[p] ?? []);
@@ -738,7 +705,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     calMonth,
     calYear,
     filterCategories,
-    filterExperiences,
     filterPayments,
     filterSubscriptions,
     selectedCity,
@@ -886,7 +852,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     const map: Record<string, FilterType> = {
       Date: 'date',
       'Experience type': 'category',
-      Experience: 'experience',
       'Ways to book': 'payment',
       Subscription: 'subscription',
       'Price range': 'price-range',
@@ -904,7 +869,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     e.stopPropagation();
     if (label === 'Date') setSelectedDate(null);
     if (label === 'Experience type') setFilterCategories(new Set());
-    if (label === 'Experience') setFilterExperiences(new Set());
     if (label === 'Ways to book') setFilterPayments(new Set());
     if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
@@ -924,10 +888,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     if (label === 'Experience type' && filterCategories.size > 0) {
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
-    }
-    if (label === 'Experience' && filterExperiences.size > 0) {
-      if (filterExperiences.size === 1) return [...filterExperiences][0];
-      return `${label} (${filterExperiences.size})`;
     }
     if (label === 'Ways to book' && filterPayments.size > 0) {
       if (filterPayments.size === 1) return [...filterPayments][0];
@@ -1010,27 +970,14 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
         onPointsClick={() => setLoyaltyOpen(true)}
       />
 
-      {/* ── Top bar: breadcrumbs + filters ─────────────────────────── */}
+      {/* ── Top bar: filters ─────────────────────────────────────────── */}
       <div className="near-you__top-bar">
-        <nav className="near-you__breadcrumbs" aria-label="Breadcrumb">
-          <button
-            type="button"
-            className="near-you__breadcrumb-link"
-            onClick={() => navigateTo(`#city/${cityName.toLowerCase()}`)}
-          >
-            {cityName}
-          </button>
-          <IconBreadcrumbChevron />
-          <span className="near-you__breadcrumb-current">Near you</span>
-        </nav>
-
         <div className="near-you__filters">
           <div className="near-you__filters-scroll">
             {FILTER_CHIPS.map((chip) => {
               const isActive =
                 (chip.label === 'Date' && selectedDate !== null) ||
                 (chip.label === 'Experience type' && filterCategories.size > 0) ||
-                (chip.label === 'Experience' && filterExperiences.size > 0) ||
                 (chip.label === 'Ways to book' && filterPayments.size > 0) ||
                 (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
@@ -1225,7 +1172,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Experience type'}
-                {activeFilter === 'experience' && 'Experience'}
                 {activeFilter === 'payment' && 'Ways to book'}
                 {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
@@ -1282,22 +1228,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
                         onChange={() => toggleSetItem(setFilterCategories, cat)}
                       />
                       <span className="filter-check-list__label">{cat}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-
-              {activeFilter === 'experience' && (
-                <div className="filter-check-list">
-                  {EXPERIENCE_OPTIONS.map((opt) => (
-                    <label key={opt} className="filter-check-list__item">
-                      <input
-                        type="checkbox"
-                        className="filter-check-list__checkbox"
-                        checked={filterExperiences.has(opt)}
-                        onChange={() => toggleSetItem(setFilterExperiences, opt)}
-                      />
-                      <span className="filter-check-list__label">{opt}</span>
                     </label>
                   ))}
                 </div>
