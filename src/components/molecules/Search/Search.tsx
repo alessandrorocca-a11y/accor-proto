@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { searchCities } from '@/data/europeanCities';
 import { EVENT_REGISTRY, getEventRoute, type EventData } from '@/data/events/eventRegistry';
 
@@ -275,44 +277,38 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
 export function Search({ open, onClose }: SearchProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
-  const [cardStyle, setCardStyle] = useState<React.CSSProperties | undefined>();
-
-  const positionCard = useCallback(() => {
-    setCardStyle(undefined);
-  }, []);
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
+  const deviceScrollContainer = useDevicePreviewScrollContainer();
 
   useEffect(() => {
     if (!open) return;
     const onEscape = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onEscape);
-    document.body.style.overflow = 'hidden';
+
+    const scrollTarget = deviceScrollContainer ?? document.body;
+    const prev = scrollTarget.style.overflow;
+    scrollTarget.style.overflow = 'hidden';
+
     return () => {
       document.removeEventListener('keydown', onEscape);
-      document.body.style.overflow = '';
+      scrollTarget.style.overflow = prev;
     };
-  }, [open, onClose]);
+  }, [open, onClose, deviceScrollContainer]);
 
   useEffect(() => {
     if (open) {
       setQuery('');
-      requestAnimationFrame(() => {
-        inputRef.current?.focus();
-        positionCard();
-      });
-      window.addEventListener('resize', positionCard);
-      return () => window.removeEventListener('resize', positionCard);
-    } else {
-      setCardStyle(undefined);
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
-  }, [open, positionCard]);
+  }, [open]);
 
   if (!open) return null;
 
   const q = query.trim();
 
-  return createPortal(
+  const searchTree = (
     <div className="search-overlay" role="dialog" aria-modal aria-label="Search" onClick={onClose}>
-      <div className="search-overlay__content" style={cardStyle} onClick={(e) => e.stopPropagation()}>
+      <div className="search-overlay__content" onClick={(e) => e.stopPropagation()}>
         <div className={`search-overlay__input-wrap${q ? ' search-overlay__input-wrap--focused' : ''}`}>
           <button
             type="button"
@@ -337,7 +333,10 @@ export function Search({ open, onClose }: SearchProps) {
 
         <SearchResultsPanel query={query} onQueryChange={setQuery} />
       </div>
-    </div>,
-    document.body,
+    </div>
   );
+
+  return overlayPortalTarget
+    ? createPortal(searchTree, overlayPortalTarget)
+    : createPortal(searchTree, document.body);
 }

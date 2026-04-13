@@ -576,7 +576,9 @@ html.device-preview-frame-active .marketplace-header__center-wrap {
 }
 
 html.device-preview-frame-active .marketplace-header__icon-group {
-  display: none !important;
+  display: flex !important;
+  order: unset !important;
+  margin-left: 0 !important;
 }
 
 html.device-preview-frame-active .marketplace-header {

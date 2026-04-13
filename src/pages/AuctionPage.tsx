@@ -151,6 +151,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [confirmBidOpen, setConfirmBidOpen] = useState(false);
   const [showBidError, setShowBidError] = useState(false);
+  const [showBidTooLow, setShowBidTooLow] = useState(false);
   const [currentBid, setCurrentBid] = useState(CURRENT_BID_INIT);
   const [bidCount, setBidCount] = useState(12);
   const [isHighestBidder, setIsHighestBidder] = useState(false);
@@ -249,6 +250,9 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const handlePlaceBidInner = (fromStickyBar = false) => {
     if (!bidNumeric || bidNumeric <= currentBid) {
       if (fromStickyBar) scrollToBidInput();
+      if (bidErrorTimerRef.current) clearTimeout(bidErrorTimerRef.current);
+      setShowBidTooLow(true);
+      bidErrorTimerRef.current = setTimeout(() => setShowBidTooLow(false), 6000);
       return;
     }
 
@@ -259,6 +263,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
       return;
     }
 
+    setShowBidTooLow(false);
     setConfirmBidOpen(true);
   };
 
@@ -379,9 +384,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         </a>
       </nav>
 
-      {/* Hero gallery */}
-      <section className="auction-page__hero-full">
-        {/* Notification snack bar — overlays hero, 16px below navbar */}
+      {/* Snackbar anchor — sticky so notifications stay visible while scrolling */}
+      <div className="auction-page__snack-anchor">
         {showNotifySnack && (
           <div className="auction-page__notify-snack" role="status">
             <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -451,6 +455,32 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
           </div>
         )}
 
+        {showBidTooLow && (
+          <div className="auction-page__notify-snack auction-page__notify-snack--error" role="alert">
+            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
+              <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div className="auction-page__notify-snack-content">
+              <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Bid too low</p>
+              <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">Your bid must be higher than the current bid of {formatChipPoints(currentBid)} points.</p>
+            </div>
+            <button
+              type="button"
+              className="auction-page__notify-snack-close"
+              onClick={() => setShowBidTooLow(false)}
+              aria-label="Close notification"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Hero gallery */}
+      <section className="auction-page__hero-full">
         <div className="auction-page__hero-image">
           {eventData?.marketingTag && (
             <MarketingTag type={eventData.marketingTag} className="auction-page__hero-tag" />
@@ -600,16 +630,20 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
                   <span>Max bid increment: <strong>2000 points</strong></span>
                 </div>
                 <div className="auction-page__chips">
-                  {BID_CHIPS.map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      className="auction-page__chip"
-                      onClick={() => handleChipClick(value)}
-                    >
-                      {formatChipPoints(value)}
-                    </button>
-                  ))}
+                  {BID_CHIPS.map((value) => {
+                    const tooLow = value <= currentBid;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        className={`auction-page__chip${tooLow ? ' auction-page__chip--disabled' : ''}`}
+                        onClick={() => !tooLow && handleChipClick(value)}
+                        disabled={tooLow}
+                      >
+                        {formatChipPoints(value)}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div ref={placeBidRef}>
                   <Button
@@ -754,16 +788,20 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
                     <span>Max bid increment: <strong>2000 points</strong></span>
                   </div>
                   <div className="auction-page__chips">
-                    {BID_CHIPS.map((value) => (
-                      <button
-                        key={value}
-                        type="button"
-                        className="auction-page__chip"
-                        onClick={() => handleChipClick(value)}
-                      >
-                        {formatChipPoints(value)}
-                      </button>
-                    ))}
+                    {BID_CHIPS.map((value) => {
+                      const tooLow = value <= currentBid;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          className={`auction-page__chip${tooLow ? ' auction-page__chip--disabled' : ''}`}
+                          onClick={() => !tooLow && handleChipClick(value)}
+                          disabled={tooLow}
+                        >
+                          {formatChipPoints(value)}
+                        </button>
+                      );
+                    })}
                   </div>
                   <Button
                     variant="primary"

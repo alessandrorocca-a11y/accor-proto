@@ -447,3 +447,52 @@
     padding: 16px 0 0;
   }
 }
+
+/* Force mobile layout inside device preview frame */
+html.device-preview-frame-active .search-overlay {
+  position: absolute;
+  background: var(--wel-sem-color-surface, #fff);
+  animation: search-slide-in 0.25s ease-out;
+  overflow-y: auto;
+}
+
+html.device-preview-frame-active .search-overlay__content {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 24px 16px 16px;
+  animation: none;
+  overflow-y: visible;
+  max-height: none;
+}
+
+html.device-preview-frame-active .search-overlay__back {
+  display: inline-flex;
+}
+
+html.device-preview-frame-active .search-overlay__search-icon {
+  display: none;
+}
+
+html.device-preview-frame-active .search-overlay__input-wrap {
+  border: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  padding: 12px 16px;
+}
+
+html.device-preview-frame-active .search-overlay__input-wrap--focused {
+  border: 2px solid var(--wel-sem-color-focus, #2a71db);
+  padding: 11px 15px;
+}
+
+html.device-preview-frame-active .search-no-results__categories {
+  background: var(--wel-sem-color-surface-container-mid, #f7f9fb);
+  border-top: 1px solid var(--wel-sem-color-outline-hi, #898c8e);
+  margin: 0 -16px -16px;
+  padding: 16px;
+}

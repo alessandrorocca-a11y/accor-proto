@@ -242,13 +242,24 @@
   color: var(--wel-sem-color-primary);
 }
 
+/* ── Sticky anchor for notification snack bars ──────────────────────── */
+.auction-page__snack-anchor {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
 /* ── Notification snack bar (Figma: success container) ───────────────── */
 .auction-page__notify-snack {
-  position: fixed;
+  position: absolute;
   top: 80px;
   left: 14px;
   right: 14px;
   z-index: 1000;
+  pointer-events: auto;
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -565,9 +576,17 @@
   justify-content: center;
 }
 
-.auction-page__chip:hover {
+.auction-page__chip:hover:not(:disabled) {
   background: var(--wel-sem-color-surface-container-mid);
   border-color: var(--wel-sem-color-primary);
+}
+
+.auction-page__chip--disabled,
+.auction-page__chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--wel-sem-color-outline-hi);
+  background: var(--wel-sem-color-surface);
 }
 
 /* Place bid button: gradient, border, radius 100px */
