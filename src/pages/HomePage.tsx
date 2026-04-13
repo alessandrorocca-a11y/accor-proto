@@ -1142,10 +1142,10 @@ export default function HomePage() {
         />
 
         <div className="home-page__hero-content">
-          <h1 className="home-page__hero-title">Experience more...</h1>
-          <p className="home-page__hero-subtitle">
-            And get rewarded with ALL Accor
-          </p>
+          <div className="home-page__hero-lead">
+            <h1 className="home-page__hero-title">Experience more…</h1>
+            <p className="home-page__hero-subtitle">And get rewarded with ALL Accor.</p>
+          </div>
           <div className="home-page__hero-search-wrap" ref={heroSearchWrapRef}>
             <div
               className={`home-page__hero-search${heroSearchActive ? ' home-page__hero-search--active' : ''}`}

@@ -66,6 +66,13 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   width: 100%;
 }
 
+.home-page__hero-lead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .home-page__hero-title {
   font: var(--wel-typography-display-04);
   color: #fff;
@@ -659,7 +666,7 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
 /* ── Suggested for you (loyalty accent bar matches header tier) ─────────── */
 .home-page__suggested {
   background: #f9f9ff;
-  padding: 20px 0 16px 24px;
+  padding: 20px 0 16px 18px;
   position: relative;
 }
 
@@ -668,7 +675,7 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   position: absolute;
   left: 0;
   top: 0;
-  width: 24px;
+  width: 18px;
   height: 100%;
   border-top-right-radius: var(--wel-sem-borderradius-container-high, 6px);
   border-bottom-right-radius: var(--wel-sem-borderradius-container-high, 6px);
@@ -1774,12 +1781,12 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   /* ── Suggested for you (desktop) ─────────────────────────────────── */
   .home-page__suggested {
     background: #f9f9ff;
-    padding: 32px 0 16px 24px;
+    padding: 32px 0 16px 18px;
     position: relative;
   }
 
   .home-page__suggested::before {
-    width: 24px;
+    width: 18px;
   }
 
   .home-page__suggested .home-page__scroll {
