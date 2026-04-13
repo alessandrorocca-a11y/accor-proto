@@ -1173,7 +1173,7 @@ button.city-page__numbered-card {
 
 @media (min-width: 601px) {
   .city-selector__backdrop {
-    align-items: center;
+    align-items: flex-end;
   }
 
   .city-selector {

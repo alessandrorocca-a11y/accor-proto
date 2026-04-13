@@ -1505,7 +1505,7 @@
   }
 
   .loyalty-sheet__backdrop {
-    align-items: center;
+    align-items: flex-end;
     background: rgba(6, 35, 44, 0.88);
   }
 
@@ -1522,7 +1522,7 @@
   }
 
   .confirm-bid__backdrop {
-    align-items: center;
+    align-items: flex-end;
     background: rgba(6, 35, 44, 0.88);
   }
 

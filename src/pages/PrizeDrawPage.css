@@ -1256,7 +1256,7 @@ html.device-preview-frame-active .recap-page .marketplace-header {
 
 @media (min-width: 1024px) {
   .recap-page__rewards-overlay {
-    align-items: center;
+    align-items: flex-end;
     background: rgba(6, 35, 44, 0.88);
   }
 

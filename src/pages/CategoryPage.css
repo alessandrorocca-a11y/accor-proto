@@ -710,7 +710,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
 
 @media (min-width: 600px) {
   .filter-sheet__backdrop {
-    align-items: center;
+    align-items: flex-end;
     padding: 24px 16px;
     box-sizing: border-box;
   }
@@ -725,7 +725,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
   }
 
   .category-page .loyalty-sheet__backdrop {
-    align-items: center;
+    align-items: flex-end;
     padding: 24px 16px;
     box-sizing: border-box;
   }
@@ -1494,7 +1494,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
    ══════════════════════════════════════════════════════════════════════ */
 
 html.device-preview-frame-active .filter-sheet__backdrop {
-  align-items: center !important;
+  align-items: flex-end !important;
   justify-content: center !important;
   padding: 12px 16px !important;
   box-sizing: border-box !important;

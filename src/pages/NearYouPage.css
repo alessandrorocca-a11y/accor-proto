@@ -675,7 +675,7 @@
 
 @media (min-width: 601px) {
   .near-you__loyalty-backdrop {
-    align-items: center;
+    align-items: flex-end;
   }
 
   .near-you__loyalty-sheet {

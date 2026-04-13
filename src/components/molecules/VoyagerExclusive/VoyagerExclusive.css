@@ -44,7 +44,7 @@
 
 @media (min-width: 600px) {
   .voyager-dialog__backdrop {
-    align-items: center;
+    align-items: flex-end;
   }
 
   .voyager-dialog {
