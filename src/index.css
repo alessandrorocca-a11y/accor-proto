@@ -24,7 +24,11 @@ body {
 
 /* Matches BottomTabBar height; sticky footers use this so they sit above the bar */
 :root {
-  --bottom-browser-bar-height: calc(44px + env(safe-area-inset-bottom, 0px));
+  /* Space below the 44px tool row (in addition to safe-area inset) */
+  --bottom-browser-bar-extra-padding: 14px;
+  --bottom-browser-bar-height: calc(
+    44px + var(--bottom-browser-bar-extra-padding) + env(safe-area-inset-bottom, 0px)
+  );
 }
 
 @media (min-width: 1024px) {
