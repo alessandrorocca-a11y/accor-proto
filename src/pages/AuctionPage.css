@@ -637,13 +637,16 @@
   color: var(--wel-sem-color-outline-hi);
 }
 
-/* ── Google Map embed ─────────────────────────────────────────────────── */
+/* ── Location map (static image or embed) ─────────────────────────────── */
 .auction-page__map {
   width: 100%;
   height: 240px;
   border: none;
   border-radius: 6px;
   margin-top: 8px;
+  display: block;
+  object-fit: cover;
+  background: var(--wel-sem-color-surface-container-mid, #e8edee);
 }
 
 .auction-page a {

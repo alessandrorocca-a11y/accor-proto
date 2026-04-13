@@ -10,6 +10,7 @@ import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { useUser } from '@/context/UserContext';
 import { getEventById } from '@/data/events/eventRegistry';
+import { RIO_SAMBADROME_MAP_IMAGE } from '@/data/events/venueData';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './LinkoutPage.css';
 const EXTERNAL_URL = 'https://www.allaccorhotels.com';
@@ -395,13 +396,12 @@ export default function LinkoutPage({ eventId }: LinkoutPageProps) {
                 R. Marquês de Sapucaí - Santo Cristo, Rio de Janeiro - RJ, 20220-007, Brazil
               </p>
             </div>
-            <iframe
+            <img
               className="auction-page__map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.3!2d-43.1967!3d-22.9119!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997f58a6800a67%3A0x39930defe3a0e8c5!2sSamb%C3%B3dromo%20da%20Marqu%C3%AAs%20de%20Sapuca%C3%AD!5e0!3m2!1spt-BR!2sbr!4v1700000000000"
-              title="Marquês de Sapucaí Sambadrome location"
+              src={RIO_SAMBADROME_MAP_IMAGE}
+              alt="Aerial view of Rio de Janeiro — approximate area of Marquês de Sapucaí Sambadrome"
               loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
+              decoding="async"
             />
           </section>
 

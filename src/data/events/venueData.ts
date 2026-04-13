@@ -380,3 +380,7 @@ export function getVenueInfo(location: string, city: string): VenueInfo {
 export function getMapEmbedUrl(venue: VenueInfo): string {
   return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${venue.mapQuery}`;
 }
+
+/** Aerial Rio — static location visual where map iframes fail to load (CSP, sandbox, bad embed URLs). */
+export const RIO_SAMBADROME_MAP_IMAGE =
+  'https://images.unsplash.com/photo-1464983953574-0892a716854b?w=800&h=480&fit=crop';
