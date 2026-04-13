@@ -1493,6 +1493,14 @@ html.device-preview-frame-active .category-page__breadcrumb {
    Center a bounded card; only the list body scrolls.
    ══════════════════════════════════════════════════════════════════════ */
 
+html.device-preview-frame-active .category-page__content {
+  padding-top: calc(var(--device-preview-status-bar-height, 54px) + 56px) !important;
+}
+
+html.device-preview-frame-active .category-page__list {
+  padding: 16px 8px !important;
+}
+
 html.device-preview-frame-active .filter-sheet__backdrop {
   align-items: flex-end !important;
   justify-content: center !important;
