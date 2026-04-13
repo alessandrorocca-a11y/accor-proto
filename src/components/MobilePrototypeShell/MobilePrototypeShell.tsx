@@ -99,7 +99,6 @@ function IosSystemBar({ collapsed }: { collapsed: boolean }) {
           {icon('M4 6h16M4 12h16M4 18h7')}
         </button>
       </div>
-      <div className="mobile-prototype-shell__ios-home-indicator" aria-hidden />
     </div>
   );
 }
