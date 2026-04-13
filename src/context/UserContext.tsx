@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { EventData } from '@/data/events/eventRegistry';
 import { formatPoints, getPaymentLabel } from '@/data/events/eventRegistry';
 
@@ -59,6 +59,8 @@ export const TEST_PROFILES: Record<
 };
 
 const STORAGE_KEY = 'accor-test-profile';
+const WALLET_KEY_PREFIX = 'accor-proto-wallet-';
+const WALLET_VERSION = 1;
 
 function getStoredTestProfile(): TestProfileId {
   try {
@@ -68,6 +70,64 @@ function getStoredTestProfile(): TestProfileId {
     /* ignore */
   }
   return 'gold';
+}
+
+function walletStorageKey(profileId: TestProfileId): string {
+  return `${WALLET_KEY_PREFIX}${profileId}`;
+}
+
+interface PersistedWallet {
+  v: number;
+  points: number;
+  orders: OrderItem[];
+  auctionOngoing: UserAuctionOngoing[];
+  auctionWon: UserAuctionWon[];
+}
+
+function loadPersistedWallet(profileId: TestProfileId): PersistedWallet | null {
+  try {
+    const raw = localStorage.getItem(walletStorageKey(profileId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return null;
+    const w = parsed as Partial<PersistedWallet>;
+    if (w.v !== WALLET_VERSION) return null;
+    if (typeof w.points !== 'number' || w.points < 0 || !Number.isFinite(w.points)) return null;
+    if (!Array.isArray(w.orders) || !Array.isArray(w.auctionOngoing) || !Array.isArray(w.auctionWon)) return null;
+    return {
+      v: WALLET_VERSION,
+      points: w.points,
+      orders: w.orders as OrderItem[],
+      auctionOngoing: w.auctionOngoing as UserAuctionOngoing[],
+      auctionWon: w.auctionWon as UserAuctionWon[],
+    };
+  } catch {
+    return null;
+  }
+}
+
+function readInitialWalletSlice(profileId: TestProfileId): {
+  points: number;
+  orders: OrderItem[];
+  auctionOngoing: UserAuctionOngoing[];
+  auctionWon: UserAuctionWon[];
+} {
+  const profile = TEST_PROFILES[profileId];
+  const stored = loadPersistedWallet(profileId);
+  if (!stored) {
+    return {
+      points: profile.points,
+      orders: [],
+      auctionOngoing: [],
+      auctionWon: [],
+    };
+  }
+  return {
+    points: stored.points,
+    orders: stored.orders,
+    auctionOngoing: stored.auctionOngoing,
+    auctionWon: stored.auctionWon,
+  };
 }
 
 interface UserContextValue {
@@ -91,10 +151,11 @@ const UserContext = createContext<UserContextValue | null>(null);
 export function UserProvider({ children }: { children: ReactNode }) {
   const [testProfileId, setTestProfileIdState] = useState<TestProfileId>(getStoredTestProfile);
   const profile = TEST_PROFILES[testProfileId];
-  const [points, setPoints] = useState(profile.points);
-  const [orders, setOrders] = useState<OrderItem[]>([]);
-  const [auctionOngoing, setAuctionOngoing] = useState<UserAuctionOngoing[]>([]);
-  const [auctionWon, setAuctionWon] = useState<UserAuctionWon[]>([]);
+  const initialWallet = useMemo(() => readInitialWalletSlice(testProfileId), [testProfileId]);
+  const [points, setPoints] = useState(initialWallet.points);
+  const [orders, setOrders] = useState<OrderItem[]>(initialWallet.orders);
+  const [auctionOngoing, setAuctionOngoing] = useState<UserAuctionOngoing[]>(initialWallet.auctionOngoing);
+  const [auctionWon, setAuctionWon] = useState<UserAuctionWon[]>(initialWallet.auctionWon);
 
   const setTestProfile = useCallback(
     (id: TestProfileId) => {
@@ -111,8 +172,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    setPoints(TEST_PROFILES[testProfileId].points);
-  }, [testProfileId]);
+    try {
+      const payload: PersistedWallet = {
+        v: WALLET_VERSION,
+        points,
+        orders,
+        auctionOngoing,
+        auctionWon,
+      };
+      localStorage.setItem(walletStorageKey(testProfileId), JSON.stringify(payload));
+    } catch {
+      /* ignore */
+    }
+  }, [testProfileId, points, orders, auctionOngoing, auctionWon]);
 
   const deductPoints = useCallback((amount: number) => {
     let success = false;

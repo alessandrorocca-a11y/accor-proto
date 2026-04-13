@@ -3,7 +3,13 @@ import { createPortal } from 'react-dom';
 import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { searchCities } from '@/data/europeanCities';
-import { EVENT_REGISTRY, getEventRoute, type EventData } from '@/data/events/eventRegistry';
+import {
+  ACCOR_PLUS_EXCLUSIVES_CATEGORY,
+  ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
+  EVENT_REGISTRY,
+  getEventRoute,
+  type EventData,
+} from '@/data/events/eventRegistry';
 
 export interface SearchProps {
   open: boolean;
@@ -105,6 +111,28 @@ const BROWSE_CATEGORIES: BrowseCategory[] = [
   },
 ];
 
+/** Hash routes for `CategoryPage` — see `CATEGORY_ROUTES` in App.tsx */
+const CATEGORY_NAME_TO_HASH: Record<string, string> = {
+  'Food and drink': '#category/food-and-drink',
+  'Arts and culture': '#category/arts-and-culture',
+  Wellness: '#category/wellness',
+  'Sports and activities': '#category/sports-and-activities',
+  'Concerts and festivals': '#category/concerts-and-festivals',
+  'Hotel experiences': '#category/hotel-experiences',
+  Visits: '#category/visits',
+  Tech: '#category/tech',
+  [ACCOR_PLUS_EXCLUSIVES_CATEGORY]: '#category/all-accor-plus-exclusives',
+  [ALL_SIGNATURE_EXCLUSIVES_CATEGORY]: '#category/all-signature-exclusives',
+};
+
+function categoryNameToHash(name: string): string | null {
+  return CATEGORY_NAME_TO_HASH[name] ?? null;
+}
+
+function cityNameToHashPath(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '-');
+}
+
 function match(text: string, query: string): boolean {
   return text.toLowerCase().includes(query.toLowerCase());
 }
@@ -123,9 +151,11 @@ function searchEvents(query: string): EventData[] {
 export interface SearchResultsPanelProps {
   query: string;
   onQueryChange: (q: string) => void;
+  /** Called after navigating (hash change); e.g. close full-screen search or desktop dropdown */
+  onNavigate?: () => void;
 }
 
-export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelProps) {
+export function SearchResultsPanel({ query, onQueryChange, onNavigate }: SearchResultsPanelProps) {
   const q = query.trim();
   const hasQuery = q.length > 0;
 
@@ -143,6 +173,26 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
 
   const topCity = matchedCities[0];
   const hasResults = matchedCities.length > 0 || matchedCategories.length > 0 || matchedEvents.length > 0;
+
+  const navigateSeeAll = () => {
+    const cat = matchedCategories[0];
+    const city = matchedCities[0];
+    if (cat) {
+      const h = categoryNameToHash(cat.name);
+      window.location.hash = h ?? '#categories';
+    } else if (city) {
+      window.location.hash = `#city/${cityNameToHashPath(city.name)}`;
+    } else {
+      window.location.hash = '#categories';
+    }
+    onNavigate?.();
+  };
+
+  const navigateToCategory = (name: string) => {
+    const h = categoryNameToHash(name);
+    window.location.hash = h ?? '#categories';
+    onNavigate?.();
+  };
 
   return (
     <>
@@ -167,7 +217,7 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
       {hasQuery && hasResults && (
         <div className="search-overlay__results">
           <div className="search-results__rows">
-            <button type="button" className="search-results__row">
+            <button type="button" className="search-results__row" onClick={navigateSeeAll}>
               <span className="search-results__row-icon search-results__row-icon--search">
                 <IconSearch />
               </span>
@@ -183,7 +233,10 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
                 key={city.name}
                 type="button"
                 className="search-results__row"
-                onClick={() => { window.location.hash = `#city/${city.name.toLowerCase()}`; }}
+                onClick={() => {
+                  window.location.hash = `#city/${cityNameToHashPath(city.name)}`;
+                  onNavigate?.();
+                }}
               >
                 <span className="search-results__row-icon search-results__row-icon--city">
                   <IconPin />
@@ -197,7 +250,12 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
             ))}
 
             {matchedCategories.map((cat) => (
-              <button key={cat.name} type="button" className="search-results__row">
+              <button
+                key={cat.name}
+                type="button"
+                className="search-results__row"
+                onClick={() => navigateToCategory(cat.name)}
+              >
                 <span className="search-results__row-icon search-results__row-icon--category">
                   <IconGrid />
                 </span>
@@ -217,7 +275,12 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
               </h3>
               <div className="search-results__events-list">
                 {matchedEvents.map((event) => (
-                  <a key={event.id} href={getEventRoute(event)} className="search-results__event-card">
+                  <a
+                    key={event.id}
+                    href={getEventRoute(event)}
+                    className="search-results__event-card"
+                    onClick={() => onNavigate?.()}
+                  >
                     <img
                       src={event.image}
                       alt=""
@@ -257,7 +320,7 @@ export function SearchResultsPanel({ query, onQueryChange }: SearchResultsPanelP
                 key={cat.name}
                 type="button"
                 className="search-no-results__category-card"
-                onClick={() => onQueryChange(cat.name)}
+                onClick={() => navigateToCategory(cat.name)}
               >
                 <img
                   src={cat.image}
@@ -331,7 +394,7 @@ export function Search({ open, onClose }: SearchProps) {
           />
         </div>
 
-        <SearchResultsPanel query={query} onQueryChange={setQuery} />
+        <SearchResultsPanel query={query} onQueryChange={setQuery} onNavigate={onClose} />
       </div>
     </div>
   );

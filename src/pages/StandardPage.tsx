@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Button,
   IconHeart,
@@ -16,6 +17,7 @@ import './StandardPage.css';
 import { getEventById, getStandardEventFromPriceEur, STANDARD_POINTS_PER_EUR } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useUser } from '@/context/UserContext';
 const DEFAULT_HERO_IMAGES = [
   { src: '/carnival-hero.png', alt: 'Rio de Janeiro Carnival 2026' },
@@ -244,6 +246,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, deductPoints, addOrder } = useUser();
   const deviceScrollContainer = useDevicePreviewScrollContainer();
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const USER_POINTS = userPoints;
@@ -715,6 +718,924 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
     </section>
   );
 
+  const recapPortalMod = overlayPortalTarget ? ' recap-page--prototype-device' : '';
+
+  const standardPayRecapOverlay =
+    showRecap &&
+    (overlayPortalTarget
+      ? createPortal(
+          <div className={`recap-page${recapPortalMod}`}>
+            <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
+            {showVoucherSnack && (
+              <div className="auction-page__notify-snack" role="status">
+                <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <div className="auction-page__notify-snack-content">
+                  <p className="auction-page__notify-snack-title">Voucher discount applied correctly</p>
+                  <p className="auction-page__notify-snack-body">Your voucher has been applied to this order.</p>
+                </div>
+                <button type="button" className="auction-page__notify-snack-close" onClick={() => setShowVoucherSnack(false)} aria-label="Close notification">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+              </div>
+            )}
+            <div className="recap-page__content">
+              <button type="button" className="recap-page__back" onClick={() => { setShowRecap(false); window.scrollTo(0, 0); }} aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> Back
+              </button>
+              <h1 className="recap-page__title">Confirm and pay</h1>
+              <div className="recap-page__event-card">
+                <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
+                <div className="recap-page__event-info">
+                  <p className="recap-page__event-name">{EVENT_TITLE} – {totalTickets} ticket{totalTickets > 1 ? 's' : ''}</p>
+                  <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__details">
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                    <span className="recap-page__detail-label">Date</span>
+                  </div>
+                  <p className="recap-page__detail-value">{selectedDateLabel} · {selectedTimeLabel}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg>
+                    <span className="recap-page__detail-label">Location</span>
+                  </div>
+                  <p className="recap-page__detail-value">{venueInfo.address}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                    <span className="recap-page__detail-label">Tickets and Add-ons</span>
+                  </div>
+                  {recapItems.map((item, i) => (
+                    <div key={i} className="recap-page__detail-row">
+                      <span className="recap-page__detail-row-label">{item.qty}x {item.label}</span>
+                      <span className="recap-page__detail-row-value">{formatEur(item.qty * item.unitPrice)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__pricing">
+                <div className="recap-page__pricing-row"><span>Subtotal</span><span>{formatEur(totalPriceEur)}</span></div>
+                <div className="recap-page__pricing-row"><span>Fees</span><span>Included</span></div>
+                {voucherApplied && (
+                  <div className="recap-page__pricing-row"><span>Voucher or gift card</span><span>-{formatEur(VOUCHER_DISCOUNT)}</span></div>
+                )}
+                {rewardsPointsUsed > 0 && (
+                  <div className="recap-page__pricing-row"><span>ALL Reward Points <span className="recap-page__pricing-muted">({rewardsPointsUsed.toLocaleString('de-DE')})</span></span><span>-{formatEur(rewardsPointsUsed / POINTS_PER_EUR)}</span></div>
+                )}
+                <div className="recap-page__pricing-total"><span>Total</span><span>{formatEur(Math.max(0, totalPriceEur - (voucherApplied ? VOUCHER_DISCOUNT : 0) - rewardsPointsUsed / POINTS_PER_EUR))}</span></div>
+              </div>
+
+              <div className="recap-page__payment">
+                <div className="recap-page__payment-divider">
+                  <span className="recap-page__payment-line" />
+                  <span className="recap-page__payment-label">PAYMENT METHOD</span>
+                  <span className="recap-page__payment-line" />
+                </div>
+
+                {rewardsPointsUsed > 0 ? (
+                  <div className="recap-page__rewards-applied">
+                    <div className="recap-page__rewards-applied-header">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
+                      </svg>
+                      <span className="recap-page__rewards-applied-title">ALL Rewards Points</span>
+                    </div>
+                    <div className="recap-page__rewards-chip" onClick={() => { setRewardsStepperValue(Math.min(rewardsPointsUsed, rewardsSliderMax)); setShowRewardsSheet(true); }}>
+                      <span className="recap-page__rewards-chip-label">{rewardsPointsUsed.toLocaleString('de-DE')} Points</span>
+                      <button
+                        type="button"
+                        className="recap-page__rewards-chip-remove"
+                        onClick={(e) => { e.stopPropagation(); setRewardsPointsUsed(0); }}
+                        aria-label="Remove points"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" className="recap-page__rewards-link" onClick={() => { setRewardsStepperValue(defaultRewardsSplitPoints); setShowRewardsSheet(true); }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
+                    </svg>
+                    <span>ALL Rewards Points</span>
+                  </button>
+                )}
+
+                {!showVoucher ? (
+                  <button type="button" className="recap-page__voucher-link" onClick={() => setShowVoucher(true)}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                      <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                      <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                    <span>Voucher or gift card</span>
+                  </button>
+                ) : voucherApplied ? (
+                  <div className="recap-page__voucher-section">
+                    <div className="recap-page__voucher-header">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                        <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                      <p className="recap-page__voucher-title">Voucher or gift card</p>
+                    </div>
+                    <div className="recap-page__voucher-chip">
+                      <span className="recap-page__voucher-chip-label">{voucherCode}</span>
+                      <button
+                        type="button"
+                        className="recap-page__voucher-chip-remove"
+                        onClick={() => { setVoucherApplied(false); setVoucherCode(''); }}
+                        aria-label="Remove voucher"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="recap-page__voucher-section">
+                    <p className="recap-page__voucher-title">Voucher or gift card</p>
+                    <div className="recap-page__voucher-form">
+                      <input
+                        type="text"
+                        className="recap-page__voucher-input"
+                        placeholder=" Voucher number"
+                        value={voucherCode}
+                        onChange={(e) => setVoucherCode(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="recap-page__voucher-apply"
+                        disabled={voucherCode.trim().length === 0}
+                        onClick={() => {
+                          if (voucherCode.trim().length > 0) {
+                            setVoucherApplied(true);
+                            setShowVoucherSnack(true);
+                            if (voucherTimerRef.current) clearTimeout(voucherTimerRef.current);
+                            voucherTimerRef.current = setTimeout(() => setShowVoucherSnack(false), 5000);
+                          }
+                        }}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="recap-page__payment-options">
+                  <div className={`recap-page__payment-option-wrap${paymentMethod === 'card' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
+                    <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('card')}>
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value="card"
+                        checked={paymentMethod === 'card'}
+                        onChange={() => setPaymentMethod('card')}
+                        className="recap-page__payment-radio"
+                      />
+                      <span className="recap-page__payment-radio-circle" />
+                      <span className="recap-page__payment-option-label">Credit or Debit card</span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
+                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                        <path d="M2 10h20" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    </label>
+                    {paymentMethod === 'card' && (
+                      <div className="recap-page__card-form">
+                        <input
+                          type="text"
+                          className="recap-page__card-input"
+                          placeholder="Card number"
+                          inputMode="numeric"
+                          autoComplete="cc-number"
+                        />
+                        <div className="recap-page__card-row">
+                          <input
+                            type="text"
+                            className="recap-page__card-input"
+                            placeholder="Expiration date ( MM/YY)"
+                            inputMode="numeric"
+                            autoComplete="cc-exp"
+                          />
+                          <input
+                            type="text"
+                            className="recap-page__card-input"
+                            placeholder="Security code"
+                            inputMode="numeric"
+                            autoComplete="cc-csc"
+                          />
+                        </div>
+                        <div className="recap-page__card-secure">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                          <span>Your payment info is stored securely</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className={`recap-page__payment-option-wrap${paymentMethod === 'apple-pay' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
+                    <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('apple-pay')}>
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value="apple-pay"
+                        checked={paymentMethod === 'apple-pay'}
+                        onChange={() => setPaymentMethod('apple-pay')}
+                        className="recap-page__payment-radio"
+                      />
+                      <span className="recap-page__payment-radio-circle" />
+                      <span className="recap-page__payment-option-label">Apple Pay</span>
+                      <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
+                        <path d="M21.7277 4.375C24.4989 4.375 26.4286 6.21123 26.4286 8.88464C26.4286 11.5676 24.4592 13.4134 21.6582 13.4134H18.5899V18.1038H16.373V4.375L21.7277 4.375ZM18.5899 11.6247H21.1336C23.0637 11.6247 24.1622 10.6258 24.1622 8.89418C24.1622 7.16274 23.0637 6.17324 21.1435 6.17324H18.5899V11.6247Z" fill="black"/>
+                        <path d="M27.0078 15.259C27.0078 13.5083 28.4034 12.4332 30.8779 12.3L33.7282 12.1383V11.3678C33.7282 10.2546 32.9462 9.58862 31.64 9.58862C30.4026 9.58862 29.6305 10.1593 29.4427 11.0538H27.4236C27.5424 9.246 29.1456 7.91406 31.7191 7.91406C34.2429 7.91406 35.8561 9.19847 35.8561 11.2059V18.1036H33.8073V16.4577H33.758C33.1543 17.5709 31.8378 18.2748 30.4721 18.2748C28.4331 18.2748 27.0078 17.057 27.0078 15.259ZM33.7282 14.3552V13.5655L31.1647 13.7176C29.8879 13.8033 29.1655 14.3456 29.1655 15.2019C29.1655 16.0771 29.9177 16.648 31.0658 16.648C32.5602 16.648 33.7282 15.6585 33.7282 14.3552Z" fill="black"/>
+                        <path d="M37.7911 21.7845V20.1195C37.9492 20.1575 38.3054 20.1575 38.4837 20.1575C39.4734 20.1575 40.0079 19.758 40.3344 18.7305C40.3344 18.7114 40.5226 18.1216 40.5226 18.1121L36.7617 8.09375H39.0775L41.7105 16.2378H41.7498L44.3828 8.09375H46.6394L42.7395 18.6257C41.8491 21.0519 40.8197 21.832 38.662 21.832C38.4837 21.832 37.9492 21.813 37.7911 21.7845Z" fill="black"/>
+                        <path d="M9.83386 5.71444C10.3682 5.07206 10.7307 4.20953 10.6351 3.32812C9.85297 3.36551 8.89854 3.82412 8.34598 4.46701C7.84983 5.01754 7.4107 5.91619 7.52518 6.76064C8.40315 6.83385 9.28031 6.3388 9.83386 5.71444Z" fill="black"/>
+                        <path d="M10.6259 6.92676C9.35087 6.85376 8.26679 7.62236 7.6579 7.62236C7.04868 7.62236 6.11627 6.96355 5.10779 6.98131C3.7952 6.99984 2.57726 7.71324 1.91118 8.84787C0.54115 11.1177 1.54963 14.4846 2.8819 16.3333C3.52889 17.2479 4.30861 18.2549 5.33602 18.2187C6.30675 18.1821 6.68724 17.6145 7.8672 17.6145C9.04629 17.6145 9.38903 18.2187 10.4166 18.2004C11.4822 18.1821 12.1484 17.2854 12.7954 16.3699C13.5376 15.3273 13.8414 14.3206 13.8606 14.2654C13.8414 14.2471 11.8057 13.4964 11.7869 11.2454C11.7676 9.36066 13.3851 8.46416 13.4612 8.40856C12.5478 7.10998 11.1207 6.96355 10.6259 6.92676Z" fill="black"/>
+                      </svg>
+                    </label>
+                  </div>
+                  <div className={`recap-page__payment-option-wrap${paymentMethod === 'google-pay' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
+                    <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('google-pay')}>
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value="google-pay"
+                        checked={paymentMethod === 'google-pay'}
+                        onChange={() => setPaymentMethod('google-pay')}
+                        className="recap-page__payment-radio"
+                      />
+                      <span className="recap-page__payment-radio-circle" />
+                      <span className="recap-page__payment-option-label">Google Pay</span>
+                      <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
+                        <path d="M22.3 11.7v3.4h-1.1V6.6h2.9c.7 0 1.4.3 1.9.7.5.5.8 1.1.8 1.8s-.3 1.3-.8 1.8c-.5.5-1.1.7-1.9.7h-1.8Zm0-4v3h1.8c.5 0 .9-.2 1.2-.5.3-.3.5-.7.5-1.1 0-.4-.2-.8-.5-1.1-.3-.3-.7-.4-1.2-.4h-1.8Z" fill="#3C4043"/>
+                        <path d="M29.8 9.3c.8 0 1.5.2 2 .7.5.5.8 1.1.8 1.9v3.3h-1v-.7h-.1c-.5.6-1.1.9-1.8.9-.6 0-1.2-.2-1.6-.6-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .7-1.4.4-.3 1-.5 1.8-.5.6 0 1.2.1 1.5.4v-.3c0-.4-.2-.7-.4-1-.3-.2-.6-.4-1-.4-.6 0-1 .3-1.3.7l-1-.6c.4-.7 1.1-1 2-1Zm-1.4 3.9c0 .3.1.5.4.7.2.2.5.3.8.3.5 0 .9-.2 1.3-.5.3-.3.5-.7.5-1.1-.3-.3-.8-.4-1.4-.4-.4 0-.8.1-1.1.3-.3.2-.5.4-.5.7Z" fill="#3C4043"/>
+                        <path d="M37.5 9.5l-3.4 7.9h-1.1l1.3-2.7-2.2-5.2h1.2l1.6 3.9 1.5-3.9h1.1Z" fill="#3C4043"/>
+                        <path d="M17.6 11.3c0-.3 0-.7-.1-1h-5v2h2.9c-.1.6-.5 1.1-1 1.5v1.2h1.6c1-.9 1.6-2.2 1.6-3.7Z" fill="#4285F4"/>
+                        <path d="M12.5 16.1c1.4 0 2.5-.5 3.3-1.2l-1.6-1.2c-.5.3-1 .5-1.7.5-1.3 0-2.4-.9-2.8-2h-1.6v1.2c.9 1.6 2.5 2.7 4.4 2.7Z" fill="#34A853"/>
+                        <path d="M9.7 12.2c-.1-.3-.2-.7-.2-1s.1-.7.2-1V8.9H8.1c-.4.7-.6 1.4-.6 2.2s.2 1.5.6 2.2l1.6-1.1Z" fill="#FBBC04"/>
+                        <path d="M12.5 8.1c.7 0 1.4.3 1.9.7l1.4-1.4c-.9-.8-2-1.3-3.3-1.3-1.9 0-3.5 1.1-4.4 2.7l1.6 1.2c.4-1.2 1.5-1.9 2.8-1.9Z" fill="#EA4335"/>
+                      </svg>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="recap-page__footer">
+              {paymentMethod === 'apple-pay' ? (
+                <button type="button" className="recap-page__apple-pay-btn" onClick={handlePayNow}>
+                  <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden>
+                    <path d="M9.2 7.4c-.6.7-1.5 1.2-2.4 1.1-.1-1 .4-2 .9-2.6.6-.7 1.6-1.2 2.3-1.2.1 1-.3 2-.8 2.7Zm.8 1.4c-1.3-.1-2.5.8-3.1.8-.6 0-1.7-.7-2.8-.7-1.4 0-2.8.8-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 2-1 2.7-2.1.9-1.2 1.2-2.4 1.2-2.5-.1 0-2.4-.9-2.4-3.6 0-2.3 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7l-.2.3Zm10.4-2.5v15.5h2.3v-5.3h3.2c2.9 0 5-2 5-5.1s-2-5.1-4.9-5.1h-5.6Zm2.3 2h2.6c2 0 3.1 1.1 3.1 3.1 0 2-1.1 3.1-3.1 3.1h-2.6V8.3Zm12.6 13.7c1.5 0 2.8-.7 3.4-1.9h.1v1.7h2.1V14c0-2.2-1.7-3.5-4.3-3.5-2.4 0-4.2 1.4-4.2 3.3h2c.2-.9 1-1.5 2.1-1.5 1.4 0 2.1.6 2.1 1.8v.8l-2.8.2c-2.6.2-4 1.2-4 3.1 0 2 1.5 3.3 3.5 3.3Zm.6-1.8c-1.2 0-2-.6-2-1.5 0-1 .7-1.5 2.2-1.6l2.5-.2v.8c0 1.4-1.2 2.5-2.7 2.5Zm7 5.8c2.2 0 3.3-.9 4.2-3.4l4-11.4H45l-2.7 8.7h-.1l-2.7-8.7h-2.4l3.9 10.8-.2.7c-.4 1.2-1 1.6-2 1.6-.2 0-.5 0-.7-.1v1.8c.2 0 .6.1.8 0Z" fill="#fff" />
+                  </svg>
+                </button>
+              ) : paymentMethod === 'google-pay' ? (
+                <button type="button" className="recap-page__google-pay-btn" onClick={handlePayNow}>
+                  <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden>
+                    <path d="M22.3 11.7v3.4h-1.1V6.6h2.9c.7 0 1.4.3 1.9.7.5.5.8 1.1.8 1.8s-.3 1.3-.8 1.8c-.5.5-1.1.7-1.9.7h-1.8Zm0-4v3h1.8c.5 0 .9-.2 1.2-.5.3-.3.5-.7.5-1.1 0-.4-.2-.8-.5-1.1-.3-.3-.7-.4-1.2-.4h-1.8Z" fill="#3C4043"/>
+                    <path d="M29.8 9.3c.8 0 1.5.2 2 .7.5.5.8 1.1.8 1.9v3.3h-1v-.7h-.1c-.5.6-1.1.9-1.8.9-.6 0-1.2-.2-1.6-.6-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .7-1.4.4-.3 1-.5 1.8-.5.6 0 1.2.1 1.5.4v-.3c0-.4-.2-.7-.4-1-.3-.2-.6-.4-1-.4-.6 0-1 .3-1.3.7l-1-.6c.4-.7 1.1-1 2-1Zm-1.4 3.9c0 .3.1.5.4.7.2.2.5.3.8.3.5 0 .9-.2 1.3-.5.3-.3.5-.7.5-1.1-.3-.3-.8-.4-1.4-.4-.4 0-.8.1-1.1.3-.3.2-.5.4-.5.7Z" fill="#3C4043"/>
+                    <path d="M37.5 9.5l-3.4 7.9h-1.1l1.3-2.7-2.2-5.2h1.2l1.6 3.9 1.5-3.9h1.1Z" fill="#3C4043"/>
+                    <path d="M17.6 11.3c0-.3 0-.7-.1-1h-5v2h2.9c-.1.6-.5 1.1-1 1.5v1.2h1.6c1-.9 1.6-2.2 1.6-3.7Z" fill="#4285F4"/>
+                    <path d="M12.5 16.1c1.4 0 2.5-.5 3.3-1.2l-1.6-1.2c-.5.3-1 .5-1.7.5-1.3 0-2.4-.9-2.8-2h-1.6v1.2c.9 1.6 2.5 2.7 4.4 2.7Z" fill="#34A853"/>
+                    <path d="M9.7 12.2c-.1-.3-.2-.7-.2-1s.1-.7.2-1V8.9H8.1c-.4.7-.6 1.4-.6 2.2s.2 1.5.6 2.2l1.6-1.1Z" fill="#FBBC04"/>
+                    <path d="M12.5 8.1c.7 0 1.4.3 1.9.7l1.4-1.4c-.9-.8-2-1.3-3.3-1.3-1.9 0-3.5 1.1-4.4 2.7l1.6 1.2c.4-1.2 1.5-1.9 2.8-1.9Z" fill="#EA4335"/>
+                  </svg>
+                </button>
+              ) : (
+                <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handlePayNow} disabled={!paymentMethod}>Pay now</Button>
+              )}
+            </div>
+
+            {showRewardsSheet && (
+              <div className="recap-page__rewards-overlay" onClick={() => setShowRewardsSheet(false)}>
+                <div className="recap-page__rewards-sheet" onClick={(e) => e.stopPropagation()}>
+                  <div className="recap-page__rewards-sheet-nav">
+                    <span className="recap-page__rewards-sheet-spacer" />
+                    <h2 className="recap-page__rewards-sheet-title">Reward Points Discount</h2>
+                    <button type="button" className="recap-page__rewards-sheet-close" onClick={() => setShowRewardsSheet(false)} aria-label="Close">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="recap-page__rewards-sheet-body">
+                    <div className="recap-page__rewards-badge-row">
+                      <span className="recap-page__rewards-badge-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="#fff" />
+                          <circle cx="12" cy="12" r="9" stroke="#fff" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <span className="recap-page__rewards-badge-text">You have {USER_POINTS.toLocaleString('de-DE')} Reward points available</span>
+                    </div>
+
+                    <p className="recap-page__rewards-sheet-desc">Choose how many Reward points to use toward this instant purchase</p>
+
+                    <div className="recap-page__rewards-inputs">
+                      <div className="recap-page__rewards-input-group">
+                        <label className="recap-page__rewards-input-label">Reward points</label>
+                        <input
+                          type="text"
+                          className="recap-page__rewards-input-field"
+                          value={rewardsStepperValue === 0 ? '0' : rewardsStepperValue.toLocaleString('de-DE')}
+                          onChange={(e) => {
+                            const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
+                            setRewardsStepperValue(Math.min(num, rewardsSliderMax));
+                          }}
+                          inputMode="numeric"
+                        />
+                      </div>
+                      <div className="recap-page__rewards-input-group">
+                        <label className="recap-page__rewards-input-label">Euros</label>
+                        <input
+                          type="text"
+                          className="recap-page__rewards-input-field"
+                          value={`€${(rewardsStepperValue / POINTS_PER_EUR).toFixed(2).replace('.', ',')}`}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
+                            const euros = parseFloat(raw) || 0;
+                            const pts = Math.round(euros * POINTS_PER_EUR);
+                            setRewardsStepperValue(Math.min(pts, rewardsSliderMax));
+                          }}
+                          inputMode="decimal"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="recap-page__rewards-slider-group">
+                      <input
+                        type="range"
+                        className="recap-page__rewards-slider"
+                        min={0}
+                        max={rewardsSliderMax > 0 ? rewardsSliderMax : 1}
+                        step={10}
+                        value={rewardsSliderMax > 0 ? Math.min(rewardsStepperValue, rewardsSliderMax) : 0}
+                        disabled={rewardsSliderMax <= 0}
+                        onChange={(e) => setRewardsStepperValue(Math.min(Number(e.target.value), rewardsSliderMax))}
+                        onInput={(e) => setRewardsStepperValue(Math.min(Number(e.currentTarget.value), rewardsSliderMax))}
+                        style={
+                          {
+                            '--recap-rewards-slider-pct': `${rewardsSliderPct}%`,
+                          } as React.CSSProperties
+                        }
+                      />
+                      <p className="recap-page__rewards-slider-caption">You have earned {USER_POINTS.toLocaleString('de-DE')} Points</p>
+                    </div>
+
+                    <p className="recap-page__rewards-sheet-discount">
+                      <strong>{formatEur(rewardsStepperValue / POINTS_PER_EUR)}</strong> discount on your purchase
+                    </p>
+
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      fullWidth
+                      disabled={rewardsStepperValue <= 0}
+                      onClick={() => {
+                        setRewardsPointsUsed(rewardsStepperValue);
+                        setShowRewardsSheet(false);
+                      }}
+                    >
+                      Apply Reward Points discount
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>,
+          overlayPortalTarget,
+        )
+      : (
+          <div className={`recap-page${recapPortalMod}`}>
+            <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
+            {showVoucherSnack && (
+              <div className="auction-page__notify-snack" role="status">
+                <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <div className="auction-page__notify-snack-content">
+                  <p className="auction-page__notify-snack-title">Voucher discount applied correctly</p>
+                  <p className="auction-page__notify-snack-body">Your voucher has been applied to this order.</p>
+                </div>
+                <button type="button" className="auction-page__notify-snack-close" onClick={() => setShowVoucherSnack(false)} aria-label="Close notification">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+              </div>
+            )}
+            <div className="recap-page__content">
+              <button type="button" className="recap-page__back" onClick={() => { setShowRecap(false); window.scrollTo(0, 0); }} aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> Back
+              </button>
+              <h1 className="recap-page__title">Confirm and pay</h1>
+              <div className="recap-page__event-card">
+                <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
+                <div className="recap-page__event-info">
+                  <p className="recap-page__event-name">{EVENT_TITLE} – {totalTickets} ticket{totalTickets > 1 ? 's' : ''}</p>
+                  <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__details">
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                    <span className="recap-page__detail-label">Date</span>
+                  </div>
+                  <p className="recap-page__detail-value">{selectedDateLabel} · {selectedTimeLabel}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg>
+                    <span className="recap-page__detail-label">Location</span>
+                  </div>
+                  <p className="recap-page__detail-value">{venueInfo.address}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                    <span className="recap-page__detail-label">Tickets and Add-ons</span>
+                  </div>
+                  {recapItems.map((item, i) => (
+                    <div key={i} className="recap-page__detail-row">
+                      <span className="recap-page__detail-row-label">{item.qty}x {item.label}</span>
+                      <span className="recap-page__detail-row-value">{formatEur(item.qty * item.unitPrice)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__pricing">
+                <div className="recap-page__pricing-row"><span>Subtotal</span><span>{formatEur(totalPriceEur)}</span></div>
+                <div className="recap-page__pricing-row"><span>Fees</span><span>Included</span></div>
+                {voucherApplied && (
+                  <div className="recap-page__pricing-row"><span>Voucher or gift card</span><span>-{formatEur(VOUCHER_DISCOUNT)}</span></div>
+                )}
+                {rewardsPointsUsed > 0 && (
+                  <div className="recap-page__pricing-row"><span>ALL Reward Points <span className="recap-page__pricing-muted">({rewardsPointsUsed.toLocaleString('de-DE')})</span></span><span>-{formatEur(rewardsPointsUsed / POINTS_PER_EUR)}</span></div>
+                )}
+                <div className="recap-page__pricing-total"><span>Total</span><span>{formatEur(Math.max(0, totalPriceEur - (voucherApplied ? VOUCHER_DISCOUNT : 0) - rewardsPointsUsed / POINTS_PER_EUR))}</span></div>
+              </div>
+
+              <div className="recap-page__payment">
+                <div className="recap-page__payment-divider">
+                  <span className="recap-page__payment-line" />
+                  <span className="recap-page__payment-label">PAYMENT METHOD</span>
+                  <span className="recap-page__payment-line" />
+                </div>
+
+                {rewardsPointsUsed > 0 ? (
+                  <div className="recap-page__rewards-applied">
+                    <div className="recap-page__rewards-applied-header">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
+                      </svg>
+                      <span className="recap-page__rewards-applied-title">ALL Rewards Points</span>
+                    </div>
+                    <div className="recap-page__rewards-chip" onClick={() => { setRewardsStepperValue(Math.min(rewardsPointsUsed, rewardsSliderMax)); setShowRewardsSheet(true); }}>
+                      <span className="recap-page__rewards-chip-label">{rewardsPointsUsed.toLocaleString('de-DE')} Points</span>
+                      <button
+                        type="button"
+                        className="recap-page__rewards-chip-remove"
+                        onClick={(e) => { e.stopPropagation(); setRewardsPointsUsed(0); }}
+                        aria-label="Remove points"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" className="recap-page__rewards-link" onClick={() => { setRewardsStepperValue(defaultRewardsSplitPoints); setShowRewardsSheet(true); }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
+                    </svg>
+                    <span>ALL Rewards Points</span>
+                  </button>
+                )}
+
+                {!showVoucher ? (
+                  <button type="button" className="recap-page__voucher-link" onClick={() => setShowVoucher(true)}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                      <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                      <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                    <span>Voucher or gift card</span>
+                  </button>
+                ) : voucherApplied ? (
+                  <div className="recap-page__voucher-section">
+                    <div className="recap-page__voucher-header">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                        <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                        <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                        <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                      <p className="recap-page__voucher-title">Voucher or gift card</p>
+                    </div>
+                    <div className="recap-page__voucher-chip">
+                      <span className="recap-page__voucher-chip-label">{voucherCode}</span>
+                      <button
+                        type="button"
+                        className="recap-page__voucher-chip-remove"
+                        onClick={() => { setVoucherApplied(false); setVoucherCode(''); }}
+                        aria-label="Remove voucher"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="recap-page__voucher-section">
+                    <p className="recap-page__voucher-title">Voucher or gift card</p>
+                    <div className="recap-page__voucher-form">
+                      <input
+                        type="text"
+                        className="recap-page__voucher-input"
+                        placeholder=" Voucher number"
+                        value={voucherCode}
+                        onChange={(e) => setVoucherCode(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="recap-page__voucher-apply"
+                        disabled={voucherCode.trim().length === 0}
+                        onClick={() => {
+                          if (voucherCode.trim().length > 0) {
+                            setVoucherApplied(true);
+                            setShowVoucherSnack(true);
+                            if (voucherTimerRef.current) clearTimeout(voucherTimerRef.current);
+                            voucherTimerRef.current = setTimeout(() => setShowVoucherSnack(false), 5000);
+                          }
+                        }}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="recap-page__payment-options">
+                  <div className={`recap-page__payment-option-wrap${paymentMethod === 'card' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
+                    <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('card')}>
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value="card"
+                        checked={paymentMethod === 'card'}
+                        onChange={() => setPaymentMethod('card')}
+                        className="recap-page__payment-radio"
+                      />
+                      <span className="recap-page__payment-radio-circle" />
+                      <span className="recap-page__payment-option-label">Credit or Debit card</span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
+                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                        <path d="M2 10h20" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    </label>
+                    {paymentMethod === 'card' && (
+                      <div className="recap-page__card-form">
+                        <input
+                          type="text"
+                          className="recap-page__card-input"
+                          placeholder="Card number"
+                          inputMode="numeric"
+                          autoComplete="cc-number"
+                        />
+                        <div className="recap-page__card-row">
+                          <input
+                            type="text"
+                            className="recap-page__card-input"
+                            placeholder="Expiration date ( MM/YY)"
+                            inputMode="numeric"
+                            autoComplete="cc-exp"
+                          />
+                          <input
+                            type="text"
+                            className="recap-page__card-input"
+                            placeholder="Security code"
+                            inputMode="numeric"
+                            autoComplete="cc-csc"
+                          />
+                        </div>
+                        <div className="recap-page__card-secure">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                          <span>Your payment info is stored securely</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className={`recap-page__payment-option-wrap${paymentMethod === 'apple-pay' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
+                    <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('apple-pay')}>
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value="apple-pay"
+                        checked={paymentMethod === 'apple-pay'}
+                        onChange={() => setPaymentMethod('apple-pay')}
+                        className="recap-page__payment-radio"
+                      />
+                      <span className="recap-page__payment-radio-circle" />
+                      <span className="recap-page__payment-option-label">Apple Pay</span>
+                      <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
+                        <path d="M21.7277 4.375C24.4989 4.375 26.4286 6.21123 26.4286 8.88464C26.4286 11.5676 24.4592 13.4134 21.6582 13.4134H18.5899V18.1038H16.373V4.375L21.7277 4.375ZM18.5899 11.6247H21.1336C23.0637 11.6247 24.1622 10.6258 24.1622 8.89418C24.1622 7.16274 23.0637 6.17324 21.1435 6.17324H18.5899V11.6247Z" fill="black"/>
+                        <path d="M27.0078 15.259C27.0078 13.5083 28.4034 12.4332 30.8779 12.3L33.7282 12.1383V11.3678C33.7282 10.2546 32.9462 9.58862 31.64 9.58862C30.4026 9.58862 29.6305 10.1593 29.4427 11.0538H27.4236C27.5424 9.246 29.1456 7.91406 31.7191 7.91406C34.2429 7.91406 35.8561 9.19847 35.8561 11.2059V18.1036H33.8073V16.4577H33.758C33.1543 17.5709 31.8378 18.2748 30.4721 18.2748C28.4331 18.2748 27.0078 17.057 27.0078 15.259ZM33.7282 14.3552V13.5655L31.1647 13.7176C29.8879 13.8033 29.1655 14.3456 29.1655 15.2019C29.1655 16.0771 29.9177 16.648 31.0658 16.648C32.5602 16.648 33.7282 15.6585 33.7282 14.3552Z" fill="black"/>
+                        <path d="M37.7911 21.7845V20.1195C37.9492 20.1575 38.3054 20.1575 38.4837 20.1575C39.4734 20.1575 40.0079 19.758 40.3344 18.7305C40.3344 18.7114 40.5226 18.1216 40.5226 18.1121L36.7617 8.09375H39.0775L41.7105 16.2378H41.7498L44.3828 8.09375H46.6394L42.7395 18.6257C41.8491 21.0519 40.8197 21.832 38.662 21.832C38.4837 21.832 37.9492 21.813 37.7911 21.7845Z" fill="black"/>
+                        <path d="M9.83386 5.71444C10.3682 5.07206 10.7307 4.20953 10.6351 3.32812C9.85297 3.36551 8.89854 3.82412 8.34598 4.46701C7.84983 5.01754 7.4107 5.91619 7.52518 6.76064C8.40315 6.83385 9.28031 6.3388 9.83386 5.71444Z" fill="black"/>
+                        <path d="M10.6259 6.92676C9.35087 6.85376 8.26679 7.62236 7.6579 7.62236C7.04868 7.62236 6.11627 6.96355 5.10779 6.98131C3.7952 6.99984 2.57726 7.71324 1.91118 8.84787C0.54115 11.1177 1.54963 14.4846 2.8819 16.3333C3.52889 17.2479 4.30861 18.2549 5.33602 18.2187C6.30675 18.1821 6.68724 17.6145 7.8672 17.6145C9.04629 17.6145 9.38903 18.2187 10.4166 18.2004C11.4822 18.1821 12.1484 17.2854 12.7954 16.3699C13.5376 15.3273 13.8414 14.3206 13.8606 14.2654C13.8414 14.2471 11.8057 13.4964 11.7869 11.2454C11.7676 9.36066 13.3851 8.46416 13.4612 8.40856C12.5478 7.10998 11.1207 6.96355 10.6259 6.92676Z" fill="black"/>
+                      </svg>
+                    </label>
+                  </div>
+                  <div className={`recap-page__payment-option-wrap${paymentMethod === 'google-pay' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
+                    <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('google-pay')}>
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value="google-pay"
+                        checked={paymentMethod === 'google-pay'}
+                        onChange={() => setPaymentMethod('google-pay')}
+                        className="recap-page__payment-radio"
+                      />
+                      <span className="recap-page__payment-radio-circle" />
+                      <span className="recap-page__payment-option-label">Google Pay</span>
+                      <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
+                        <path d="M22.3 11.7v3.4h-1.1V6.6h2.9c.7 0 1.4.3 1.9.7.5.5.8 1.1.8 1.8s-.3 1.3-.8 1.8c-.5.5-1.1.7-1.9.7h-1.8Zm0-4v3h1.8c.5 0 .9-.2 1.2-.5.3-.3.5-.7.5-1.1 0-.4-.2-.8-.5-1.1-.3-.3-.7-.4-1.2-.4h-1.8Z" fill="#3C4043"/>
+                        <path d="M29.8 9.3c.8 0 1.5.2 2 .7.5.5.8 1.1.8 1.9v3.3h-1v-.7h-.1c-.5.6-1.1.9-1.8.9-.6 0-1.2-.2-1.6-.6-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .7-1.4.4-.3 1-.5 1.8-.5.6 0 1.2.1 1.5.4v-.3c0-.4-.2-.7-.4-1-.3-.2-.6-.4-1-.4-.6 0-1 .3-1.3.7l-1-.6c.4-.7 1.1-1 2-1Zm-1.4 3.9c0 .3.1.5.4.7.2.2.5.3.8.3.5 0 .9-.2 1.3-.5.3-.3.5-.7.5-1.1-.3-.3-.8-.4-1.4-.4-.4 0-.8.1-1.1.3-.3.2-.5.4-.5.7Z" fill="#3C4043"/>
+                        <path d="M37.5 9.5l-3.4 7.9h-1.1l1.3-2.7-2.2-5.2h1.2l1.6 3.9 1.5-3.9h1.1Z" fill="#3C4043"/>
+                        <path d="M17.6 11.3c0-.3 0-.7-.1-1h-5v2h2.9c-.1.6-.5 1.1-1 1.5v1.2h1.6c1-.9 1.6-2.2 1.6-3.7Z" fill="#4285F4"/>
+                        <path d="M12.5 16.1c1.4 0 2.5-.5 3.3-1.2l-1.6-1.2c-.5.3-1 .5-1.7.5-1.3 0-2.4-.9-2.8-2h-1.6v1.2c.9 1.6 2.5 2.7 4.4 2.7Z" fill="#34A853"/>
+                        <path d="M9.7 12.2c-.1-.3-.2-.7-.2-1s.1-.7.2-1V8.9H8.1c-.4.7-.6 1.4-.6 2.2s.2 1.5.6 2.2l1.6-1.1Z" fill="#FBBC04"/>
+                        <path d="M12.5 8.1c.7 0 1.4.3 1.9.7l1.4-1.4c-.9-.8-2-1.3-3.3-1.3-1.9 0-3.5 1.1-4.4 2.7l1.6 1.2c.4-1.2 1.5-1.9 2.8-1.9Z" fill="#EA4335"/>
+                      </svg>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="recap-page__footer">
+              {paymentMethod === 'apple-pay' ? (
+                <button type="button" className="recap-page__apple-pay-btn" onClick={handlePayNow}>
+                  <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden>
+                    <path d="M9.2 7.4c-.6.7-1.5 1.2-2.4 1.1-.1-1 .4-2 .9-2.6.6-.7 1.6-1.2 2.3-1.2.1 1-.3 2-.8 2.7Zm.8 1.4c-1.3-.1-2.5.8-3.1.8-.6 0-1.7-.7-2.8-.7-1.4 0-2.8.8-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 2-1 2.7-2.1.9-1.2 1.2-2.4 1.2-2.5-.1 0-2.4-.9-2.4-3.6 0-2.3 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7l-.2.3Zm10.4-2.5v15.5h2.3v-5.3h3.2c2.9 0 5-2 5-5.1s-2-5.1-4.9-5.1h-5.6Zm2.3 2h2.6c2 0 3.1 1.1 3.1 3.1 0 2-1.1 3.1-3.1 3.1h-2.6V8.3Zm12.6 13.7c1.5 0 2.8-.7 3.4-1.9h.1v1.7h2.1V14c0-2.2-1.7-3.5-4.3-3.5-2.4 0-4.2 1.4-4.2 3.3h2c.2-.9 1-1.5 2.1-1.5 1.4 0 2.1.6 2.1 1.8v.8l-2.8.2c-2.6.2-4 1.2-4 3.1 0 2 1.5 3.3 3.5 3.3Zm.6-1.8c-1.2 0-2-.6-2-1.5 0-1 .7-1.5 2.2-1.6l2.5-.2v.8c0 1.4-1.2 2.5-2.7 2.5Zm7 5.8c2.2 0 3.3-.9 4.2-3.4l4-11.4H45l-2.7 8.7h-.1l-2.7-8.7h-2.4l3.9 10.8-.2.7c-.4 1.2-1 1.6-2 1.6-.2 0-.5 0-.7-.1v1.8c.2 0 .6.1.8 0Z" fill="#fff" />
+                  </svg>
+                </button>
+              ) : paymentMethod === 'google-pay' ? (
+                <button type="button" className="recap-page__google-pay-btn" onClick={handlePayNow}>
+                  <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden>
+                    <path d="M22.3 11.7v3.4h-1.1V6.6h2.9c.7 0 1.4.3 1.9.7.5.5.8 1.1.8 1.8s-.3 1.3-.8 1.8c-.5.5-1.1.7-1.9.7h-1.8Zm0-4v3h1.8c.5 0 .9-.2 1.2-.5.3-.3.5-.7.5-1.1 0-.4-.2-.8-.5-1.1-.3-.3-.7-.4-1.2-.4h-1.8Z" fill="#3C4043"/>
+                    <path d="M29.8 9.3c.8 0 1.5.2 2 .7.5.5.8 1.1.8 1.9v3.3h-1v-.7h-.1c-.5.6-1.1.9-1.8.9-.6 0-1.2-.2-1.6-.6-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .7-1.4.4-.3 1-.5 1.8-.5.6 0 1.2.1 1.5.4v-.3c0-.4-.2-.7-.4-1-.3-.2-.6-.4-1-.4-.6 0-1 .3-1.3.7l-1-.6c.4-.7 1.1-1 2-1Zm-1.4 3.9c0 .3.1.5.4.7.2.2.5.3.8.3.5 0 .9-.2 1.3-.5.3-.3.5-.7.5-1.1-.3-.3-.8-.4-1.4-.4-.4 0-.8.1-1.1.3-.3.2-.5.4-.5.7Z" fill="#3C4043"/>
+                    <path d="M37.5 9.5l-3.4 7.9h-1.1l1.3-2.7-2.2-5.2h1.2l1.6 3.9 1.5-3.9h1.1Z" fill="#3C4043"/>
+                    <path d="M17.6 11.3c0-.3 0-.7-.1-1h-5v2h2.9c-.1.6-.5 1.1-1 1.5v1.2h1.6c1-.9 1.6-2.2 1.6-3.7Z" fill="#4285F4"/>
+                    <path d="M12.5 16.1c1.4 0 2.5-.5 3.3-1.2l-1.6-1.2c-.5.3-1 .5-1.7.5-1.3 0-2.4-.9-2.8-2h-1.6v1.2c.9 1.6 2.5 2.7 4.4 2.7Z" fill="#34A853"/>
+                    <path d="M9.7 12.2c-.1-.3-.2-.7-.2-1s.1-.7.2-1V8.9H8.1c-.4.7-.6 1.4-.6 2.2s.2 1.5.6 2.2l1.6-1.1Z" fill="#FBBC04"/>
+                    <path d="M12.5 8.1c.7 0 1.4.3 1.9.7l1.4-1.4c-.9-.8-2-1.3-3.3-1.3-1.9 0-3.5 1.1-4.4 2.7l1.6 1.2c.4-1.2 1.5-1.9 2.8-1.9Z" fill="#EA4335"/>
+                  </svg>
+                </button>
+              ) : (
+                <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handlePayNow} disabled={!paymentMethod}>Pay now</Button>
+              )}
+            </div>
+
+            {showRewardsSheet && (
+              <div className="recap-page__rewards-overlay" onClick={() => setShowRewardsSheet(false)}>
+                <div className="recap-page__rewards-sheet" onClick={(e) => e.stopPropagation()}>
+                  <div className="recap-page__rewards-sheet-nav">
+                    <span className="recap-page__rewards-sheet-spacer" />
+                    <h2 className="recap-page__rewards-sheet-title">Reward Points Discount</h2>
+                    <button type="button" className="recap-page__rewards-sheet-close" onClick={() => setShowRewardsSheet(false)} aria-label="Close">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="recap-page__rewards-sheet-body">
+                    <div className="recap-page__rewards-badge-row">
+                      <span className="recap-page__rewards-badge-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="#fff" />
+                          <circle cx="12" cy="12" r="9" stroke="#fff" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <span className="recap-page__rewards-badge-text">You have {USER_POINTS.toLocaleString('de-DE')} Reward points available</span>
+                    </div>
+
+                    <p className="recap-page__rewards-sheet-desc">Choose how many Reward points to use toward this instant purchase</p>
+
+                    <div className="recap-page__rewards-inputs">
+                      <div className="recap-page__rewards-input-group">
+                        <label className="recap-page__rewards-input-label">Reward points</label>
+                        <input
+                          type="text"
+                          className="recap-page__rewards-input-field"
+                          value={rewardsStepperValue === 0 ? '0' : rewardsStepperValue.toLocaleString('de-DE')}
+                          onChange={(e) => {
+                            const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
+                            setRewardsStepperValue(Math.min(num, rewardsSliderMax));
+                          }}
+                          inputMode="numeric"
+                        />
+                      </div>
+                      <div className="recap-page__rewards-input-group">
+                        <label className="recap-page__rewards-input-label">Euros</label>
+                        <input
+                          type="text"
+                          className="recap-page__rewards-input-field"
+                          value={`€${(rewardsStepperValue / POINTS_PER_EUR).toFixed(2).replace('.', ',')}`}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
+                            const euros = parseFloat(raw) || 0;
+                            const pts = Math.round(euros * POINTS_PER_EUR);
+                            setRewardsStepperValue(Math.min(pts, rewardsSliderMax));
+                          }}
+                          inputMode="decimal"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="recap-page__rewards-slider-group">
+                      <input
+                        type="range"
+                        className="recap-page__rewards-slider"
+                        min={0}
+                        max={rewardsSliderMax > 0 ? rewardsSliderMax : 1}
+                        step={10}
+                        value={rewardsSliderMax > 0 ? Math.min(rewardsStepperValue, rewardsSliderMax) : 0}
+                        disabled={rewardsSliderMax <= 0}
+                        onChange={(e) => setRewardsStepperValue(Math.min(Number(e.target.value), rewardsSliderMax))}
+                        onInput={(e) => setRewardsStepperValue(Math.min(Number(e.currentTarget.value), rewardsSliderMax))}
+                        style={
+                          {
+                            '--recap-rewards-slider-pct': `${rewardsSliderPct}%`,
+                          } as React.CSSProperties
+                        }
+                      />
+                      <p className="recap-page__rewards-slider-caption">You have earned {USER_POINTS.toLocaleString('de-DE')} Points</p>
+                    </div>
+
+                    <p className="recap-page__rewards-sheet-discount">
+                      <strong>{formatEur(rewardsStepperValue / POINTS_PER_EUR)}</strong> discount on your purchase
+                    </p>
+
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      fullWidth
+                      disabled={rewardsStepperValue <= 0}
+                      onClick={() => {
+                        setRewardsPointsUsed(rewardsStepperValue);
+                        setShowRewardsSheet(false);
+                      }}
+                    >
+                      Apply Reward Points discount
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ));
+
+  const standardConfirmationOverlay =
+    showConfirmation &&
+    (overlayPortalTarget
+      ? createPortal(
+          <div className={`recap-page${recapPortalMod}`}>
+            <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
+            <div className="recap-page__content">
+              {showSuccessBanner && (
+                <div className="confirmation__success-banner">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p className="confirmation__success-text">Success! Your purchase is complete. View it in your profile.</p>
+                  <button type="button" className="confirmation__success-close" onClick={() => setShowSuccessBanner(false)} aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </button>
+                </div>
+              )}
+              <div className="confirmation__header">
+                <h1 className="recap-page__title">Purchase confirmed</h1>
+                <span className="confirmation__order-id">Order ID: R{Math.floor(1000000 + Math.random() * 9000000)}</span>
+              </div>
+              <div className="recap-page__event-card">
+                <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
+                <div className="recap-page__event-info">
+                  <p className="recap-page__event-name">{EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}</p>
+                  <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__details">
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Date</span></div>
+                  <p className="recap-page__detail-value">{selectedDateLabel} · {selectedTimeLabel}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg><span className="recap-page__detail-label">Location</span></div>
+                  <p className="recap-page__detail-value">{venueInfo.address}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Tickets and Add-ons</span></div>
+                  <div className="recap-page__detail-row"><span className="recap-page__detail-row-label">{confirmedTickets}x {confirmedTicketName}</span><span className="recap-page__detail-row-value">{formatEur(confirmedTotal)}</span></div>
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__pricing">
+                <div className="recap-page__pricing-row"><span>Subtotal</span><span>{formatEur(confirmedTotal)}</span></div>
+                <div className="recap-page__pricing-row"><span>Fees</span><span>Included</span></div>
+                <div className="recap-page__pricing-total"><span>Total</span><span>{formatEur(confirmedTotal)}</span></div>
+              </div>
+              <div className="confirmation__info-box">
+                <div className="confirmation__info-row"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M2 8l10 6 10-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><p className="confirmation__info-text">All your tickets have been sent to your email <strong>johnsmith@gmail.com</strong></p></div>
+                <div className="confirmation__info-row"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" /><path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span className="confirmation__info-text">Need help?</span><a href="#" className="confirmation__info-link">Contact Customer Center</a></div>
+              </div>
+              <div className="confirmation__actions">
+                <Button variant="tertiary" size="md" fullWidth onClick={handleBackToEvent}>Continue exploring</Button>
+                <button type="button" className="confirmation__orders-btn" onClick={handleViewOrders}>View all my orders</button>
+              </div>
+            </div>
+          </div>,
+          overlayPortalTarget,
+        )
+      : (
+          <div className={`recap-page${recapPortalMod}`}>
+            <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
+            <div className="recap-page__content">
+              {showSuccessBanner && (
+                <div className="confirmation__success-banner">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p className="confirmation__success-text">Success! Your purchase is complete. View it in your profile.</p>
+                  <button type="button" className="confirmation__success-close" onClick={() => setShowSuccessBanner(false)} aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </button>
+                </div>
+              )}
+              <div className="confirmation__header">
+                <h1 className="recap-page__title">Purchase confirmed</h1>
+                <span className="confirmation__order-id">Order ID: R{Math.floor(1000000 + Math.random() * 9000000)}</span>
+              </div>
+              <div className="recap-page__event-card">
+                <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
+                <div className="recap-page__event-info">
+                  <p className="recap-page__event-name">{EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}</p>
+                  <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__details">
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Date</span></div>
+                  <p className="recap-page__detail-value">{selectedDateLabel} · {selectedTimeLabel}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg><span className="recap-page__detail-label">Location</span></div>
+                  <p className="recap-page__detail-value">{venueInfo.address}</p>
+                </div>
+                <div className="recap-page__detail-group">
+                  <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Tickets and Add-ons</span></div>
+                  <div className="recap-page__detail-row"><span className="recap-page__detail-row-label">{confirmedTickets}x {confirmedTicketName}</span><span className="recap-page__detail-row-value">{formatEur(confirmedTotal)}</span></div>
+                </div>
+              </div>
+              <hr className="recap-page__divider" aria-hidden />
+              <div className="recap-page__pricing">
+                <div className="recap-page__pricing-row"><span>Subtotal</span><span>{formatEur(confirmedTotal)}</span></div>
+                <div className="recap-page__pricing-row"><span>Fees</span><span>Included</span></div>
+                <div className="recap-page__pricing-total"><span>Total</span><span>{formatEur(confirmedTotal)}</span></div>
+              </div>
+              <div className="confirmation__info-box">
+                <div className="confirmation__info-row"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M2 8l10 6 10-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><p className="confirmation__info-text">All your tickets have been sent to your email <strong>johnsmith@gmail.com</strong></p></div>
+                <div className="confirmation__info-row"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" /><path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span className="confirmation__info-text">Need help?</span><a href="#" className="confirmation__info-link">Contact Customer Center</a></div>
+              </div>
+              <div className="confirmation__actions">
+                <Button variant="tertiary" size="md" fullWidth onClick={handleBackToEvent}>Continue exploring</Button>
+                <button type="button" className="confirmation__orders-btn" onClick={handleViewOrders}>View all my orders</button>
+              </div>
+            </div>
+          </div>
+        ));
+
   return (
     <div className={`auction-page standard${isEventSoldOut ? ' standard--sold-out' : ''}`}>
       <MarketplaceHeader
@@ -909,460 +1830,9 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      {showRecap && (
-        <div className="recap-page">
-          <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
-          {showVoucherSnack && (
-            <div className="auction-page__notify-snack" role="status">
-              <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              <div className="auction-page__notify-snack-content">
-                <p className="auction-page__notify-snack-title">Voucher discount applied correctly</p>
-                <p className="auction-page__notify-snack-body">Your voucher has been applied to this order.</p>
-              </div>
-              <button type="button" className="auction-page__notify-snack-close" onClick={() => setShowVoucherSnack(false)} aria-label="Close notification">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
-            </div>
-          )}
-          <div className="recap-page__content">
-            <button type="button" className="recap-page__back" onClick={() => { setShowRecap(false); window.scrollTo(0, 0); }} aria-label="Go back">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> Back
-            </button>
-            <h1 className="recap-page__title">Confirm and pay</h1>
-            <div className="recap-page__event-card">
-              <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
-              <div className="recap-page__event-info">
-                <p className="recap-page__event-name">{EVENT_TITLE} – {totalTickets} ticket{totalTickets > 1 ? 's' : ''}</p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
-              </div>
-            </div>
-            <hr className="recap-page__divider" aria-hidden />
-            <div className="recap-page__details">
-              <div className="recap-page__detail-group">
-                <div className="recap-page__detail-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                  <span className="recap-page__detail-label">Date</span>
-                </div>
-                <p className="recap-page__detail-value">{selectedDateLabel} · {selectedTimeLabel}</p>
-              </div>
-              <div className="recap-page__detail-group">
-                <div className="recap-page__detail-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg>
-                  <span className="recap-page__detail-label">Location</span>
-                </div>
-                <p className="recap-page__detail-value">{venueInfo.address}</p>
-              </div>
-              <div className="recap-page__detail-group">
-                <div className="recap-page__detail-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                  <span className="recap-page__detail-label">Tickets and Add-ons</span>
-                </div>
-                {recapItems.map((item, i) => (
-                  <div key={i} className="recap-page__detail-row">
-                    <span className="recap-page__detail-row-label">{item.qty}x {item.label}</span>
-                    <span className="recap-page__detail-row-value">{formatEur(item.qty * item.unitPrice)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <hr className="recap-page__divider" aria-hidden />
-            <div className="recap-page__pricing">
-              <div className="recap-page__pricing-row"><span>Subtotal</span><span>{formatEur(totalPriceEur)}</span></div>
-              <div className="recap-page__pricing-row"><span>Fees</span><span>Included</span></div>
-              {voucherApplied && (
-                <div className="recap-page__pricing-row"><span>Voucher or gift card</span><span>-{formatEur(VOUCHER_DISCOUNT)}</span></div>
-              )}
-              {rewardsPointsUsed > 0 && (
-                <div className="recap-page__pricing-row"><span>ALL Reward Points <span className="recap-page__pricing-muted">({rewardsPointsUsed.toLocaleString('de-DE')})</span></span><span>-{formatEur(rewardsPointsUsed / POINTS_PER_EUR)}</span></div>
-              )}
-              <div className="recap-page__pricing-total"><span>Total</span><span>{formatEur(Math.max(0, totalPriceEur - (voucherApplied ? VOUCHER_DISCOUNT : 0) - rewardsPointsUsed / POINTS_PER_EUR))}</span></div>
-            </div>
+      {standardPayRecapOverlay}
 
-            <div className="recap-page__payment">
-              <div className="recap-page__payment-divider">
-                <span className="recap-page__payment-line" />
-                <span className="recap-page__payment-label">PAYMENT METHOD</span>
-                <span className="recap-page__payment-line" />
-              </div>
-
-              {rewardsPointsUsed > 0 ? (
-                <div className="recap-page__rewards-applied">
-                  <div className="recap-page__rewards-applied-header">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
-                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
-                    </svg>
-                    <span className="recap-page__rewards-applied-title">ALL Rewards Points</span>
-                  </div>
-                  <div className="recap-page__rewards-chip" onClick={() => { setRewardsStepperValue(Math.min(rewardsPointsUsed, rewardsSliderMax)); setShowRewardsSheet(true); }}>
-                    <span className="recap-page__rewards-chip-label">{rewardsPointsUsed.toLocaleString('de-DE')} Points</span>
-                    <button
-                      type="button"
-                      className="recap-page__rewards-chip-remove"
-                      onClick={(e) => { e.stopPropagation(); setRewardsPointsUsed(0); }}
-                      aria-label="Remove points"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button type="button" className="recap-page__rewards-link" onClick={() => { setRewardsStepperValue(defaultRewardsSplitPoints); setShowRewardsSheet(true); }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="currentColor" />
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeLinejoin="round" />
-                  </svg>
-                  <span>ALL Rewards Points</span>
-                </button>
-              )}
-
-              {!showVoucher ? (
-                <button type="button" className="recap-page__voucher-link" onClick={() => setShowVoucher(true)}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-                    <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
-                    <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                  <span>Voucher or gift card</span>
-                </button>
-              ) : voucherApplied ? (
-                <div className="recap-page__voucher-section">
-                  <div className="recap-page__voucher-header">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-                      <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <circle cx="9.5" cy="9.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
-                      <circle cx="14.5" cy="14.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                    <p className="recap-page__voucher-title">Voucher or gift card</p>
-                  </div>
-                  <div className="recap-page__voucher-chip">
-                    <span className="recap-page__voucher-chip-label">{voucherCode}</span>
-                    <button
-                      type="button"
-                      className="recap-page__voucher-chip-remove"
-                      onClick={() => { setVoucherApplied(false); setVoucherCode(''); }}
-                      aria-label="Remove voucher"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="recap-page__voucher-section">
-                  <p className="recap-page__voucher-title">Voucher or gift card</p>
-                  <div className="recap-page__voucher-form">
-                    <input
-                      type="text"
-                      className="recap-page__voucher-input"
-                      placeholder=" Voucher number"
-                      value={voucherCode}
-                      onChange={(e) => setVoucherCode(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="recap-page__voucher-apply"
-                      disabled={voucherCode.trim().length === 0}
-                      onClick={() => {
-                        if (voucherCode.trim().length > 0) {
-                          setVoucherApplied(true);
-                          setShowVoucherSnack(true);
-                          if (voucherTimerRef.current) clearTimeout(voucherTimerRef.current);
-                          voucherTimerRef.current = setTimeout(() => setShowVoucherSnack(false), 5000);
-                        }
-                      }}
-                    >
-                      Apply
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="recap-page__payment-options">
-                <div className={`recap-page__payment-option-wrap${paymentMethod === 'card' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
-                  <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('card')}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="card"
-                      checked={paymentMethod === 'card'}
-                      onChange={() => setPaymentMethod('card')}
-                      className="recap-page__payment-radio"
-                    />
-                    <span className="recap-page__payment-radio-circle" />
-                    <span className="recap-page__payment-option-label">Credit or Debit card</span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
-                      <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                      <path d="M2 10h20" stroke="currentColor" strokeWidth="1.5" />
-                    </svg>
-                  </label>
-                  {paymentMethod === 'card' && (
-                    <div className="recap-page__card-form">
-                      <input
-                        type="text"
-                        className="recap-page__card-input"
-                        placeholder="Card number"
-                        inputMode="numeric"
-                        autoComplete="cc-number"
-                      />
-                      <div className="recap-page__card-row">
-                        <input
-                          type="text"
-                          className="recap-page__card-input"
-                          placeholder="Expiration date ( MM/YY)"
-                          inputMode="numeric"
-                          autoComplete="cc-exp"
-                        />
-                        <input
-                          type="text"
-                          className="recap-page__card-input"
-                          placeholder="Security code"
-                          inputMode="numeric"
-                          autoComplete="cc-csc"
-                        />
-                      </div>
-                      <div className="recap-page__card-secure">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                          <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                        </svg>
-                        <span>Your payment info is stored securely</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className={`recap-page__payment-option-wrap${paymentMethod === 'apple-pay' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
-                  <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('apple-pay')}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="apple-pay"
-                      checked={paymentMethod === 'apple-pay'}
-                      onChange={() => setPaymentMethod('apple-pay')}
-                      className="recap-page__payment-radio"
-                    />
-                    <span className="recap-page__payment-radio-circle" />
-                    <span className="recap-page__payment-option-label">Apple Pay</span>
-                    <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
-                      <path d="M21.7277 4.375C24.4989 4.375 26.4286 6.21123 26.4286 8.88464C26.4286 11.5676 24.4592 13.4134 21.6582 13.4134H18.5899V18.1038H16.373V4.375L21.7277 4.375ZM18.5899 11.6247H21.1336C23.0637 11.6247 24.1622 10.6258 24.1622 8.89418C24.1622 7.16274 23.0637 6.17324 21.1435 6.17324H18.5899V11.6247Z" fill="black"/>
-                      <path d="M27.0078 15.259C27.0078 13.5083 28.4034 12.4332 30.8779 12.3L33.7282 12.1383V11.3678C33.7282 10.2546 32.9462 9.58862 31.64 9.58862C30.4026 9.58862 29.6305 10.1593 29.4427 11.0538H27.4236C27.5424 9.246 29.1456 7.91406 31.7191 7.91406C34.2429 7.91406 35.8561 9.19847 35.8561 11.2059V18.1036H33.8073V16.4577H33.758C33.1543 17.5709 31.8378 18.2748 30.4721 18.2748C28.4331 18.2748 27.0078 17.057 27.0078 15.259ZM33.7282 14.3552V13.5655L31.1647 13.7176C29.8879 13.8033 29.1655 14.3456 29.1655 15.2019C29.1655 16.0771 29.9177 16.648 31.0658 16.648C32.5602 16.648 33.7282 15.6585 33.7282 14.3552Z" fill="black"/>
-                      <path d="M37.7911 21.7845V20.1195C37.9492 20.1575 38.3054 20.1575 38.4837 20.1575C39.4734 20.1575 40.0079 19.758 40.3344 18.7305C40.3344 18.7114 40.5226 18.1216 40.5226 18.1121L36.7617 8.09375H39.0775L41.7105 16.2378H41.7498L44.3828 8.09375H46.6394L42.7395 18.6257C41.8491 21.0519 40.8197 21.832 38.662 21.832C38.4837 21.832 37.9492 21.813 37.7911 21.7845Z" fill="black"/>
-                      <path d="M9.83386 5.71444C10.3682 5.07206 10.7307 4.20953 10.6351 3.32812C9.85297 3.36551 8.89854 3.82412 8.34598 4.46701C7.84983 5.01754 7.4107 5.91619 7.52518 6.76064C8.40315 6.83385 9.28031 6.3388 9.83386 5.71444Z" fill="black"/>
-                      <path d="M10.6259 6.92676C9.35087 6.85376 8.26679 7.62236 7.6579 7.62236C7.04868 7.62236 6.11627 6.96355 5.10779 6.98131C3.7952 6.99984 2.57726 7.71324 1.91118 8.84787C0.54115 11.1177 1.54963 14.4846 2.8819 16.3333C3.52889 17.2479 4.30861 18.2549 5.33602 18.2187C6.30675 18.1821 6.68724 17.6145 7.8672 17.6145C9.04629 17.6145 9.38903 18.2187 10.4166 18.2004C11.4822 18.1821 12.1484 17.2854 12.7954 16.3699C13.5376 15.3273 13.8414 14.3206 13.8606 14.2654C13.8414 14.2471 11.8057 13.4964 11.7869 11.2454C11.7676 9.36066 13.3851 8.46416 13.4612 8.40856C12.5478 7.10998 11.1207 6.96355 10.6259 6.92676Z" fill="black"/>
-                    </svg>
-                  </label>
-                </div>
-                <div className={`recap-page__payment-option-wrap${paymentMethod === 'google-pay' ? ' recap-page__payment-option-wrap--selected' : ''}`}>
-                  <label className="recap-page__payment-option-row" onClick={() => setPaymentMethod('google-pay')}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="google-pay"
-                      checked={paymentMethod === 'google-pay'}
-                      onChange={() => setPaymentMethod('google-pay')}
-                      className="recap-page__payment-radio"
-                    />
-                    <span className="recap-page__payment-radio-circle" />
-                    <span className="recap-page__payment-option-label">Google Pay</span>
-                    <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden className="recap-page__payment-option-icon">
-                      <path d="M22.3 11.7v3.4h-1.1V6.6h2.9c.7 0 1.4.3 1.9.7.5.5.8 1.1.8 1.8s-.3 1.3-.8 1.8c-.5.5-1.1.7-1.9.7h-1.8Zm0-4v3h1.8c.5 0 .9-.2 1.2-.5.3-.3.5-.7.5-1.1 0-.4-.2-.8-.5-1.1-.3-.3-.7-.4-1.2-.4h-1.8Z" fill="#3C4043"/>
-                      <path d="M29.8 9.3c.8 0 1.5.2 2 .7.5.5.8 1.1.8 1.9v3.3h-1v-.7h-.1c-.5.6-1.1.9-1.8.9-.6 0-1.2-.2-1.6-.6-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .7-1.4.4-.3 1-.5 1.8-.5.6 0 1.2.1 1.5.4v-.3c0-.4-.2-.7-.4-1-.3-.2-.6-.4-1-.4-.6 0-1 .3-1.3.7l-1-.6c.4-.7 1.1-1 2-1Zm-1.4 3.9c0 .3.1.5.4.7.2.2.5.3.8.3.5 0 .9-.2 1.3-.5.3-.3.5-.7.5-1.1-.3-.3-.8-.4-1.4-.4-.4 0-.8.1-1.1.3-.3.2-.5.4-.5.7Z" fill="#3C4043"/>
-                      <path d="M37.5 9.5l-3.4 7.9h-1.1l1.3-2.7-2.2-5.2h1.2l1.6 3.9 1.5-3.9h1.1Z" fill="#3C4043"/>
-                      <path d="M17.6 11.3c0-.3 0-.7-.1-1h-5v2h2.9c-.1.6-.5 1.1-1 1.5v1.2h1.6c1-.9 1.6-2.2 1.6-3.7Z" fill="#4285F4"/>
-                      <path d="M12.5 16.1c1.4 0 2.5-.5 3.3-1.2l-1.6-1.2c-.5.3-1 .5-1.7.5-1.3 0-2.4-.9-2.8-2h-1.6v1.2c.9 1.6 2.5 2.7 4.4 2.7Z" fill="#34A853"/>
-                      <path d="M9.7 12.2c-.1-.3-.2-.7-.2-1s.1-.7.2-1V8.9H8.1c-.4.7-.6 1.4-.6 2.2s.2 1.5.6 2.2l1.6-1.1Z" fill="#FBBC04"/>
-                      <path d="M12.5 8.1c.7 0 1.4.3 1.9.7l1.4-1.4c-.9-.8-2-1.3-3.3-1.3-1.9 0-3.5 1.1-4.4 2.7l1.6 1.2c.4-1.2 1.5-1.9 2.8-1.9Z" fill="#EA4335"/>
-                    </svg>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="recap-page__footer">
-            {paymentMethod === 'apple-pay' ? (
-              <button type="button" className="recap-page__apple-pay-btn" onClick={handlePayNow}>
-                <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden>
-                  <path d="M9.2 7.4c-.6.7-1.5 1.2-2.4 1.1-.1-1 .4-2 .9-2.6.6-.7 1.6-1.2 2.3-1.2.1 1-.3 2-.8 2.7Zm.8 1.4c-1.3-.1-2.5.8-3.1.8-.6 0-1.7-.7-2.8-.7-1.4 0-2.8.8-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7 1.3 0 1.6.7 2.8.7 1.2 0 2-1 2.7-2.1.9-1.2 1.2-2.4 1.2-2.5-.1 0-2.4-.9-2.4-3.6 0-2.3 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.7l-.2.3Zm10.4-2.5v15.5h2.3v-5.3h3.2c2.9 0 5-2 5-5.1s-2-5.1-4.9-5.1h-5.6Zm2.3 2h2.6c2 0 3.1 1.1 3.1 3.1 0 2-1.1 3.1-3.1 3.1h-2.6V8.3Zm12.6 13.7c1.5 0 2.8-.7 3.4-1.9h.1v1.7h2.1V14c0-2.2-1.7-3.5-4.3-3.5-2.4 0-4.2 1.4-4.2 3.3h2c.2-.9 1-1.5 2.1-1.5 1.4 0 2.1.6 2.1 1.8v.8l-2.8.2c-2.6.2-4 1.2-4 3.1 0 2 1.5 3.3 3.5 3.3Zm.6-1.8c-1.2 0-2-.6-2-1.5 0-1 .7-1.5 2.2-1.6l2.5-.2v.8c0 1.4-1.2 2.5-2.7 2.5Zm7 5.8c2.2 0 3.3-.9 4.2-3.4l4-11.4H45l-2.7 8.7h-.1l-2.7-8.7h-2.4l3.9 10.8-.2.7c-.4 1.2-1 1.6-2 1.6-.2 0-.5 0-.7-.1v1.8c.2 0 .6.1.8 0Z" fill="#fff" />
-                </svg>
-              </button>
-            ) : paymentMethod === 'google-pay' ? (
-              <button type="button" className="recap-page__google-pay-btn" onClick={handlePayNow}>
-                <svg width="48" height="24" viewBox="0 0 48 24" fill="none" aria-hidden>
-                  <path d="M22.3 11.7v3.4h-1.1V6.6h2.9c.7 0 1.4.3 1.9.7.5.5.8 1.1.8 1.8s-.3 1.3-.8 1.8c-.5.5-1.1.7-1.9.7h-1.8Zm0-4v3h1.8c.5 0 .9-.2 1.2-.5.3-.3.5-.7.5-1.1 0-.4-.2-.8-.5-1.1-.3-.3-.7-.4-1.2-.4h-1.8Z" fill="#3C4043"/>
-                  <path d="M29.8 9.3c.8 0 1.5.2 2 .7.5.5.8 1.1.8 1.9v3.3h-1v-.7h-.1c-.5.6-1.1.9-1.8.9-.6 0-1.2-.2-1.6-.6-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .7-1.4.4-.3 1-.5 1.8-.5.6 0 1.2.1 1.5.4v-.3c0-.4-.2-.7-.4-1-.3-.2-.6-.4-1-.4-.6 0-1 .3-1.3.7l-1-.6c.4-.7 1.1-1 2-1Zm-1.4 3.9c0 .3.1.5.4.7.2.2.5.3.8.3.5 0 .9-.2 1.3-.5.3-.3.5-.7.5-1.1-.3-.3-.8-.4-1.4-.4-.4 0-.8.1-1.1.3-.3.2-.5.4-.5.7Z" fill="#3C4043"/>
-                  <path d="M37.5 9.5l-3.4 7.9h-1.1l1.3-2.7-2.2-5.2h1.2l1.6 3.9 1.5-3.9h1.1Z" fill="#3C4043"/>
-                  <path d="M17.6 11.3c0-.3 0-.7-.1-1h-5v2h2.9c-.1.6-.5 1.1-1 1.5v1.2h1.6c1-.9 1.6-2.2 1.6-3.7Z" fill="#4285F4"/>
-                  <path d="M12.5 16.1c1.4 0 2.5-.5 3.3-1.2l-1.6-1.2c-.5.3-1 .5-1.7.5-1.3 0-2.4-.9-2.8-2h-1.6v1.2c.9 1.6 2.5 2.7 4.4 2.7Z" fill="#34A853"/>
-                  <path d="M9.7 12.2c-.1-.3-.2-.7-.2-1s.1-.7.2-1V8.9H8.1c-.4.7-.6 1.4-.6 2.2s.2 1.5.6 2.2l1.6-1.1Z" fill="#FBBC04"/>
-                  <path d="M12.5 8.1c.7 0 1.4.3 1.9.7l1.4-1.4c-.9-.8-2-1.3-3.3-1.3-1.9 0-3.5 1.1-4.4 2.7l1.6 1.2c.4-1.2 1.5-1.9 2.8-1.9Z" fill="#EA4335"/>
-                </svg>
-              </button>
-            ) : (
-              <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handlePayNow} disabled={!paymentMethod}>Pay now</Button>
-            )}
-          </div>
-
-          {showRewardsSheet && (
-            <div className="recap-page__rewards-overlay" onClick={() => setShowRewardsSheet(false)}>
-              <div className="recap-page__rewards-sheet" onClick={(e) => e.stopPropagation()}>
-                <div className="recap-page__rewards-sheet-nav">
-                  <span className="recap-page__rewards-sheet-spacer" />
-                  <h2 className="recap-page__rewards-sheet-title">Reward Points Discount</h2>
-                  <button type="button" className="recap-page__rewards-sheet-close" onClick={() => setShowRewardsSheet(false)} aria-label="Close">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className="recap-page__rewards-sheet-body">
-                  <div className="recap-page__rewards-badge-row">
-                    <span className="recap-page__rewards-badge-icon">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-                        <path d="M11.649 5.73553C11.7899 5.44032 12.2101 5.44032 12.351 5.73553L13.9252 9.03458C13.9819 9.15339 14.0948 9.23545 14.2254 9.25266L17.8494 9.73037C18.1737 9.77312 18.3036 10.1728 18.0663 10.398L15.4152 12.9146C15.3197 13.0052 15.2766 13.138 15.3006 13.2675L15.9661 16.8618C16.0257 17.1834 15.6857 17.4304 15.3982 17.2744L12.1855 15.5307C12.0698 15.4679 11.9302 15.4679 11.8145 15.5307L8.60178 17.2744C8.3143 17.4304 7.97433 17.1834 8.03389 16.8618L8.69945 13.2675C8.72341 13.138 8.68027 13.0052 8.5848 12.9146L5.93368 10.398C5.69644 10.1728 5.8263 9.77312 6.15059 9.73037L9.77464 9.25266C9.90515 9.23545 10.0181 9.15339 10.0748 9.03458L11.649 5.73553Z" stroke="#fff" />
-                        <circle cx="12" cy="12" r="9" stroke="#fff" strokeLinejoin="round" />
-                      </svg>
-                    </span>
-                    <span className="recap-page__rewards-badge-text">You have {USER_POINTS.toLocaleString('de-DE')} Reward points available</span>
-                  </div>
-
-                  <p className="recap-page__rewards-sheet-desc">Choose how many Reward points to use toward this instant purchase</p>
-
-                  <div className="recap-page__rewards-inputs">
-                    <div className="recap-page__rewards-input-group">
-                      <label className="recap-page__rewards-input-label">Reward points</label>
-                      <input
-                        type="text"
-                        className="recap-page__rewards-input-field"
-                        value={rewardsStepperValue === 0 ? '0' : rewardsStepperValue.toLocaleString('de-DE')}
-                        onChange={(e) => {
-                          const num = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0;
-                          setRewardsStepperValue(Math.min(num, rewardsSliderMax));
-                        }}
-                        inputMode="numeric"
-                      />
-                    </div>
-                    <div className="recap-page__rewards-input-group">
-                      <label className="recap-page__rewards-input-label">Euros</label>
-                      <input
-                        type="text"
-                        className="recap-page__rewards-input-field"
-                        value={`€${(rewardsStepperValue / POINTS_PER_EUR).toFixed(2).replace('.', ',')}`}
-                        onChange={(e) => {
-                          const raw = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
-                          const euros = parseFloat(raw) || 0;
-                          const pts = Math.round(euros * POINTS_PER_EUR);
-                          setRewardsStepperValue(Math.min(pts, rewardsSliderMax));
-                        }}
-                        inputMode="decimal"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="recap-page__rewards-slider-group">
-                    <input
-                      type="range"
-                      className="recap-page__rewards-slider"
-                      min={0}
-                      max={rewardsSliderMax > 0 ? rewardsSliderMax : 1}
-                      step={10}
-                      value={rewardsSliderMax > 0 ? Math.min(rewardsStepperValue, rewardsSliderMax) : 0}
-                      disabled={rewardsSliderMax <= 0}
-                      onChange={(e) => setRewardsStepperValue(Math.min(Number(e.target.value), rewardsSliderMax))}
-                      onInput={(e) => setRewardsStepperValue(Math.min(Number(e.currentTarget.value), rewardsSliderMax))}
-                      style={
-                        {
-                          '--recap-rewards-slider-pct': `${rewardsSliderPct}%`,
-                        } as React.CSSProperties
-                      }
-                    />
-                    <p className="recap-page__rewards-slider-caption">You have earned {USER_POINTS.toLocaleString('de-DE')} Points</p>
-                  </div>
-
-                  <p className="recap-page__rewards-sheet-discount">
-                    <strong>{formatEur(rewardsStepperValue / POINTS_PER_EUR)}</strong> discount on your purchase
-                  </p>
-
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                    disabled={rewardsStepperValue <= 0}
-                    onClick={() => {
-                      setRewardsPointsUsed(rewardsStepperValue);
-                      setShowRewardsSheet(false);
-                    }}
-                  >
-                    Apply Reward Points discount
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {showConfirmation && (
-        <div className="recap-page">
-          <MarketplaceHeader theme="light" isLoggedIn avatarSrc="/avatar.png" points={USER_POINTS} loyaltyTier={userLoyaltyTier} onLogoClick={() => { window.location.href = window.location.pathname; }} onMenu={() => {}} onPointsClick={() => {}} />
-          <div className="recap-page__content">
-            {showSuccessBanner && (
-              <div className="confirmation__success-banner">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" fill="#00513f" /><path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                <p className="confirmation__success-text">Success! Your purchase is complete. View it in your profile.</p>
-                <button type="button" className="confirmation__success-close" onClick={() => setShowSuccessBanner(false)} aria-label="Close">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </button>
-              </div>
-            )}
-            <div className="confirmation__header">
-              <h1 className="recap-page__title">Purchase confirmed</h1>
-              <span className="confirmation__order-id">Order ID: R{Math.floor(1000000 + Math.random() * 9000000)}</span>
-            </div>
-            <div className="recap-page__event-card">
-              <img src={HERO_IMAGES[0]?.src ?? '/carnival-hero.png'} alt={HERO_IMAGES[0]?.alt ?? EVENT_TITLE} className="recap-page__event-thumb" />
-              <div className="recap-page__event-info">
-                <p className="recap-page__event-name">{EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}</p>
-                <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
-              </div>
-            </div>
-            <hr className="recap-page__divider" aria-hidden />
-            <div className="recap-page__details">
-              <div className="recap-page__detail-group">
-                <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Date</span></div>
-                <p className="recap-page__detail-value">{selectedDateLabel} · {selectedTimeLabel}</p>
-              </div>
-              <div className="recap-page__detail-group">
-                <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" /></svg><span className="recap-page__detail-label">Location</span></div>
-                <p className="recap-page__detail-value">{venueInfo.address}</p>
-              </div>
-              <div className="recap-page__detail-group">
-                <div className="recap-page__detail-header"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h0a3 3 0 0 0-3 3v0a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9Z" stroke="currentColor" strokeWidth="1.5" /><path d="M13 12h3M13 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><span className="recap-page__detail-label">Tickets and Add-ons</span></div>
-                <div className="recap-page__detail-row"><span className="recap-page__detail-row-label">{confirmedTickets}x {confirmedTicketName}</span><span className="recap-page__detail-row-value">{formatEur(confirmedTotal)}</span></div>
-              </div>
-            </div>
-            <hr className="recap-page__divider" aria-hidden />
-            <div className="recap-page__pricing">
-              <div className="recap-page__pricing-row"><span>Subtotal</span><span>{formatEur(confirmedTotal)}</span></div>
-              <div className="recap-page__pricing-row"><span>Fees</span><span>Included</span></div>
-              <div className="recap-page__pricing-total"><span>Total</span><span>{formatEur(confirmedTotal)}</span></div>
-            </div>
-            <div className="confirmation__info-box">
-              <div className="confirmation__info-row"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M2 8l10 6 10-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg><p className="confirmation__info-text">All your tickets have been sent to your email <strong>johnsmith@gmail.com</strong></p></div>
-              <div className="confirmation__info-row"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" /><path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span className="confirmation__info-text">Need help?</span><a href="#" className="confirmation__info-link">Contact Customer Center</a></div>
-            </div>
-            <div className="confirmation__actions">
-              <Button variant="tertiary" size="md" fullWidth onClick={handleBackToEvent}>Continue exploring</Button>
-              <button type="button" className="confirmation__orders-btn" onClick={handleViewOrders}>View all my orders</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {standardConfirmationOverlay}
 
       <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} variant="standard" />
     </div>

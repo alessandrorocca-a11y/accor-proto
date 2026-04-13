@@ -1177,7 +1177,7 @@ export default function HomePage() {
             </div>
             {heroSearchActive && (
               <div className="home-page__hero-search-dropdown">
-                <SearchResultsPanel query={heroQuery} onQueryChange={setHeroQuery} />
+                <SearchResultsPanel query={heroQuery} onQueryChange={setHeroQuery} onNavigate={closeHeroSearch} />
               </div>
             )}
           </div>

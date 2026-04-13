@@ -606,7 +606,10 @@ export function Menu({
   };
 
   const menuTree = (
-    <div className="menu-overlay" onClick={onClose}>
+    <div
+      className={`menu-overlay${overlayPortalTarget ? ' menu-overlay--prototype-device' : ''}`}
+      onClick={onClose}
+    >
       <div
         ref={menuRef}
         className="menu"
@@ -1074,7 +1077,11 @@ export function Menu({
                 {/* Card list */}
                 <div className="menu__orders-list">
                   {(ordersTab === 'upcoming' ? UPCOMING_ORDERS : PAST_ORDERS).map((event) => (
-                    <a key={event.id} href="#" className="menu__order-card">
+                    <button
+                      key={event.id}
+                      type="button"
+                      className="menu__order-card"
+                    >
                       <div className="menu__order-card-img-wrap">
                         <img
                           src={event.image}
@@ -1102,8 +1109,15 @@ export function Menu({
                           <span className="menu__order-card-countdown-value">{event.countdown}</span>
                         </span>
                       </div>
-                    </a>
+                    </button>
                   ))}
+                  {(ordersTab === 'upcoming' ? UPCOMING_ORDERS : PAST_ORDERS).length === 0 && (
+                    <p className="menu__empty-state">
+                      {ordersTab === 'upcoming'
+                        ? 'No upcoming orders yet. Complete a booking to see it here.'
+                        : 'No past orders yet.'}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

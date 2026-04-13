@@ -219,6 +219,12 @@
   min-height: 0;
 }
 
+/* Portaled to `.device-preview-frame__overlay-slot` — fixed is trapped by translateZ on the scroll viewport. */
+.recap-page.recap-page--prototype-device {
+  position: absolute;
+  pointer-events: auto;
+}
+
 .recap-page .marketplace-header,
 html.device-preview-frame-active .recap-page .marketplace-header {
   position: sticky;

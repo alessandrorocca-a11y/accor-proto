@@ -393,7 +393,14 @@ export function MarketplaceHeader({
             </div>
             {desktopSearchActive && (
               <div className="marketplace-header__search-dropdown">
-                <SearchResultsPanel query={desktopQuery} onQueryChange={setDesktopQuery} />
+                <SearchResultsPanel
+                  query={desktopQuery}
+                  onQueryChange={setDesktopQuery}
+                  onNavigate={() => {
+                    setDesktopSearchActive(false);
+                    setDesktopQuery('');
+                  }}
+                />
               </div>
             )}
           </div>

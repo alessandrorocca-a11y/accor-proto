@@ -270,6 +270,11 @@
   animation: auction-notify-slide-in 0.3s ease-out;
 }
 
+/* Portaled to `.device-preview-frame__overlay-slot` — not the scrolling viewport (see confirm-bid). */
+.auction-page__notify-snack.auction-page__notify-snack--prototype-device {
+  position: absolute;
+}
+
 @keyframes auction-notify-slide-in {
   from {
     opacity: 0;
@@ -1210,18 +1215,34 @@ html:not(.device-preview-frame-active) .auction-page__hero-status-badge{
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  /* Overlay slot uses pointer-events: none so empty areas pass through; re-enable for dimmer + sheet. */
+  pointer-events: auto;
+}
+
+/* Portaled to `.device-preview-frame__overlay-slot` — not the scrolling viewport — so fixed isn’t trapped by translateZ/overflow. */
+.confirm-bid__backdrop.confirm-bid__backdrop--prototype-device {
+  position: absolute;
 }
 
 .confirm-bid {
   background: var(--wel-sem-color-surface, #fff);
   border-radius: 16px 16px 0 0;
   width: 100%;
+  max-height: 100%;
   padding: 16px 16px 28px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 28px;
+  flex-shrink: 1;
+  min-height: 0;
+  overflow: hidden;
   box-shadow: 0 -2px 6px var(--wel-sem-color-shadow-default, rgba(7, 5, 24, 0.05));
   animation: confirm-bid-slide-up 0.25s ease-out;
+  touch-action: auto;
 }
 
 @media (min-width: 600px) {  html:not(.device-preview-frame-active) .confirm-bid{

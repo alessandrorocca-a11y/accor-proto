@@ -6,6 +6,9 @@
   background: var(--wel-sem-color-surface, #fff);
   animation: search-slide-in 0.25s ease-out;
   overflow-y: auto;
+  /* Re-enable hits: parent `.device-preview-frame__overlay-slot` uses `none` so empty
+   * overlay area passes through; without `auto` here, taps/typing on search often fail. */
+  pointer-events: auto;
 }
 
 @keyframes search-slide-in {

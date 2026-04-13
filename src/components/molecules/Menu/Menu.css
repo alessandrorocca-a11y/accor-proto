@@ -13,6 +13,9 @@
   align-items: flex-end;
   justify-content: center;
   animation: menu-overlay-in 0.2s ease-out;
+  /* Re-enable hits: parent `.device-preview-frame__overlay-slot` uses `none` so empty
+   * overlay area passes through; without `auto` here, Safari often ignores taps on the menu. */
+  pointer-events: auto;
 }
 
 /* Portaled under `.mobile-prototype-shell__device` — not the scrolling screen — so the sheet stays pinned while content scrolls. */
@@ -716,6 +719,19 @@
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+}
+
+/* Use <button> for order rows so `href="#"` does not fire hashchange (Menu closes on hashchange). */
+button.menu__order-card {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  text-align: left;
 }
 
 .menu__order-card:hover .menu__order-card-img {

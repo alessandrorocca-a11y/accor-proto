@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Button,
   Countdown,
@@ -16,8 +17,10 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
+import { useScrollLock } from '@/utils/useScrollLock';
 import { getEventById, isSignatureExclusiveMarketingTag, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { RIO_SAMBADROME_MAP_IMAGE } from '@/data/events/venueData';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useUser } from '@/context/UserContext';
 import './AuctionPage.css';
 
@@ -166,9 +169,12 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const [termsOpen, setTermsOpen] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const placeBidRef = useRef<HTMLDivElement>(null);
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
   const notifyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const favTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bidErrorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useScrollLock(confirmBidOpen);
 
   const handleAuctionEnd = useCallback(() => {
     setAuctionEnded(true);
@@ -284,6 +290,178 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
     setBid('');
   };
 
+  const snackDeviceSuffix = overlayPortalTarget ? ' auction-page__notify-snack--prototype-device' : '';
+
+  const auctionSnacks = (
+    <>
+      {showNotifySnack && (
+        <div className={`auction-page__notify-snack${snackDeviceSuffix}`} role="status">
+          <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="12" r="10" fill="#00513f" />
+            <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="auction-page__notify-snack-content">
+            <p className="auction-page__notify-snack-title">Notifications enabled for this auction</p>
+            <p className="auction-page__notify-snack-body">You can review your preferences in communication settings.</p>
+          </div>
+          <button
+            type="button"
+            className="auction-page__notify-snack-close"
+            onClick={() => setShowNotifySnack(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {showFavSnack && (
+        <div className={`auction-page__notify-snack auction-page__notify-snack--fav${snackDeviceSuffix}`} role="status">
+          <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="12" r="10" fill="#00513f" />
+            <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="auction-page__notify-snack-content">
+            <p className="auction-page__notify-snack-title">Added to your favourites</p>
+            <p className="auction-page__notify-snack-body">You can review your favourites in your profile menu.</p>
+          </div>
+          <button
+            type="button"
+            className="auction-page__notify-snack-close"
+            onClick={() => setShowFavSnack(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {showBidError && (
+        <div className={`auction-page__notify-snack auction-page__notify-snack--error${snackDeviceSuffix}`} role="alert">
+          <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
+            <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="auction-page__notify-snack-content">
+            <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Insufficient Points balance</p>
+            <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">You do not have enough points to place this bid. Review your point balance before trying again.</p>
+          </div>
+          <button
+            type="button"
+            className="auction-page__notify-snack-close"
+            onClick={() => setShowBidError(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {showBidTooLow && (
+        <div className={`auction-page__notify-snack auction-page__notify-snack--error${snackDeviceSuffix}`} role="alert">
+          <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
+            <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="auction-page__notify-snack-content">
+            <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Bid too low</p>
+            <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">Your bid must be higher than the current bid of {formatChipPoints(currentBid)} points.</p>
+          </div>
+          <button
+            type="button"
+            className="auction-page__notify-snack-close"
+            onClick={() => setShowBidTooLow(false)}
+            aria-label="Close notification"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </>
+  );
+
+  const confirmBidDialog =
+    confirmBidOpen &&
+    (
+      <div
+        className={`confirm-bid__backdrop${overlayPortalTarget ? ' confirm-bid__backdrop--prototype-device' : ''}`}
+        onClick={() => setConfirmBidOpen(false)}
+      >
+        <div
+          className="confirm-bid"
+          role="dialog"
+          aria-modal
+          aria-label="Confirm your bid"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="confirm-bid__header">
+            <span className="confirm-bid__spacer" />
+            <h2 className="confirm-bid__title">Confirm your bid</h2>
+            <button
+              type="button"
+              className="confirm-bid__close"
+              onClick={() => setConfirmBidOpen(false)}
+              aria-label="Close"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="confirm-bid__body">
+            <div className="confirm-bid__info">
+              <div className="confirm-bid__time-row">
+                <span className="confirm-bid__time-left">
+                  Ends in{' '}
+                  <strong>
+                    {(() => {
+                      const diff = Math.max(0, Math.floor((endDate.getTime() - Date.now()) / 1000));
+                      const d = Math.floor(diff / 86400);
+                      const h = Math.floor((diff % 86400) / 3600);
+                      const m = Math.floor((diff % 3600) / 60);
+                      const s = diff % 60;
+                      return `${d}d ${h}h ${m}m ${s}s`;
+                    })()}
+                  </strong>
+                </span>
+                <span className="confirm-bid__time-date">
+                  {endDate.toLocaleString('en-GB', { weekday: 'long', day: '2-digit', month: 'long' })} - {endDate.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+
+              <div className="confirm-bid__actual">
+                <span className="confirm-bid__actual-label">Current bid:</span>
+                <span className="confirm-bid__actual-value">{formatChipPoints(currentBid)} points</span>
+              </div>
+            </div>
+
+            <div className="confirm-bid__your-bid">
+              <span className="confirm-bid__your-bid-label">Your bid</span>
+              <span className="confirm-bid__your-bid-value">{formatChipPoints(bidNumeric)} points</span>
+            </div>
+
+            <div className="confirm-bid__actions">
+              <Button variant="tertiary" size="md" fullWidth onClick={() => setConfirmBidOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" size="md" fullWidth onClick={handleConfirmBid}>
+                Confirm bid
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div className="auction-page">
       <MarketplaceHeader
@@ -386,100 +564,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         </a>
       </nav>
 
-      {/* Snackbar anchor — sticky so notifications stay visible while scrolling */}
-      <div className="auction-page__snack-anchor">
-        {showNotifySnack && (
-          <div className="auction-page__notify-snack" role="status">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <circle cx="12" cy="12" r="10" fill="#00513f" />
-              <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title">Notifications enabled for this auction</p>
-              <p className="auction-page__notify-snack-body">You can review your preferences in communication settings.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowNotifySnack(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {showFavSnack && (
-          <div className="auction-page__notify-snack auction-page__notify-snack--fav" role="status">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <circle cx="12" cy="12" r="10" fill="#00513f" />
-              <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title">Added to your favourites</p>
-              <p className="auction-page__notify-snack-body">You can review your favourites in your profile menu.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowFavSnack(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {showBidError && (
-          <div className="auction-page__notify-snack auction-page__notify-snack--error" role="alert">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
-              <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Insufficient Points balance</p>
-              <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">You do not have enough points to place this bid. Review your point balance before trying again.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowBidError(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {showBidTooLow && (
-          <div className="auction-page__notify-snack auction-page__notify-snack--error" role="alert">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
-              <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Bid too low</p>
-              <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">Your bid must be higher than the current bid of {formatChipPoints(currentBid)} points.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowBidTooLow(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Snackbar anchor — sticky when not in device shell; in preview, snacks portal to overlay slot */}
+      <div className="auction-page__snack-anchor">{!overlayPortalTarget && auctionSnacks}</div>
 
       {/* Hero gallery */}
       <section className="auction-page__hero-full">
@@ -849,74 +935,10 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      {confirmBidOpen && (
-        <div className="confirm-bid__backdrop" onClick={() => setConfirmBidOpen(false)}>
-          <div
-            className="confirm-bid"
-            role="dialog"
-            aria-modal
-            aria-label="Confirm your bid"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="confirm-bid__header">
-              <span className="confirm-bid__spacer" />
-              <h2 className="confirm-bid__title">Confirm your bid</h2>
-              <button
-                type="button"
-                className="confirm-bid__close"
-                onClick={() => setConfirmBidOpen(false)}
-                aria-label="Close"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="confirm-bid__body">
-              <div className="confirm-bid__info">
-                <div className="confirm-bid__time-row">
-                  <span className="confirm-bid__time-left">
-                    Ends in{' '}
-                    <strong>
-                      {(() => {
-                        const diff = Math.max(0, Math.floor((endDate.getTime() - Date.now()) / 1000));
-                        const d = Math.floor(diff / 86400);
-                        const h = Math.floor((diff % 86400) / 3600);
-                        const m = Math.floor((diff % 3600) / 60);
-                        const s = diff % 60;
-                        return `${d}d ${h}h ${m}m ${s}s`;
-                      })()}
-                    </strong>
-                  </span>
-                  <span className="confirm-bid__time-date">
-                    {endDate.toLocaleString('en-GB', { weekday: 'long', day: '2-digit', month: 'long' })} - {endDate.toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-
-                <div className="confirm-bid__actual">
-                  <span className="confirm-bid__actual-label">Current bid:</span>
-                  <span className="confirm-bid__actual-value">{formatChipPoints(currentBid)} points</span>
-                </div>
-              </div>
-
-              <div className="confirm-bid__your-bid">
-                <span className="confirm-bid__your-bid-label">Your bid</span>
-                <span className="confirm-bid__your-bid-value">{formatChipPoints(bidNumeric)} points</span>
-              </div>
-
-              <div className="confirm-bid__actions">
-                <Button variant="tertiary" size="md" fullWidth onClick={() => setConfirmBidOpen(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" size="md" fullWidth onClick={handleConfirmBid}>
-                  Confirm bid
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {overlayPortalTarget &&
+        (showNotifySnack || showFavSnack || showBidError || showBidTooLow) &&
+        createPortal(auctionSnacks, overlayPortalTarget)}
+      {overlayPortalTarget ? confirmBidDialog && createPortal(confirmBidDialog, overlayPortalTarget) : confirmBidDialog}
 
       <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} />
       <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} variant={voyagerVariant} />
