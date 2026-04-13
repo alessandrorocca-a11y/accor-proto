@@ -518,6 +518,9 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   overflow: hidden;
   width: 100%;
   padding: 0 16px;
+  /* Same as `.home-page__scroll`: shell screen uses `touch-action: pan-y` — allow horizontal swipes for carousel. */
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
 }
 
 .home-page__top-card {

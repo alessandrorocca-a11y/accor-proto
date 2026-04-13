@@ -17,6 +17,9 @@ const INTERACTIVE_DRAG_SKIP =
 const HORIZONTAL_SCROLL_STRIP_SELECTOR =
   '.home-page__scroll, .city-page__scroll, .linkout__recommendations-scroll';
 
+/** Custom swipe carousel (not `scrollLeft`); skip shell mouse-drag so vertical scroll does not eat horizontal intent. */
+const CAROUSEL_POINTER_DRAG_SKIP = '.home-page__top-carousel';
+
 function AndroidStatusBar() {
   return (
     <div className="mobile-prototype-shell__status-bar mobile-prototype-shell__status-bar--android" aria-hidden>
@@ -238,6 +241,7 @@ export function MobilePrototypeShell({ children }: { children: ReactNode }) {
       if (e.pointerType !== 'mouse' || e.button !== 0) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest(INTERACTIVE_DRAG_SKIP)) return;
+      if (t?.closest(CAROUSEL_POINTER_DRAG_SKIP)) return;
 
       activePointerId = e.pointerId;
       startX = e.clientX;
