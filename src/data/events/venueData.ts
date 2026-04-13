@@ -378,7 +378,12 @@ export function getVenueInfo(location: string, city: string): VenueInfo {
 }
 
 export function getMapEmbedUrl(venue: VenueInfo): string {
-  return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${venue.mapQuery}`;
+  const q = encodeURIComponent(venue.mapQuery.replace(/\+/g, ' '));
+  return `https://www.openstreetmap.org/export/embed.html?bbox=&layer=mapnik&marker=&query=${q}`;
+}
+
+export function getGoogleMapsSearchUrl(venue: VenueInfo): string {
+  return `https://www.google.com/maps/search/?api=1&query=${venue.mapQuery}`;
 }
 
 /** Aerial Rio — static location visual where map iframes fail to load (CSP, sandbox, bad embed URLs). */

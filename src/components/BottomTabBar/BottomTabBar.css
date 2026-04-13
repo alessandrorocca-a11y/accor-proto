@@ -14,6 +14,17 @@
   border-top: 0.5px solid rgba(60, 60, 67, 0.18);
 }
 
+/* Pinned below scroll viewport inside DevicePreviewFrame (not overlaying page content) */
+.bottom-tab-bar.bottom-tab-bar--device-preview {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  z-index: 200;
+  width: 100%;
+  border-top: none;
+}
+
 .bottom-tab-bar__browser-row {
   display: flex;
   align-items: center;
@@ -60,5 +71,9 @@
 @media (min-width: 1024px) {
   .bottom-tab-bar {
     display: none !important;
+  }
+
+  html.device-preview-frame-active .bottom-tab-bar {
+    display: flex !important;
   }
 }

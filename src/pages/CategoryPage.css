@@ -35,9 +35,9 @@
   border-color: var(--wel-sem-color-primary);
 }
 
-/* Breadcrumb */
+/* Breadcrumb — desktop only (hidden on mobile / narrow layouts) */
 .category-page__breadcrumb {
-  display: flex;
+  display: none;
   align-items: center;
   padding: 12px 16px 0;
 }
@@ -75,6 +75,11 @@
 
 .category-page__breadcrumb-current {
   display: none;
+}
+
+/* Wide browser + device frame: keep breadcrumb off the “phone” glass */
+html.device-preview-frame-active .category-page__breadcrumb {
+  display: none !important;
 }
 
 /* Page header */
@@ -1271,6 +1276,7 @@
 
   /* Breadcrumb */
   .category-page__breadcrumb {
+    display: flex;
     padding: 12px 64px 0;
     max-width: 1440px;
     margin: 0 auto;
@@ -1479,4 +1485,36 @@
     right: 24px;
     width: 420px;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Device preview: filter sheets use browser vh — too tall vs the ~852px
+   glass; bottom-anchored sheet + huge max-height causes bad scroll.
+   Center a bounded card; only the list body scrolls.
+   ══════════════════════════════════════════════════════════════════════ */
+
+html.device-preview-frame-active .filter-sheet__backdrop {
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px 16px !important;
+  box-sizing: border-box !important;
+  overscroll-behavior: contain;
+}
+
+html.device-preview-frame-active .filter-sheet {
+  width: 100% !important;
+  max-width: 380px !important;
+  max-height: calc(100% - 24px) !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2) !important;
+  overflow: hidden;
+  animation: dialog-scale-in 0.2s ease-out !important;
+}
+
+html.device-preview-frame-active .filter-sheet__body {
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }

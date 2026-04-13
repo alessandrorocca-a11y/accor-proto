@@ -907,7 +907,7 @@ export default function PlanPage({ planSlug }: PlanPageProps) {
             </div>
             <iframe
               className="auction-page__map"
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${plan.mapQuery}`}
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=&layer=mapnik&marker=&query=${encodeURIComponent(plan.mapQuery.replace(/\+/g, ' '))}`}
               title={`${plan.venue} location`}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

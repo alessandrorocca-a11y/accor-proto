@@ -14,7 +14,7 @@ import { useFavourites } from '@/context/FavouritesContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './StandardPage.css';
 import { getEventById, getStandardEventFromPriceEur, STANDARD_POINTS_PER_EUR } from '@/data/events/eventRegistry';
-import { getVenueInfo } from '@/data/events/venueData';
+import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 const DEFAULT_HERO_IMAGES = [
   { src: '/carnival-hero.png', alt: 'Rio de Janeiro Carnival 2026' },
@@ -864,7 +864,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <p className="auction-page__body auction-page__body--strong">{venueInfo.name}</p>
               <p className="auction-page__body auction-page__body--muted">{venueInfo.address}</p>
             </div>
-            <iframe className="auction-page__map" src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${venueInfo.mapQuery}`} title={`${venueInfo.name} location`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+            <iframe className="auction-page__map" src={getMapEmbedUrl(venueInfo)} title={`${venueInfo.name} location`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
           </section>
 
           <hr className="auction-page__divider" aria-hidden />

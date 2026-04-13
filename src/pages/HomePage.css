@@ -22,6 +22,10 @@
   margin-top: -56px;
 }
 
+html.device-preview-frame-active .home-page__hero {
+  margin-top: calc(-1 * (56px + var(--device-preview-status-bar-height, 0px)));
+}
+
 /* Prototype: bleed hero under portaled nav (must beat `body… .home-page__hero` if reintroduced; shell screen uses matching offset) */
 body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   margin-top: calc(-1 * var(--prototype-nav-bar-offset, 56px));
@@ -1019,6 +1023,9 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
 /* ── Banner (Figma 6905-44832) ────────────────────────────────────────── */
 .home-page__banner {
   margin: 20px 0 0;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -1047,7 +1054,7 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
  */
 .home-page__banner-loyalty-card {
   position: absolute;
-  left: 28px;
+  left: 24px;
   bottom: -22px;
   transform: none;
   width: 107px;
@@ -1126,7 +1133,9 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
 
 .home-page__banner-content {
   position: relative;
-  padding: 56px 56px 56px 28px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 56px 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1217,7 +1226,7 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
 
   /* ── Banner tablet ──────────────────────────────────────────────── */
   .home-page__banner {
-    margin: 20px 32px;
+    margin: 20px 0 0;
   }
 
   .home-page__banner-visual {
@@ -1232,7 +1241,7 @@ body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   }
 
   .home-page__banner-content {
-    padding: 40px 32px 32px;
+    padding: 40px 24px 32px;
     gap: 32px;
   }
 

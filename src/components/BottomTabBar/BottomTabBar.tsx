@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useDevicePreviewBottomChromeTarget } from '@/context/DevicePreviewBottomChromeContext';
 import './BottomTabBar.css';
 
 const ROOT_PAD_CLASS = 'has-bottom-tab-bar';
 
 export function BottomTabBar() {
+  const devicePreviewBottomTarget = useDevicePreviewBottomChromeTarget();
   const [canBack, setCanBack] = useState(false);
   const [canForward, setCanForward] = useState(false);
 
@@ -36,8 +39,16 @@ export function BottomTabBar() {
     </svg>
   );
 
-  return (
-    <div className="bottom-tab-bar" role="toolbar" aria-label="Browser navigation">
+  if (devicePreviewBottomTarget === null) {
+    return null;
+  }
+
+  const bar = (
+    <div
+      className={`bottom-tab-bar${devicePreviewBottomTarget ? ' bottom-tab-bar--device-preview' : ''}`}
+      role="toolbar"
+      aria-label="Browser navigation"
+    >
       <div className="bottom-tab-bar__browser-row">
         <button
           type="button"
@@ -61,4 +72,6 @@ export function BottomTabBar() {
       </div>
     </div>
   );
+
+  return devicePreviewBottomTarget != null ? createPortal(bar, devicePreviewBottomTarget) : bar;
 }

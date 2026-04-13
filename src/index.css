@@ -29,6 +29,8 @@ body {
   --bottom-browser-bar-height: calc(
     44px + var(--bottom-browser-bar-extra-padding) + env(safe-area-inset-bottom, 0px)
   );
+  /* Bottom offset for sticky UI inside the scrolling document when the bar overlays content */
+  --bottom-browser-bar-scroll-inset: var(--bottom-browser-bar-height);
 }
 
 @media (min-width: 1024px) {
@@ -43,7 +45,46 @@ body {
   padding-top: 56px;
 }
 
+/* Device preview: header offset lives inside DevicePreviewFrame__content */
+html.device-preview-frame-active #root {
+  padding-top: 0;
+  min-height: 100%;
+  height: 100%;
+}
+
+html.device-preview-frame-active,
+html.device-preview-frame-active body {
+  min-height: 100%;
+  height: 100%;
+}
+
+/* iOS status strip inside DevicePreviewFrame (keep in sync with DEVICE_STATUS_BAR_HEIGHT in TS) */
+html.device-preview-frame-active {
+  --device-preview-status-bar-height: 54px;
+  /* Bar sits in a flex slot below .device-preview-frame__viewport — no inset inside the scroll area */
+  --bottom-browser-bar-scroll-inset: 0px;
+}
+
 /* Space for fixed bottom browser chrome (see BottomTabBar) */
 #root.has-bottom-tab-bar {
   padding-bottom: var(--bottom-browser-bar-height);
+}
+
+/* Bar is inside the phone shell, not overlaying the outer page */
+html.device-preview-frame-active #root.has-bottom-tab-bar {
+  padding-bottom: 0;
+}
+
+/* Device preview: scrolling happens inside .device-preview-frame__viewport, not #root */
+
+/*
+ * Wide viewport + device frame: restore bottom bar height (normally 0 at 1024px+)
+ * so sticky auction/linkout chrome still clears the bar inside the phone screen.
+ */
+@media (min-width: 1024px) {
+  html.device-preview-frame-active {
+    --bottom-browser-bar-height: calc(
+      44px + var(--bottom-browser-bar-extra-padding) + env(safe-area-inset-bottom, 0px)
+    );
+  }
 }

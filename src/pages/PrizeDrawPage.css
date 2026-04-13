@@ -184,7 +184,7 @@
 /* ── Sticky bottom bar — visible when in-flow button scrolls out ──── */
 .prize-draw__sticky-bar {
   position: fixed;
-  bottom: var(--bottom-browser-bar-height, 0px);
+  bottom: var(--bottom-browser-bar-scroll-inset, 0px);
   left: 0;
   right: 0;
   z-index: 250;

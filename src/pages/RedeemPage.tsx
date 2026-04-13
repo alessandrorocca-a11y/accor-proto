@@ -11,7 +11,7 @@ import {
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import { getEventById } from '@/data/events/eventRegistry';
-import { getVenueInfo } from '@/data/events/venueData';
+import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 import './RedeemPage.css';
 
@@ -592,7 +592,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
             </div>
             <iframe
               className="auction-page__map"
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${venueInfo.mapQuery}`}
+              src={getMapEmbedUrl(venueInfo)}
               title={`${venueInfo.name} location`}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

@@ -1461,7 +1461,7 @@
 /* ── Sticky bottom bar — visible when Place bid scrolls out of view ── */
 .auction-page__sticky-bar {
   position: fixed;
-  bottom: var(--bottom-browser-bar-height, 0px);
+  bottom: var(--bottom-browser-bar-scroll-inset, 0px);
   left: 0;
   right: 0;
   z-index: 250;
@@ -1518,4 +1518,252 @@
     from { transform: scale(0.95); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Device preview: viewport is wide but the “glass” is ~393px. Without this,
+   min-width:601px / 1024px rules turn on the desktop sidebar grid and hide
+   the in-flow mobile bid section — the sticky card overlaps the title.
+   Force mobile auction / linkout layout whenever the iPhone frame is active.
+   ══════════════════════════════════════════════════════════════════════ */
+
+html.device-preview-frame-active .auction-page__content-layout,
+html.device-preview-frame-active .auction-page__content-layout:has(> .auction-page__sidebar) {
+  display: contents !important;
+  grid-template-columns: unset !important;
+  gap: unset !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  align-items: unset !important;
+}
+
+html.device-preview-frame-active .auction-page__content-layout:has(> .auction-page__sidebar) > .auction-page__main {
+  min-width: 0 !important;
+  max-width: 393px !important;
+  margin: 0 auto !important;
+  padding: 0 16px 96px !important;
+  gap: 24px !important;
+}
+
+html.device-preview-frame-active .auction-page__sidebar {
+  display: none !important;
+}
+
+html.device-preview-frame-active .auction-page__bid-section--mobile {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+html.device-preview-frame-active .auction-page__divider--mobile-only {
+  display: block !important;
+}
+
+html.device-preview-frame-active .auction-page__sticky-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-width: none !important;
+  transform: none !important;
+  padding: 12px 16px !important;
+}
+
+/* Header: keep compact bar like real phone width */
+html.device-preview-frame-active .auction-page .marketplace-header__bar {
+  padding: 8px 16px !important;
+  min-height: 56px !important;
+}
+
+html.device-preview-frame-active .auction-page .marketplace-header__icon-btn[aria-label='Search'] {
+  display: flex !important;
+}
+
+/* Breadcrumb stays hidden (mobile) */
+html.device-preview-frame-active .auction-page__breadcrumb {
+  display: none !important;
+}
+
+/* Hero: mobile proportions, not 1024px tall strip */
+html.device-preview-frame-active .auction-page__hero-full {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.device-preview-frame-active .auction-page__hero-image {
+  aspect-ratio: 4 / 3 !important;
+  height: auto !important;
+}
+
+html.device-preview-frame-active .auction-page__hero-counter {
+  bottom: 32px !important;
+  right: 12px !important;
+}
+
+html.device-preview-frame-active .auction-page__hero-label-container {
+  margin-top: -16px !important;
+  padding: 0 28px !important;
+}
+
+html.device-preview-frame-active .auction-page__hero-auction-badge,
+html.device-preview-frame-active .auction-page__hero-status-badge {
+  height: 32px !important;
+  padding: 0 12px !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  border-radius: 4px !important;
+}
+
+html.device-preview-frame-active .auction-page__hero-tag {
+  top: 8px !important;
+  left: 8px !important;
+  height: 32px !important;
+  padding: 0 12px !important;
+  font-size: inherit !important;
+  border-radius: 4px !important;
+}
+
+/* Typography & controls: undo desktop bumps */
+html.device-preview-frame-active .auction-page__date {
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+html.device-preview-frame-active .auction-page__title {
+  font: var(--wel-typography-display-06) !important;
+  line-height: 24px !important;
+  letter-spacing: 0.5px !important;
+}
+
+html.device-preview-frame-active .auction-page__location {
+  font: var(--wel-typography-body-default-02) !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+html.device-preview-frame-active .auction-page__location svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+html.device-preview-frame-active .auction-page__icon-btn {
+  width: 24px !important;
+  height: 24px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+html.device-preview-frame-active .auction-page__icon-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+html.device-preview-frame-active .auction-page__tag {
+  padding: 6px 16px !important;
+  font: var(--wel-typography-label-default-03) !important;
+}
+
+html.device-preview-frame-active .auction-page__heading {
+  font: var(--wel-typography-title-03) !important;
+}
+
+html.device-preview-frame-active .auction-page__section-img {
+  height: 200px !important;
+}
+
+html.device-preview-frame-active .auction-page__side-img {
+  height: 200px !important;
+  margin-top: 0 !important;
+}
+
+html.device-preview-frame-active .auction-page__map {
+  height: 240px !important;
+  margin-top: 8px !important;
+}
+
+html.device-preview-frame-active .auction-page__section--description {
+  gap: 24px !important;
+}
+
+/* Snackbars: stay full-bleed within the device screen */
+html.device-preview-frame-active .auction-page__notify-snack {
+  left: 14px !important;
+  right: 14px !important;
+  max-width: none !important;
+}
+
+/* ── Same viewport vs “glass” issue on other product templates (import AuctionPage.css) ── */
+
+html.device-preview-frame-active .prize-draw__ticket-section--mobile {
+  display: flex !important;
+}
+
+html.device-preview-frame-active .prize-draw .auction-page__divider--mobile-only {
+  display: block !important;
+}
+
+html.device-preview-frame-active .prize-draw__sticky-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-width: none !important;
+  transform: none !important;
+}
+
+html.device-preview-frame-active .standard__purchase--mobile {
+  display: flex !important;
+}
+
+html.device-preview-frame-active .standard .auction-page__divider--mobile-only {
+  display: block !important;
+}
+
+html.device-preview-frame-active .standard__sticky-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-width: none !important;
+  transform: none !important;
+}
+
+html.device-preview-frame-active .redeem__ticket-section--mobile {
+  display: flex !important;
+}
+
+html.device-preview-frame-active .redeem .auction-page__divider--mobile-only {
+  display: block !important;
+}
+
+html.device-preview-frame-active .redeem__sticky-bar {
+  display: flex !important;
+  flex-direction: column !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-width: none !important;
+  transform: none !important;
+}
+
+html.device-preview-frame-active .linkout__cta-bar {
+  display: flex !important;
+}
+
+html.device-preview-frame-active .linkout__cta-spacer {
+  display: block !important;
+  height: 1px !important;
+}
+
+html.device-preview-frame-active .waitlist__cta-bar {
+  display: flex !important;
+}
+
+html.device-preview-frame-active .waitlist__cta-spacer {
+  display: block !important;
+  height: 1px !important;
 }

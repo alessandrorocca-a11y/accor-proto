@@ -1,6 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Avatar, IconHeart } from '@/components/atoms';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { usePrototypeMobileScrollContainer } from '@/context/PrototypeMobileScrollContainerContext';
 import { usePrototypeNavChromePortal } from '@/context/PrototypeNavChromePortalContext';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
@@ -141,6 +142,7 @@ export function MarketplaceHeader({
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchWrapRef = useRef<HTMLDivElement>(null);
   const prototypeScrollContainer = usePrototypeMobileScrollContainer();
+  const devicePreviewScrollContainer = useDevicePreviewScrollContainer();
   const prototypeNavChrome = usePrototypeNavChromePortal();
 
   /** Bind in layout phase so prototype scroll container from ref+state is ready before paint; avoids a frame on `window`. */
@@ -153,11 +155,12 @@ export function MarketplaceHeader({
     const WINDOW_TOP_REVEAL_PX = 8;
     /** Prototype scroll view starts below portaled nav (iOS status bar removed in shell). */
     const PROTOTYPE_TOP_REVEAL_PX = 40;
-    const topRevealPx = prototypeScrollContainer != null ? PROTOTYPE_TOP_REVEAL_PX : WINDOW_TOP_REVEAL_PX;
+    const scrollRoot = prototypeScrollContainer ?? devicePreviewScrollContainer;
+    const topRevealPx =
+      prototypeScrollContainer != null ? PROTOTYPE_TOP_REVEAL_PX : WINDOW_TOP_REVEAL_PX;
     /** Ignore small downward jitter when deciding to hide; keep separate from scroll-up reveal. */
     const hideDelta = 8;
 
-    const scrollRoot = prototypeScrollContainer;
     const getScrollY = () => (scrollRoot ? scrollRoot.scrollTop : window.scrollY);
 
     lastScrollY.current = getScrollY();
@@ -180,7 +183,7 @@ export function MarketplaceHeader({
     target.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => target.removeEventListener('scroll', handleScroll);
-  }, [prototypeScrollContainer, prototypeNavChrome]);
+  }, [prototypeScrollContainer, devicePreviewScrollContainer, prototypeNavChrome]);
 
   const closeDesktopSearch = () => {
     setDesktopSearchActive(false);
@@ -211,7 +214,8 @@ export function MarketplaceHeader({
   }, [desktopSearchActive]);
 
   const handleSearchClick = () => {
-    const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+    const isDesktop =
+      window.matchMedia('(min-width: 1024px)').matches && devicePreviewScrollContainer == null;
     if (isDesktop) {
       setDesktopSearchActive(true);
     } else {

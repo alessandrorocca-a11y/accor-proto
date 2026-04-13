@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { BottomTabBar } from './components/BottomTabBar/BottomTabBar';
 import Demo from './Demo';
 import HomePage from './pages/HomePage';
@@ -121,11 +122,16 @@ const PAYMENT_ROUTES: Record<string, PaymentType> = {
 
 export default function App() {
   const [hash, setHash] = useState(window.location.hash);
+  const deviceScrollContainer = useDevicePreviewScrollContainer();
 
   const onHashChange = useCallback(() => {
     setHash(window.location.hash);
-    window.scrollTo(0, 0);
-  }, []);
+    if (deviceScrollContainer) {
+      deviceScrollContainer.scrollTo(0, 0);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [deviceScrollContainer]);
 
   useEffect(() => {
     window.addEventListener('hashchange', onHashChange);

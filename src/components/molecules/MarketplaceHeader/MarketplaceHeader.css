@@ -522,3 +522,7 @@
     --header-shadow: 0 1px 3px rgba(7, 5, 24, 0.06);
   }
 }
+
+html.device-preview-frame-active .marketplace-header:not(.marketplace-header--prototype-nav-chrome) {
+  top: var(--device-preview-status-bar-height, 54px);
+}
