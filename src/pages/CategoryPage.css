@@ -2,7 +2,7 @@
   width: 100%;
   min-height: 100vh;
   background: var(--wel-sem-color-surface, #fff);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Lets filter strip use full width and scroll; avoids min-width:auto blocking overflow */

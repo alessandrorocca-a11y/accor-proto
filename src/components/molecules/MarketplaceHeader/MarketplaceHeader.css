@@ -526,3 +526,7 @@
 html.device-preview-frame-active .marketplace-header:not(.marketplace-header--prototype-nav-chrome) {
   top: var(--device-preview-status-bar-height, 54px);
 }
+
+html.device-preview-frame-active .marketplace-header--hidden:not(.marketplace-header--prototype-nav-chrome) {
+  transform: translateY(calc(-100% - var(--device-preview-status-bar-height, 54px)));
+}

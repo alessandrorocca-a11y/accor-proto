@@ -175,9 +175,10 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   useEffect(() => {
     const el = placeBidRef.current;
     if (!el) return;
+    const scrollRoot = el.closest('.device-preview-frame__viewport') as Element | null;
     const observer = new IntersectionObserver(
       ([entry]) => setShowStickyBar(!entry.isIntersecting),
-      { threshold: 0 }
+      { threshold: 0, root: scrollRoot }
     );
     observer.observe(el);
     return () => observer.disconnect();

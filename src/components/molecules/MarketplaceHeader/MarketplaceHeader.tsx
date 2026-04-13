@@ -139,6 +139,7 @@ export function MarketplaceHeader({
   const [hidden, setHidden] = useState(false);
   const [atTop, setAtTop] = useState(true);
   const lastScrollY = useRef(0);
+  const headerRef = useRef<HTMLElement>(null);
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchWrapRef = useRef<HTMLDivElement>(null);
   const prototypeScrollContainer = usePrototypeMobileScrollContainer();
@@ -155,7 +156,23 @@ export function MarketplaceHeader({
     const WINDOW_TOP_REVEAL_PX = 8;
     /** Prototype scroll view starts below portaled nav (iOS status bar removed in shell). */
     const PROTOTYPE_TOP_REVEAL_PX = 40;
-    const scrollRoot = prototypeScrollContainer ?? devicePreviewScrollContainer;
+
+    let scrollRoot: HTMLElement | null = prototypeScrollContainer ?? devicePreviewScrollContainer;
+
+    if (!scrollRoot && headerRef.current) {
+      let el: HTMLElement | null = headerRef.current.parentElement;
+      while (el) {
+        if (el.scrollHeight > el.clientHeight + 1) {
+          const { overflowY } = getComputedStyle(el);
+          if (overflowY === 'auto' || overflowY === 'scroll') {
+            scrollRoot = el;
+            break;
+          }
+        }
+        el = el.parentElement;
+      }
+    }
+
     const topRevealPx =
       prototypeScrollContainer != null ? PROTOTYPE_TOP_REVEAL_PX : WINDOW_TOP_REVEAL_PX;
     /** Ignore small downward jitter when deciding to hide; keep separate from scroll-up reveal. */
@@ -239,6 +256,7 @@ export function MarketplaceHeader({
 
   const headerEl = (
     <header
+      ref={headerRef}
       className={`marketplace-header marketplace-header--${theme}${headerHiddenClass}${prototypeBarHiddenClass}${headerTransparentClass}${headerChromeClass} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
