@@ -708,36 +708,28 @@ html.device-preview-frame-active .category-page__breadcrumb {
   box-shadow: 0px -2px 6px 0px rgba(7, 5, 24, 0.05);
 }
 
-@media (min-width: 600px) {
-  .filter-sheet__backdrop {
+@media (min-width: 600px) {  html:not(.device-preview-frame-active) .filter-sheet__backdrop{
     align-items: flex-end;
     padding: 24px 16px;
     box-sizing: border-box;
-  }
-
-  .filter-sheet {
+  }  html:not(.device-preview-frame-active) .filter-sheet{
     width: 100%;
     max-width: 420px;
     max-height: min(85vh, calc(100vh - 48px));
     border-radius: 16px;
     box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
     animation: dialog-scale-in 0.2s ease-out;
-  }
-
-  .category-page .loyalty-sheet__backdrop {
+  }  html:not(.device-preview-frame-active) .category-page .loyalty-sheet__backdrop{
     align-items: flex-end;
     padding: 24px 16px;
     box-sizing: border-box;
-  }
-
-  .category-page .loyalty-sheet {
+  }  html:not(.device-preview-frame-active) .category-page .loyalty-sheet{
     border-radius: 16px;
     box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
     animation: dialog-scale-in 0.2s ease-out;
     max-height: min(85vh, calc(100vh - 48px));
     overflow-y: auto;
-  }
-}
+  }}
 
 .filter-sheet__nav {
   display: flex;
@@ -1257,143 +1249,96 @@ html.device-preview-frame-active .category-page__breadcrumb {
 }
 
 /* ── Tablet+ — same horizontal list, more horizontal padding ─────────── */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .category-page__list {
+@media (min-width: 768px) and (max-width: 1023px) {  html:not(.device-preview-frame-active) .category-page__list{
     padding: 24px 12px;
-  }
-}
+  }}
 
 /* ── Desktop overrides ── */
-@media (min-width: 1024px) {
-  .category-page .marketplace-header__bar {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .category-page .marketplace-header__bar{
     padding: 8px 64px;
     min-height: 72px;
-  }
-
-  .category-page .marketplace-header__icon-btn[aria-label="Search"] {
+  }  html:not(.device-preview-frame-active) .category-page .marketplace-header__icon-btn[aria-label="Search"]{
     display: none;
-  }
-
-  /* Breadcrumb */
-  .category-page__breadcrumb {
+  }/* Breadcrumb */  html:not(.device-preview-frame-active) .category-page__breadcrumb{
     display: flex;
     padding: 12px 64px 0;
     max-width: 1440px;
     margin: 0 auto;
-  }
-
-  .category-page__breadcrumb-link {
+  }  html:not(.device-preview-frame-active) .category-page__breadcrumb-link{
     display: none;
-  }
-
-  .category-page__breadcrumb-trail {
+  }  html:not(.device-preview-frame-active) .category-page__breadcrumb-trail{
     display: inline-flex;
     align-items: center;
-  }
-
-  .category-page__breadcrumb-divider {
+  }  html:not(.device-preview-frame-active) .category-page__breadcrumb-divider{
     display: inline-flex;
     align-items: center;
     margin: 0 4px;
-  }
-
-  .category-page__breadcrumb-current {
+  }  html:not(.device-preview-frame-active) .category-page__breadcrumb-current{
     display: inline;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: var(--wel-sem-color-on-surface-mid, #38364d);
-  }
-
-  /* Title */
-  .category-page__header {
+  }/* Title */  html:not(.device-preview-frame-active) .category-page__header{
     padding: 8px 64px 0;
     max-width: 1440px;
     margin: 0 auto;
-  }
-
-  .category-page__title {
+  }  html:not(.device-preview-frame-active) .category-page__title{
     font-size: 26px;
     line-height: 32px;
-  }
-
-  .category-page__title-dropdown {
+  }  html:not(.device-preview-frame-active) .category-page__title-dropdown{
     width: 32px;
     height: 32px;
-  }
-
-  /* Filters + Order by on same row */
-  .category-page__filters-order-row {
+  }/* Filters + Order by on same row */  html:not(.device-preview-frame-active) .category-page__filters-order-row{
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 24px 64px 0;
     max-width: 1440px;
     margin: 0 auto;
-  }
-
-  .category-page__filters {
+  }  html:not(.device-preview-frame-active) .category-page__filters{
     padding: 0;
     flex-shrink: 0;
     width: auto;
     max-width: none;
     touch-action: auto;
-  }
-
-  /* Results bar on desktop: just "Showing X experiences" */
-  .category-page__results-bar {
+  }/* Results bar on desktop: just "Showing X experiences" */  html:not(.device-preview-frame-active) .category-page__results-bar{
     padding: 0 64px;
     max-width: 1440px;
     margin: 0 auto;
     justify-content: flex-start;
-  }
-
-  .category-page__results-bar > .category-page__order-btn {
+  }  html:not(.device-preview-frame-active) .category-page__results-bar > .category-page__order-btn{
     display: none;
-  }
-
-  /* Desktop order button (inside filters row) */
-  .category-page__desktop-order {
+  }/* Desktop order button (inside filters row) */  html:not(.device-preview-frame-active) .category-page__desktop-order{
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 0;
     flex-shrink: 0;
-  }
-
-  .category-page__desktop-order-label {
+  }  html:not(.device-preview-frame-active) .category-page__desktop-order-label{
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: var(--wel-sem-color-on-surface-low, #5e5b73);
     text-align: right;
-  }
-
-  .category-page__results-showing {
+  }  html:not(.device-preview-frame-active) .category-page__results-showing{
     display: inline;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
     color: #000;
-  }
-
-  .category-page__results-count {
+  }  html:not(.device-preview-frame-active) .category-page__results-count{
     font-size: 18px;
     font-weight: 500;
-  }
-
-  .category-page__results-count strong {
+  }  html:not(.device-preview-frame-active) .category-page__results-count strong{
     font-weight: 500;
     font-size: 18px;
-  }
-
-  .category-page__list {
+  }  html:not(.device-preview-frame-active) .category-page__list{
     padding: 24px 48px 64px;
-  }
-}
+  }}
 
 @keyframes slide-up {
   from {
@@ -1479,13 +1424,11 @@ html.device-preview-frame-active .category-page__breadcrumb {
   color: #00513f;
 }
 
-@media (min-width: 1024px) {
-  .category-page__fav-snack {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .category-page__fav-snack{
     left: auto;
     right: 24px;
     width: 420px;
-  }
-}
+  }}
 
 /* ══════════════════════════════════════════════════════════════════════
    Device preview: filter sheets use browser vh — too tall vs the ~852px

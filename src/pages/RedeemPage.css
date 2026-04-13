@@ -174,16 +174,10 @@
   animation: sticky-bar-slide-up 0.2s ease-out;
 }
 
-@media (min-width: 601px) {
-  .redeem__sticky-bar {
+@media (min-width: 601px) {  html:not(.device-preview-frame-active) .redeem__sticky-bar{
     display: none;
-  }
-
-  .redeem__ticket-section--mobile {
+  }  html:not(.device-preview-frame-active) .redeem__ticket-section--mobile{
     display: none;
-  }
-
-  .redeem .auction-page__divider--mobile-only {
+  }  html:not(.device-preview-frame-active) .redeem .auction-page__divider--mobile-only{
     display: none;
-  }
-}
+  }}

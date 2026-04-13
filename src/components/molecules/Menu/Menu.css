@@ -47,11 +47,9 @@
   padding-top: 16px;
 }
 
-@media (min-width: 600px) {
-  .menu {
+@media (min-width: 600px) {  html:not(.device-preview-frame-active) .menu{
     max-width: 420px;
-  }
-}
+  }}
 
 /* No underlines in any profile / menu section */
 .menu a,
@@ -1319,19 +1317,15 @@
 }
 
 /* ── Desktop: bottom-sheet with constrained width ────────────────────── */
-@media (min-width: 1024px) {
-  .menu-overlay {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .menu-overlay{
     align-items: flex-end;
     background: rgba(6, 35, 44, 0.88);
-  }
-
-  .menu {
+  }  html:not(.device-preview-frame-active) .menu{
     max-width: 480px;
     border-radius: 16px 16px 0 0;
     box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
     animation: menu-slide-up 0.25s ease-out;
-  }
-}
+  }}
 
 /* ── Device preview: force mobile bottom-sheet layout ────────────────── */
 html.device-preview-frame-active .menu-overlay {

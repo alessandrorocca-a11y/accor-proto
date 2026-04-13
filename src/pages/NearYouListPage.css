@@ -222,57 +222,37 @@
 
 /* ── Tablet ────────────────────────────────────────────────────── */
 
-@media (min-width: 768px) {
-  .ny-list__cards {
+@media (min-width: 768px) {  html:not(.device-preview-frame-active) .ny-list__cards{
     padding: 16px 32px;
-  }
-
-  .ny-list__card-img-wrap {
+  }  html:not(.device-preview-frame-active) .ny-list__card-img-wrap{
     width: 200px;
     min-width: 200px;
-  }
-}
+  }}
 
 /* ── Desktop ───────────────────────────────────────────────────── */
 
-@media (min-width: 1024px) {
-  .ny-list__cards {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .ny-list__cards{
     padding: 24px 64px 64px;
     max-width: 1440px;
     margin: 0 auto;
-  }
-
-  .ny-list__card-img-wrap {
+  }  html:not(.device-preview-frame-active) .ny-list__card-img-wrap{
     width: 240px;
     min-width: 240px;
-  }
-
-  .ny-list__card-title {
+  }  html:not(.device-preview-frame-active) .ny-list__card-title{
     font-size: 20px;
     line-height: 28px;
-  }
-
-  .ny-list__card-date {
+  }  html:not(.device-preview-frame-active) .ny-list__card-date{
     font-size: 14px;
     line-height: 20px;
-  }
-
-  .ny-list__card-payment-label {
+  }  html:not(.device-preview-frame-active) .ny-list__card-payment-label{
     font-size: 14px;
     line-height: 20px;
-  }
-
-  .ny-list__card-points-value {
+  }  html:not(.device-preview-frame-active) .ny-list__card-points-value{
     font-size: 16px;
     line-height: 24px;
-  }
-
-  .ny-list__card-timer {
+  }  html:not(.device-preview-frame-active) .ny-list__card-timer{
     font-size: 14px;
     line-height: 20px;
-  }
-
-  .ny-list__map-view-btn {
+  }  html:not(.device-preview-frame-active) .ny-list__map-view-btn{
     bottom: 40px;
-  }
-}
+  }}

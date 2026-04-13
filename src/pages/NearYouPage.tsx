@@ -17,6 +17,8 @@ import './CategoryPage.css';
 
 type PaymentType = 'prize-draw' | 'redeem' | 'auction' | 'cash' | 'flex' | 'linkout' | 'waitlist';
 
+type MapMarketingTag = 'presale' | 'exclusivity' | 'signature' | 'sold-out' | 'discount';
+
 interface MapEventCard {
   id: string;
   title: string;
@@ -29,7 +31,11 @@ interface MapEventCard {
   msLeft?: number;
   eventTag?: string;
   route?: string;
-  marketingTag?: 'presale' | 'exclusivity' | 'signature' | 'sold-out' | 'discount';
+  marketingTag?: MapMarketingTag;
+  /** Listing categories (same taxonomy as Category page). */
+  categories: string[];
+  city?: string;
+  hotelBrands?: string[];
 }
 
 export interface NearYouPageProps {
@@ -84,6 +90,8 @@ const MAP_EVENTS: MapEventCard[] = [
     msLeft: 80 * 24 * 60 * 60 * 1000,
     eventTag: 'Limitless experience',
     route: '#draw',
+    categories: ['Sports and activities'],
+    hotelBrands: ['Pullman'],
   },
   {
     id: 'me2',
@@ -94,6 +102,9 @@ const MAP_EVENTS: MapEventCard[] = [
     points: '6.000',
     eventTag: 'Limitless experience',
     route: '#redeem',
+    categories: ['Concerts and festivals'],
+    marketingTag: 'exclusivity',
+    hotelBrands: ['Sofitel'],
   },
   {
     id: 'me3',
@@ -105,6 +116,8 @@ const MAP_EVENTS: MapEventCard[] = [
     cashPrice: '49,00 €',
     eventTag: 'Limitless experience',
     route: '#standard',
+    categories: ['Arts and culture', ACCOR_PLUS_EXCLUSIVES_CATEGORY],
+    marketingTag: 'exclusivity',
   },
   {
     id: 'me4',
@@ -114,6 +127,9 @@ const MAP_EVENTS: MapEventCard[] = [
     paymentType: 'redeem',
     points: '12.000',
     route: '#redeem',
+    categories: ['Visits'],
+    eventTag: 'Limitless experience',
+    hotelBrands: ['Novotel'],
   },
   {
     id: 'me5',
@@ -124,6 +140,8 @@ const MAP_EVENTS: MapEventCard[] = [
     points: '18.000',
     eventTag: 'Limitless experience',
     route: '#redeem',
+    categories: ['Concerts and festivals'],
+    hotelBrands: ['Mercure'],
   },
   {
     id: 'me6',
@@ -134,6 +152,9 @@ const MAP_EVENTS: MapEventCard[] = [
     points: '8.500',
     eventTag: 'Signature Exclusive',
     route: '#auction',
+    categories: ['Visits', ALL_SIGNATURE_EXCLUSIVES_CATEGORY],
+    marketingTag: 'signature',
+    hotelBrands: ['Fairmont'],
   },
   {
     id: 'me7',
@@ -144,6 +165,8 @@ const MAP_EVENTS: MapEventCard[] = [
     points: '15.000',
     eventTag: 'Limitless experience',
     route: '#redeem',
+    categories: ['Arts and culture'],
+    hotelBrands: ['Raffles'],
   },
   {
     id: 'me8',
@@ -154,6 +177,8 @@ const MAP_EVENTS: MapEventCard[] = [
     points: '4.500',
     eventTag: 'Food & Drinks',
     route: '#standard',
+    categories: ['Food and drink'],
+    hotelBrands: ['Ibis'],
   },
   {
     id: 'me9',
@@ -164,6 +189,8 @@ const MAP_EVENTS: MapEventCard[] = [
     points: '7.200',
     eventTag: 'Hotel experience',
     route: '#standard',
+    categories: ['Hotel experiences', 'Tech'],
+    hotelBrands: ['Sofitel'],
   },
   {
     id: 'me10',
@@ -176,19 +203,33 @@ const MAP_EVENTS: MapEventCard[] = [
     msLeft: 100 * 24 * 60 * 60 * 1000,
     eventTag: 'Signature Exclusive',
     route: '#draw',
+    categories: ['Food and drink', ALL_SIGNATURE_EXCLUSIVES_CATEGORY],
+    marketingTag: 'signature',
+    hotelBrands: ['Pullman'],
   },
 ];
 
 const FILTER_CHIPS = [
   { id: 'date', label: 'Date', icon: 'calendar' as const },
   { id: 'category', label: 'Experience type', icon: 'grid' as const },
-  { id: 'payment', label: 'Payment method', icon: 'payment' as const },
+  { id: 'experience', label: 'Experience', icon: 'experience' as const },
+  { id: 'payment', label: 'Ways to book', icon: 'payment' as const },
+  { id: 'subscription', label: 'Subscription', icon: 'subscription' as const },
   { id: 'price', label: 'Price range', icon: 'price-range' as const },
   { id: 'location', label: 'City', icon: 'location' as const },
   { id: 'hotel', label: 'Hotel brand', icon: 'hotel' as const },
-];
+] as const;
 
-type FilterType = 'date' | 'category' | 'payment' | 'price-range' | 'location' | 'hotel' | null;
+type FilterType =
+  | 'date'
+  | 'category'
+  | 'experience'
+  | 'payment'
+  | 'subscription'
+  | 'price-range'
+  | 'location'
+  | 'hotel'
+  | null;
 
 function parseOptionalEurBound(s: string): number | null {
   const t = s.trim().replace(',', '.');
@@ -300,14 +341,35 @@ const CATEGORIES = [
   'Wellness',
   'Visits',
   'Hotel experiences',
+  'Tech',
   'Paris Saint Germain',
   'Arena',
   ALL_SIGNATURE_EXCLUSIVES_CATEGORY,
   ACCOR_PLUS_EXCLUSIVES_CATEGORY,
 ];
 
-const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Waitlist'];
+const PAYMENT_OPTIONS = ['Instant purchase', 'Auction', 'Prize draw', 'Standard'] as const;
+const SUBSCRIPTION_OPTIONS = ['Explorer', 'Signature'] as const;
+
+const EXPERIENCE_OPTIONS = Array.from(
+  new Set(MAP_EVENTS.map((e) => e.eventTag).filter((t): t is string => Boolean(t))),
+).sort((a, b) => a.localeCompare(b));
+
 const HOTEL_BRANDS = ['Fairmont', 'Ibis', 'Mercure', 'Novotel', 'Pullman', 'Raffles', 'Sofitel'];
+
+const PAYMENT_TYPE_MAP: Record<string, PaymentType[]> = {
+  'Instant purchase': ['flex', 'cash', 'redeem'],
+  Auction: ['auction'],
+  'Prize draw': ['prize-draw'],
+  Standard: ['cash'],
+};
+
+function mapEventMatchesCalendarDay(ev: MapEventCard, day: number, month: number, year: number): boolean {
+  const t = Date.parse(ev.date);
+  if (Number.isNaN(t)) return false;
+  const d = new Date(t);
+  return d.getDate() === day && d.getMonth() === month && d.getFullYear() === year;
+}
 
 const DAYS_OF_WEEK = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -380,6 +442,28 @@ function IconChipPayment() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
       <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
       <path d="M2 10h20" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function IconChipSubscription() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M7 10h10M7 14h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconChipExperience() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M12 2l1.8 5.5h5.7l-4.6 3.3 1.8 5.5L12 14.9 7.3 16.3l1.8-5.5L4.5 7.5h5.7L12 2z"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -468,7 +552,9 @@ function chipIcon(type: string) {
   switch (type) {
     case 'calendar': return <IconChipCalendar />;
     case 'grid': return <IconChipGrid />;
+    case 'experience': return <IconChipExperience />;
     case 'payment': return <IconChipPayment />;
+    case 'subscription': return <IconChipSubscription />;
     case 'price-range': return <IconChipPriceRange />;
     case 'location': return <IconChipLocation />;
     case 'hotel': return <IconChipHotel />;
@@ -579,7 +665,9 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
   const [calYear, setCalYear] = useState(2026);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [filterCategories, setFilterCategories] = useState<Set<string>>(new Set());
+  const [filterExperiences, setFilterExperiences] = useState<Set<string>>(new Set());
   const [filterPayments, setFilterPayments] = useState<Set<string>>(new Set());
+  const [filterSubscriptions, setFilterSubscriptions] = useState<Set<string>>(new Set());
   const [filterBrands, setFilterBrands] = useState<Set<string>>(new Set());
   const [brandSearch, setBrandSearch] = useState('');
   const [citySearch, setCitySearch] = useState('');
@@ -597,6 +685,28 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     const ptsLo = parseOptionalPointsBound(pointsMin);
     const ptsHi = parseOptionalPointsBound(pointsMax);
     return MAP_EVENTS.map((ev, idx) => ({ ev, idx })).filter(({ ev }) => {
+      if (selectedDate !== null && !mapEventMatchesCalendarDay(ev, selectedDate, calMonth, calYear)) {
+        return false;
+      }
+      if (filterCategories.size > 0 && !ev.categories.some((c) => filterCategories.has(c))) {
+        return false;
+      }
+      if (filterExperiences.size > 0) {
+        if (!ev.eventTag || !filterExperiences.has(ev.eventTag)) return false;
+      }
+      if (filterPayments.size > 0) {
+        const allowed = [...filterPayments].flatMap((p) => PAYMENT_TYPE_MAP[p] ?? []);
+        if (!allowed.includes(ev.paymentType)) return false;
+      }
+      if (filterSubscriptions.size > 0) {
+        const matchesExplorer =
+          filterSubscriptions.has('Explorer') &&
+          isExplorerExclusiveMarketingTag(ev.marketingTag);
+        const matchesSignature =
+          filterSubscriptions.has('Signature') &&
+          isSignatureExclusiveMarketingTag(ev.marketingTag);
+        if (!matchesExplorer && !matchesSignature) return false;
+      }
       if (priceFilterOn) {
         const eur = mapEventCashEur(ev);
         if (eur == null) return false;
@@ -609,9 +719,32 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
         if (ptsLo != null && pts < ptsLo) return false;
         if (ptsHi != null && pts > ptsHi) return false;
       }
+      if (selectedCity) {
+        const eventCity = ev.city ?? cityName;
+        if (eventCity !== selectedCity) return false;
+      }
+      if (filterBrands.size > 0) {
+        const brands = ev.hotelBrands ?? [];
+        if (!brands.some((b) => filterBrands.has(b))) return false;
+      }
       return true;
     });
-  }, [priceMin, priceMax, pointsMin, pointsMax]);
+  }, [
+    priceMin,
+    priceMax,
+    pointsMin,
+    pointsMax,
+    selectedDate,
+    calMonth,
+    calYear,
+    filterCategories,
+    filterExperiences,
+    filterPayments,
+    filterSubscriptions,
+    selectedCity,
+    cityName,
+    filterBrands,
+  ]);
 
   useEffect(() => {
     setActiveFilteredIndex((i) => {
@@ -751,11 +884,13 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
 
   const handleFilterChipClick = (label: string) => {
     const map: Record<string, FilterType> = {
-      'Date': 'date',
+      Date: 'date',
       'Experience type': 'category',
-      'Payment method': 'payment',
+      Experience: 'experience',
+      'Ways to book': 'payment',
+      Subscription: 'subscription',
       'Price range': 'price-range',
-      'City': 'location',
+      City: 'location',
       'Hotel brand': 'hotel',
     };
     setActiveFilter(map[label] ?? null);
@@ -769,7 +904,9 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
     e.stopPropagation();
     if (label === 'Date') setSelectedDate(null);
     if (label === 'Experience type') setFilterCategories(new Set());
-    if (label === 'Payment method') setFilterPayments(new Set());
+    if (label === 'Experience') setFilterExperiences(new Set());
+    if (label === 'Ways to book') setFilterPayments(new Set());
+    if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
       setPriceMin('');
       setPriceMax('');
@@ -788,9 +925,17 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
     }
-    if (label === 'Payment method' && filterPayments.size > 0) {
+    if (label === 'Experience' && filterExperiences.size > 0) {
+      if (filterExperiences.size === 1) return [...filterExperiences][0];
+      return `${label} (${filterExperiences.size})`;
+    }
+    if (label === 'Ways to book' && filterPayments.size > 0) {
       if (filterPayments.size === 1) return [...filterPayments][0];
       return `${label} (${filterPayments.size})`;
+    }
+    if (label === 'Subscription' && filterSubscriptions.size > 0) {
+      if (filterSubscriptions.size === 1) return [...filterSubscriptions][0];
+      return `${label} (${filterSubscriptions.size})`;
     }
     if (label === 'City' && selectedCity) {
       return selectedCity;
@@ -885,7 +1030,9 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
               const isActive =
                 (chip.label === 'Date' && selectedDate !== null) ||
                 (chip.label === 'Experience type' && filterCategories.size > 0) ||
-                (chip.label === 'Payment method' && filterPayments.size > 0) ||
+                (chip.label === 'Experience' && filterExperiences.size > 0) ||
+                (chip.label === 'Ways to book' && filterPayments.size > 0) ||
+                (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
                 (chip.label === 'City' && selectedCity !== null) ||
                 (chip.label === 'Hotel brand' && filterBrands.size > 0);
@@ -1078,7 +1225,9 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Experience type'}
-                {activeFilter === 'payment' && 'Payment method'}
+                {activeFilter === 'experience' && 'Experience'}
+                {activeFilter === 'payment' && 'Ways to book'}
+                {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
                 {activeFilter === 'location' && 'City'}
                 {activeFilter === 'hotel' && 'Hotel brand'}
@@ -1138,6 +1287,22 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
                 </div>
               )}
 
+              {activeFilter === 'experience' && (
+                <div className="filter-check-list">
+                  {EXPERIENCE_OPTIONS.map((opt) => (
+                    <label key={opt} className="filter-check-list__item">
+                      <input
+                        type="checkbox"
+                        className="filter-check-list__checkbox"
+                        checked={filterExperiences.has(opt)}
+                        onChange={() => toggleSetItem(setFilterExperiences, opt)}
+                      />
+                      <span className="filter-check-list__label">{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
               {activeFilter === 'payment' && (
                 <div className="filter-check-list">
                   {PAYMENT_OPTIONS.map((opt) => (
@@ -1147,6 +1312,22 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
                         className="filter-check-list__checkbox"
                         checked={filterPayments.has(opt)}
                         onChange={() => toggleSetItem(setFilterPayments, opt)}
+                      />
+                      <span className="filter-check-list__label">{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {activeFilter === 'subscription' && (
+                <div className="filter-check-list">
+                  {SUBSCRIPTION_OPTIONS.map((opt) => (
+                    <label key={opt} className="filter-check-list__item">
+                      <input
+                        type="checkbox"
+                        className="filter-check-list__checkbox"
+                        checked={filterSubscriptions.has(opt)}
+                        onChange={() => toggleSetItem(setFilterSubscriptions, opt)}
                       />
                       <span className="filter-check-list__label">{opt}</span>
                     </label>

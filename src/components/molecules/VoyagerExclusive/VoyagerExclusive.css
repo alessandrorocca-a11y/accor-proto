@@ -60,16 +60,12 @@
   flex-shrink: 1;
 }
 
-@media (min-width: 600px) {
-  .voyager-dialog__backdrop {
+@media (min-width: 600px) {  html:not(.device-preview-frame-active) .voyager-dialog__backdrop{
     align-items: flex-end;
-  }
-
-  .voyager-dialog {
+  }  html:not(.device-preview-frame-active) .voyager-dialog{
     max-width: 420px;
     border-radius: 16px;
-  }
-}
+  }}
 
 @keyframes voyager-slide-up {
   from { transform: translateY(100%); }
@@ -139,11 +135,9 @@
   filter: drop-shadow(0 1px 4px rgba(5, 0, 51, 0.1));
 }
 
-@media (min-width: 768px) {
-  .voyager-dialog__card {
+@media (min-width: 768px) {  html:not(.device-preview-frame-active) .voyager-dialog__card{
     filter: drop-shadow(0 2px 8px rgba(5, 0, 51, 0.15));
-  }
-}
+  }}
 
 .voyager-dialog__content {
   display: flex;

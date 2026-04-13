@@ -15,6 +15,7 @@ import {
   type EventData,
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { useUser, type LoyaltyTier } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
@@ -701,6 +702,7 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 
 export default function HomePage() {
   const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
+  const devicePreviewScrollContainer = useDevicePreviewScrollContainer();
 
   const NEXT_TRIP_EVENTS = useMemo(() => {
     let pool = EVENT_REGISTRY.filter((e) => e.city === 'Paris' && isAccor(e));
@@ -917,7 +919,8 @@ export default function HomePage() {
   }, [heroSearchActive]);
 
   const handleHeroSearchClick = () => {
-    const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+    const isDesktop =
+      window.matchMedia('(min-width: 1024px)').matches && devicePreviewScrollContainer == null;
     if (isDesktop) {
       setHeroSearchActive(true);
     } else {

@@ -29,11 +29,9 @@
   animation: terms-slide-up 0.3s ease-out;
 }
 
-@media (min-width: 600px) {
-  .terms-sheet {
+@media (min-width: 600px) {  html:not(.device-preview-frame-active) .terms-sheet{
     max-width: 420px;
-  }
-}
+  }}
 
 @keyframes terms-slide-up {
   from { transform: translateY(100%); }
@@ -154,21 +152,15 @@
   color: var(--wel-sem-color-hover-link, #003d82);
 }
 
-@media (min-width: 1024px) {
-  .terms-sheet__backdrop {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .terms-sheet__backdrop{
     align-items: flex-end;
     background: rgba(6, 35, 44, 0.88);
-  }
-
-  .terms-sheet {
+  }  html:not(.device-preview-frame-active) .terms-sheet{
     max-width: 480px;
     border-radius: 16px;
     box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
     animation: terms-scale-in 0.2s ease-out;
-  }
-
-  @keyframes terms-scale-in {
+  }@keyframes terms-scale-in {
     from { transform: scale(0.95); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
-  }
-}
+  }}

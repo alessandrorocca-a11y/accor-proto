@@ -736,36 +736,24 @@
 /* ══════════════════════════════════════════════════════════════════════
    DESKTOP SIDEBAR — 601px+
    ══════════════════════════════════════════════════════════════════════ */
-@media (min-width: 601px) {
-  .standard__purchase--mobile {
+@media (min-width: 601px) {  html:not(.device-preview-frame-active) .standard__purchase--mobile{
     display: none;
-  }
-
-  .standard .auction-page__divider--mobile-only {
+  }  html:not(.device-preview-frame-active) .standard .auction-page__divider--mobile-only{
     display: none;
-  }
-
-  .standard__sticky-bar {
+  }  html:not(.device-preview-frame-active) .standard__sticky-bar{
     display: none;
-  }
-
-  .standard .auction-page__sidebar {
+  }  html:not(.device-preview-frame-active) .standard .auction-page__sidebar{
     min-width: 0;
-  }
-
-  .standard .auction-page__bid-card {
+  }  html:not(.device-preview-frame-active) .standard .auction-page__bid-card{
     overflow: hidden;
     max-width: 100%;
     border-radius: 16px;
     box-shadow: 0 4px 24px 0 rgba(7, 5, 24, 0.1);
-  }
-}
+  }}
 
 /* ══════════════════════════════════════════════════════════════════════
    DESKTOP — 1024px+
    ══════════════════════════════════════════════════════════════════════ */
-@media (min-width: 1024px) {
-  .standard .auction-page__content-layout {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .standard .auction-page__content-layout{
     padding-top: 24px;
-  }
-}
+  }}

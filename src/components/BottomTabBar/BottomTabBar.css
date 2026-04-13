@@ -69,11 +69,7 @@
 }
 
 @media (min-width: 1024px) {
-  .bottom-tab-bar {
+  html:not(.device-preview-frame-active) .bottom-tab-bar {
     display: none !important;
-  }
-
-  html.device-preview-frame-active .bottom-tab-bar {
-    display: flex !important;
   }
 }

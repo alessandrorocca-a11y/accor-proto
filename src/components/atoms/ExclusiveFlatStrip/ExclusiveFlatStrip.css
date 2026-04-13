@@ -44,11 +44,9 @@
   border-radius: var(--wel-sem-borderradius-surface, 6px);
 }
 
-@media (min-width: 1024px) {
-  .exclusive-flat-strip {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .exclusive-flat-strip{
     min-height: 36px;
     padding: 8px 12px;
     font-size: var(--wel-sem-fontsizes-label-md, 14px);
     line-height: var(--wel-sem-lineheights-label-md, 20px);
-  }
-}
+  }}

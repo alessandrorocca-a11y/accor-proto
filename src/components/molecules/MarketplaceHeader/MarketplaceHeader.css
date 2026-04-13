@@ -320,69 +320,50 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .marketplace-header__bar {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .marketplace-header__bar{
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-start;
     column-gap: 0;
-  }
-
-  .marketplace-header__left-cluster {
+  }  html:not(.device-preview-frame-active) .marketplace-header__left-cluster{
     display: contents;
-  }
-
-  .marketplace-header__left-cluster .marketplace-header__menu-btn {
+  }  html:not(.device-preview-frame-active) .marketplace-header__left-cluster .marketplace-header__menu-btn{
     order: 6;
     grid-column: unset;
     grid-row: unset;
     justify-self: unset;
     margin-left: var(--wel-sem-spacingstatic-inline-md, 16px);
-  }
-
-  .marketplace-header__left-cluster .marketplace-header__icon-btn {
+  }  html:not(.device-preview-frame-active) .marketplace-header__left-cluster .marketplace-header__icon-btn{
     order: 5;
     grid-column: unset;
     grid-row: unset;
     justify-self: unset;
-  }
-
-  .marketplace-header__logo-slot {
+  }  html:not(.device-preview-frame-active) .marketplace-header__logo-slot{
     order: 1;
     grid-column: unset;
     grid-row: unset;
     justify-self: unset;
     justify-content: flex-start;
     flex-shrink: 0;
-  }
-
-  .marketplace-header__mobile-trailing {
+  }  html:not(.device-preview-frame-active) .marketplace-header__mobile-trailing{
     display: contents;
-  }
-
-  .marketplace-header__points {
+  }  html:not(.device-preview-frame-active) .marketplace-header__points{
     order: 2;
     grid-column: unset;
     grid-row: unset;
     margin-left: 2.5rem;
-  }
-
-  .marketplace-header__center-wrap {
+  }  html:not(.device-preview-frame-active) .marketplace-header__center-wrap{
     order: 3;
     display: block;
     flex: 1 1 0;
     max-width: 600px;
     min-width: 0;
     margin: 0 var(--wel-sem-spacingstatic-inline-md, 16px);
-  }
-
-  .marketplace-header__center {
+  }  html:not(.device-preview-frame-active) .marketplace-header__center{
     display: flex;
-  }
-
-  .marketplace-header__icon-group {
+  }  html:not(.device-preview-frame-active) .marketplace-header__icon-group{
     order: 5;
     grid-column: unset;
     grid-row: unset;
@@ -391,8 +372,7 @@
     gap: var(--wel-sem-spacingstatic-inline-md, 16px);
     flex-shrink: 0;
     margin-left: auto;
-  }
-}
+  }}
 
 .marketplace-header__icon-btn {
   display: inline-flex;

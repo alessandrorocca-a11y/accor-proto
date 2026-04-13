@@ -668,92 +668,54 @@ button.city-page__numbered-card {
 
 /* ── Tablet ───────────────────────────────────────────────────────── */
 
-@media (min-width: 768px) {
-  .city-page__hero {
+@media (min-width: 768px) {  html:not(.device-preview-frame-active) .city-page__hero{
     height: 280px;
-  }
-
-  .city-page__hero-name h1 {
+  }  html:not(.device-preview-frame-active) .city-page__hero-name h1{
     font-size: 40px;
     line-height: 48px;
-  }
-
-  .city-page__scroll {
+  }  html:not(.device-preview-frame-active) .city-page__scroll{
     gap: 16px;
-  }
-
-  .city-page__event-card {
+  }  html:not(.device-preview-frame-active) .city-page__event-card{
     flex: 0 0 200px;
-  }
-
-  .city-page__event-card-img {
+  }  html:not(.device-preview-frame-active) .city-page__event-card-img{
     width: 200px;
     height: 200px;
-  }
-}
+  }}
 
-@media (min-width: 1024px) {
-  .city-page__hero {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .city-page__hero{
     height: 360px;
-  }
-
-  .city-page__hero-content {
+  }  html:not(.device-preview-frame-active) .city-page__hero-content{
     padding-left: 64px;
     padding-right: 64px;
-  }
-
-  .city-page__hero-name h1 {
+  }  html:not(.device-preview-frame-active) .city-page__hero-name h1{
     font-size: 50px;
     line-height: 64px;
-  }
-
-  .city-page__section-header {
+  }  html:not(.device-preview-frame-active) .city-page__section-header{
     padding-left: 64px;
     padding-right: 64px;
-  }
-
-  .city-page__section > .city-page__scroll {
+  }  html:not(.device-preview-frame-active) .city-page__section > .city-page__scroll{
     margin-left: 64px;
-  }
-
-  .city-page__scroll {
+  }  html:not(.device-preview-frame-active) .city-page__scroll{
     padding-right: 64px;
-  }
-
-  .city-page__near-map {
+  }  html:not(.device-preview-frame-active) .city-page__near-map{
     margin: 0 64px;
-  }
-
-  .city-page__accor-plus-banner {
+  }  html:not(.device-preview-frame-active) .city-page__accor-plus-banner{
     margin: 0 64px;
-  }
-
-  .city-page__near-cities-card {
+  }  html:not(.device-preview-frame-active) .city-page__near-cities-card{
     margin: 0 64px;
-  }
-
-  .city-page__event-card {
+  }  html:not(.device-preview-frame-active) .city-page__event-card{
     flex: 0 0 220px;
-  }
-
-  .city-page__event-card-img {
+  }  html:not(.device-preview-frame-active) .city-page__event-card-img{
     width: 220px;
     height: 220px;
-  }
-
-  button.city-page__numbered-card {
+  }  html:not(.device-preview-frame-active) button.city-page__numbered-card{
     width: 180px;
-  }
-
-  .city-page__category-card {
+  }  html:not(.device-preview-frame-active) .city-page__category-card{
     flex: 0 0 200px;
-  }
-
-  .city-page__category-card-img {
+  }  html:not(.device-preview-frame-active) .city-page__category-card-img{
     width: 200px;
     height: 112px;
-  }
-}
+  }}
 
 /* ══════════════════════════════════════════════════════════════════════
    FULL DESKTOP LAYOUT (≥ 1200px)
@@ -765,58 +727,37 @@ button.city-page__numbered-card {
   display: none;
 }
 
-@media (min-width: 1200px) {
-
-  /* ── Hero ──────────────────────────────────────────────────────── */
-  .city-page__hero {
+@media (min-width: 1200px) {/* ── Hero ──────────────────────────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__hero{
     height: 420px;
-  }
-
-  .city-page__hero-content {
+  }  html:not(.device-preview-frame-active) .city-page__hero-content{
     padding-left: 64px;
     padding-right: 64px;
     padding-bottom: 48px;
-  }
-
-  .city-page__hero-name h1 {
+  }  html:not(.device-preview-frame-active) .city-page__hero-name h1{
     font: var(--wel-typography-display-02, 700 56px/64px 'Montserrat', sans-serif);
     font-weight: 700;
-  }
-
-  /* ── Section styles ────────────────────────────────────────────── */
-  .city-page__section {
+  }/* ── Section styles ────────────────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__section{
     padding: 64px 0 0;
-  }
-
-  .city-page__section-header {
+  }  html:not(.device-preview-frame-active) .city-page__section-header{
     padding: 0 64px;
     margin-bottom: 40px;
     justify-content: flex-start;
     align-items: center;
-  }
-
-  .city-page__section-title {
+  }  html:not(.device-preview-frame-active) .city-page__section-title{
     font: var(--wel-typography-display-05, 700 26px/32px 'Montserrat', sans-serif);
     letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px);
     flex-shrink: 0;
-  }
-
-  .city-page__section-header .city-page__section-link {
+  }  html:not(.device-preview-frame-active) .city-page__section-header .city-page__section-link{
     order: 2;
     flex-shrink: 0;
-  }
-
-  .city-page__section .city-page__section-header::after {
+  }  html:not(.device-preview-frame-active) .city-page__section .city-page__section-header::after{
     content: '';
     flex: 1;
     height: 2px;
     background: var(--wel-sem-color-surface-container-mid, #e8edee);
     margin: 0 16px;
     order: 1;
-  }
-
-  /* ── Scroll → Grid on desktop ──────────────────────────────────── */
-  .city-page__scroll {
+  }/* ── Scroll → Grid on desktop ──────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__scroll{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
@@ -825,115 +766,69 @@ button.city-page__numbered-card {
     padding-left: 64px;
     padding-right: 64px;
     padding-bottom: 0;
-  }
-
-  .city-page__section > .city-page__scroll {
+  }  html:not(.device-preview-frame-active) .city-page__section > .city-page__scroll{
     margin-left: 0;
     margin-right: 0;
-  }
-
-  .city-page__scroll > *:nth-child(n+5) {
+  }  html:not(.device-preview-frame-active) .city-page__scroll > *:nth-child(n+5){
     display: none;
-  }
-
-  /* ── Event card desktop sizing ─────────────────────────────────── */
-  .city-page__event-card {
+  }/* ── Event card desktop sizing ─────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__event-card{
     flex: unset;
     width: 100%;
-  }
-
-  .city-page__event-card-img {
+  }  html:not(.device-preview-frame-active) .city-page__event-card-img{
     width: 100%;
     height: auto;
     aspect-ratio: 1 / 1;
-  }
-
-  .city-page__event-card-title {
+  }  html:not(.device-preview-frame-active) .city-page__event-card-title{
     font: var(--wel-typography-title-02, 500 20px/24px 'Roboto', sans-serif);
-  }
-
-  /* ── Top 10 / For you desktop ──────────────────────────────────── */
-  .city-page__top10 .city-page__section-header::after {
+  }/* ── Top 10 / For you desktop ──────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__top10 .city-page__section-header::after{
     content: '';
     flex: 1;
     height: 2px;
     background: var(--wel-sem-color-surface-container-mid, #e8edee);
     margin: 0 16px;
     order: 1;
-  }
-
-  .city-page__top10-scroll {
+  }  html:not(.device-preview-frame-active) .city-page__top10-scroll{
     grid-template-columns: repeat(5, 1fr);
     gap: 23px;
     padding-left: 0;
-  }
-
-  .city-page__top10-scroll > *:nth-child(5) {
+  }  html:not(.device-preview-frame-active) .city-page__top10-scroll > *:nth-child(5){
     display: block;
-  }
-
-  .city-page__top10-scroll > *:nth-child(n+6) {
+  }  html:not(.device-preview-frame-active) .city-page__top10-scroll > *:nth-child(n+6){
     display: none;
-  }
-
-  button.city-page__numbered-card {
+  }  html:not(.device-preview-frame-active) button.city-page__numbered-card{
     width: 100%;
-  }
-
-  .city-page__numbered-card-img {
+  }  html:not(.device-preview-frame-active) .city-page__numbered-card-img{
     aspect-ratio: 244 / 360;
-  }
-
-  .city-page__numbered-card-number {
+  }  html:not(.device-preview-frame-active) .city-page__numbered-card-number{
     font-size: 88px;
     bottom: -24px;
     left: -9px;
-  }
-
-  .city-page__numbered-card-title {
+  }  html:not(.device-preview-frame-active) .city-page__numbered-card-title{
     font: var(--wel-typography-body-strong-01, 500 16px/24px 'Roboto', sans-serif);
     margin-top: 12px;
-  }
-
-  /* ── Near you map desktop ──────────────────────────────────────── */
-  .city-page__near-map {
+  }/* ── Near you map desktop ──────────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__near-map{
     margin: 0 64px;
     aspect-ratio: 3 / 1;
-  }
-
-  /* ── Near cities desktop ───────────────────────────────────────── */
-  .city-page__near-cities-card {
+  }/* ── Near cities desktop ───────────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__near-cities-card{
     margin: 0 64px;
     border-radius: 16px;
     padding: 32px;
     gap: 32px;
-  }
-
-  .city-page__near-cities-title {
+  }  html:not(.device-preview-frame-active) .city-page__near-cities-title{
     font: var(--wel-typography-display-05, 700 26px/32px 'Montserrat', sans-serif);
     letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px);
-  }
-
-  .city-page__near-cities-chips {
+  }  html:not(.device-preview-frame-active) .city-page__near-cities-chips{
     gap: 12px;
-  }
-
-  /* ── Categories hidden on desktop ──────────────────────────────── */
-  .city-page__categories {
+  }/* ── Categories hidden on desktop ──────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__categories{
     display: none;
-  }
-
-  /* ── Pagination on desktop ─────────────────────────────────────── */
-  .city-page__pagination {
+  }/* ── Pagination on desktop ─────────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__pagination{
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 16px;
     padding: 0 64px;
     margin-top: 20px;
-  }
-
-  .city-page__pagination-btn {
+  }  html:not(.device-preview-frame-active) .city-page__pagination-btn{
     width: 48px;
     height: 48px;
     display: flex;
@@ -945,63 +840,42 @@ button.city-page__numbered-card {
     cursor: pointer;
     color: var(--wel-sem-color-primary, #050033);
     padding: 0;
-  }
-
-  .city-page__pagination-btn:disabled {
+  }  html:not(.device-preview-frame-active) .city-page__pagination-btn:disabled{
     opacity: 0.38;
     cursor: not-allowed;
-  }
-
-  .city-page__pagination-counter {
+  }  html:not(.device-preview-frame-active) .city-page__pagination-counter{
     font: var(--wel-typography-body-default-02, 400 14px/20px 'Roboto', sans-serif);
     color: var(--wel-sem-color-on-surface-mid, #38364d);
-  }
-
-  /* ── Selling points (desktop only) ─────────────────────────────── */
-  .city-page__selling-points {
+  }/* ── Selling points (desktop only) ─────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__selling-points{
     display: flex;
     gap: 63px;
     padding: 32px 64px;
     background: var(--wel-sem-color-primary-container-hi, #e8edff);
-  }
-
-  .city-page__selling-point {
+  }  html:not(.device-preview-frame-active) .city-page__selling-point{
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 16px;
-  }
-
-  .city-page__selling-point-header {
+  }  html:not(.device-preview-frame-active) .city-page__selling-point-header{
     display: flex;
     align-items: center;
     gap: 12px;
-  }
-
-  .city-page__selling-point-header svg {
+  }  html:not(.device-preview-frame-active) .city-page__selling-point-header svg{
     flex-shrink: 0;
     width: 48px;
     height: 48px;
-  }
-
-  .city-page__selling-point-title {
+  }  html:not(.device-preview-frame-active) .city-page__selling-point-title{
     font: var(--wel-typography-title-02, 500 20px/24px 'Roboto', sans-serif);
     color: var(--wel-sem-color-on-surface-hi, #232136);
     margin: 0;
-  }
-
-  .city-page__selling-point-desc {
+  }  html:not(.device-preview-frame-active) .city-page__selling-point-desc{
     font: var(--wel-typography-body-default-01, 400 16px/24px 'Roboto', sans-serif);
     color: var(--wel-sem-color-outline-hi, #898c8e);
     margin: 0;
     line-height: 24px;
-  }
-
-  /* ── Near cities: no divider line ────────────────────────────────── */
-  .city-page__near-cities .city-page__section-header::after {
+  }/* ── Near cities: no divider line ────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__near-cities .city-page__section-header::after{
     display: none;
-  }
-}
+  }}
 
 /* ── City Selector Dialog ─────────────────────────────────────────── */
 
@@ -1171,16 +1045,12 @@ button.city-page__numbered-card {
   margin: 0;
 }
 
-@media (min-width: 601px) {
-  .city-selector__backdrop {
+@media (min-width: 601px) {  html:not(.device-preview-frame-active) .city-selector__backdrop{
     align-items: flex-end;
-  }
-
-  .city-selector {
+  }  html:not(.device-preview-frame-active) .city-selector{
     border-radius: 16px;
     max-height: 70vh;
-  }
-}
+  }}
 
 /* ── Date filter banner ───────────────────────────────────────────── */
 
@@ -1253,11 +1123,9 @@ button.city-page__numbered-card {
   text-align: center;
 }
 
-@media (min-width: 768px) {
-  .city-page__date-filter-bar {
+@media (min-width: 768px) {  html:not(.device-preview-frame-active) .city-page__date-filter-bar{
     padding: 14px 32px;
-  }
-}
+  }}
 
 /* ══════════════════════════════════════════════════════════════════════════
    Device preview: force mobile layout regardless of browser viewport width.

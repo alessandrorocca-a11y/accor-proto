@@ -64,14 +64,10 @@
   gap: 0.5rem;
 }
 
-@media (min-width: 1024px) {
-  .ads-modal-backdrop {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .ads-modal-backdrop{
     background: rgba(6, 35, 44, 0.88);
-  }
-
-  .ads-modal {
+  }  html:not(.device-preview-frame-active) .ads-modal{
     max-width: 480px;
     border-radius: 16px;
     box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
-  }
-}
+  }}

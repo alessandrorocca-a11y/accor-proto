@@ -34,7 +34,7 @@ body {
 }
 
 @media (min-width: 1024px) {
-  :root {
+  html:not(.device-preview-frame-active) {
     --bottom-browser-bar-height: 0px;
   }
 }
@@ -76,15 +76,3 @@ html.device-preview-frame-active #root.has-bottom-tab-bar {
 }
 
 /* Device preview: scrolling happens inside .device-preview-frame__viewport, not #root */
-
-/*
- * Wide viewport + device frame: restore bottom bar height (normally 0 at 1024px+)
- * so sticky auction/linkout chrome still clears the bar inside the phone screen.
- */
-@media (min-width: 1024px) {
-  html.device-preview-frame-active {
-    --bottom-browser-bar-height: calc(
-      44px + var(--bottom-browser-bar-extra-padding) + env(safe-area-inset-bottom, 0px)
-    );
-  }
-}

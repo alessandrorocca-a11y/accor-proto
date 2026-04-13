@@ -671,39 +671,25 @@
 
 /* ── Desktop ─────────────────────────────────────────────────────── */
 
-@media (min-width: 601px) {
-  .near-you__loyalty-backdrop {
+@media (min-width: 601px) {  html:not(.device-preview-frame-active) .near-you__loyalty-backdrop{
     align-items: flex-end;
-  }
-
-  .near-you__loyalty-sheet {
+  }  html:not(.device-preview-frame-active) .near-you__loyalty-sheet{
     border-radius: 16px;
-  }
-}
+  }}
 
-@media (min-width: 768px) {
-  .near-you__top-bar {
+@media (min-width: 768px) {  html:not(.device-preview-frame-active) .near-you__top-bar{
     padding: 0 32px;
-  }
-
-  .near-you__event-card {
+  }  html:not(.device-preview-frame-active) .near-you__event-card{
     width: min(400px, calc(100% - 32px));
-  }
-}
+  }}
 
-@media (min-width: 1024px) {
-  .near-you__top-bar {
+@media (min-width: 1024px) {  html:not(.device-preview-frame-active) .near-you__top-bar{
     padding: 0 64px;
-  }
-
-  .near-you__list-view-btn {
+  }  html:not(.device-preview-frame-active) .near-you__list-view-btn{
     left: 24px;
-  }
-
-  .near-you__compass-btn {
+  }  html:not(.device-preview-frame-active) .near-you__compass-btn{
     right: 24px;
-  }
-}
+  }}
 
 /*
  * Device preview: BottomTabBar lives in a flex slot under the scroll viewport, but
