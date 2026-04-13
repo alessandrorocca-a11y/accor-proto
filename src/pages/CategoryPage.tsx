@@ -1514,6 +1514,21 @@ export default function CategoryPage({
           </div>
         </div>
       )}
+
+      <button
+        type="button"
+        className="category-page__map-view-btn"
+        onClick={() => {
+          const city = (defaultLocation ?? 'Paris').toLowerCase().replace(/\s+/g, '-');
+          window.location.hash = `#near-you/${city}`;
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8 2v16M16 6v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Map view
+      </button>
     </div>
   );
 }

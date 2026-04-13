@@ -1493,6 +1493,40 @@ html.device-preview-frame-active .category-page__breadcrumb {
    Center a bounded card; only the list body scrolls.
    ══════════════════════════════════════════════════════════════════════ */
 
+/* ── Floating "Map view" button ─────────────────────────────────────── */
+.category-page__map-view-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--wel-sem-color-primary, #050033);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  font: var(--wel-typography-label-strong-01, 600 16px/24px 'Roboto', sans-serif);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.category-page__map-view-btn:hover {
+  background: #1a1740;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.category-page__map-view-btn:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+.category-page__map-view-btn svg {
+  flex-shrink: 0;
+}
+
 html.device-preview-frame-active .category-page__content {
   padding-top: calc(var(--device-preview-status-bar-height, 54px) + 56px) !important;
 }
