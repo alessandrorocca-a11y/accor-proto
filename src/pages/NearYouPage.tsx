@@ -966,11 +966,6 @@ export default function NearYouPage({ cityName = 'Paris' }: NearYouPageProps) {
           </div>
         </div>
 
-        {/* ── "Search in this area" button ────────────────────────────── */}
-        <button type="button" className="near-you__search-area-btn">
-          Search in this area
-        </button>
-
         {/* ── "List view" button ──────────────────────────────────────── */}
         <button
           type="button"

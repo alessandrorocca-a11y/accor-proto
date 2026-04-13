@@ -282,30 +282,6 @@
   color: var(--wel-sem-color-primary, #050033);
 }
 
-/* ── "Search in this area" button ────────────────────────────────── */
-
-.near-you__search-area-btn {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px 16px;
-  border: 1px solid var(--wel-comp-btn-primary-border-color, #b7b3ec);
-  border-radius: 100px;
-  background: linear-gradient(247deg, var(--wel-comp-btn-primary-bg-gradient-end, #524f81) 6%, var(--wel-comp-btn-primary-bg-gradient-start, #050033) 92%);
-  color: var(--wel-comp-btn-primary-fg-color, #f9f9ff);
-  font: var(--wel-typography-label-default-01, 400 16px/24px 'Roboto', sans-serif);
-  cursor: pointer;
-  white-space: nowrap;
-  z-index: 5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.near-you__search-area-btn:hover {
-  background: linear-gradient(90deg, rgba(232,198,232,0.6), rgba(198,198,240,0.6));
-  color: #050033;
-}
-
 /* ── "List view" button ──────────────────────────────────────────── */
 
 .near-you__list-view-btn {
