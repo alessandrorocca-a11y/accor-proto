@@ -10,9 +10,16 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
+import type { CheckoutFlowStep } from '@/utils/hashRoute';
+import {
+  REDEEM_SESSION_CONFIRM,
+  buildRedeemCheckoutPath,
+  buildRedeemConfirmationPath,
+  buildRedeemDetailPath,
+  type RedeemConfirmPayload,
+} from '@/utils/hashRoute';
 import { getEventById } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
-import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { useUser } from '@/context/UserContext';
 import './RedeemPage.css';
 
@@ -106,10 +113,17 @@ function formatPoints(n: number) {
   return n.toLocaleString('de-DE');
 }
 
-export default function RedeemPage({ eventId }: { eventId?: string }) {
+export default function RedeemPage({
+  eventId,
+  flowStep = 'detail',
+  checkoutTickets = 1,
+}: {
+  eventId?: string;
+  flowStep?: CheckoutFlowStep;
+  checkoutTickets?: number;
+}) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, deductPoints, addOrder } = useUser();
-  const deviceScrollContainer = useDevicePreviewScrollContainer();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const USER_POINTS = userPoints;
@@ -123,7 +137,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
   const _EVENT_DATE = eventData?.date ?? 'February 16, 2026';
   const venueInfo = getVenueInfo(EVENT_LOCATION, EVENT_CITY);
 
-  const [ticketCount, setTicketCount] = useState(1);
+  const [ticketCount, setTicketCount] = useState(() => (flowStep === 'detail' ? 1 : checkoutTickets));
   const [isFavourite, setFavourite] = useState(false);
   const [showFavSnack, setShowFavSnack] = useState(false);
   const [isNotifyOn, setNotifyOn] = useState(false);
@@ -132,11 +146,9 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [showInsufficientError, setShowInsufficientError] = useState(false);
-  const [showRecap, setShowRecap] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
-  const [confirmedTotal, setConfirmedTotal] = useState(0);
-  const [confirmedTickets, setConfirmedTickets] = useState(1);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(() => flowStep === 'confirmation');
+  const [confirmationData, setConfirmationData] = useState<{ tickets: number; total: number } | null>(null);
+  const orderIdRef = useRef(Math.floor(1000000 + Math.random() * 9000000));
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -160,14 +172,32 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
   }, []);
 
   useEffect(() => {
-    if (!showRecap && !showConfirmation) return;
-    const scrollTarget = deviceScrollContainer ?? document.body;
-    const prev = scrollTarget.style.overflow;
-    scrollTarget.style.overflow = 'hidden';
-    return () => {
-      scrollTarget.style.overflow = prev;
-    };
-  }, [showRecap, showConfirmation, deviceScrollContainer]);
+    if (flowStep !== 'detail') {
+      setTicketCount(checkoutTickets);
+    }
+  }, [flowStep, checkoutTickets]);
+
+  useEffect(() => {
+    if (flowStep !== 'confirmation') {
+      setConfirmationData(null);
+      return;
+    }
+    const raw = sessionStorage.getItem(REDEEM_SESSION_CONFIRM);
+    if (!raw) {
+      window.location.hash = buildRedeemDetailPath(eventId);
+      return;
+    }
+    try {
+      const p = JSON.parse(raw) as RedeemConfirmPayload;
+      if ((p.eventId ?? null) !== (eventId ?? null) || p.tickets !== checkoutTickets) {
+        window.location.hash = buildRedeemDetailPath(eventId);
+        return;
+      }
+      setConfirmationData({ tickets: p.tickets, total: p.totalPoints });
+    } catch {
+      window.location.hash = buildRedeemDetailPath(eventId);
+    }
+  }, [flowStep, eventId, checkoutTickets]);
 
   const handleScroll = useCallback(() => {
     const track = trackRef.current;
@@ -216,20 +246,31 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
       errorTimerRef.current = setTimeout(() => setShowInsufficientError(false), 6000);
       return;
     }
-    setShowRecap(true);
+    try {
+      sessionStorage.removeItem(REDEEM_SESSION_CONFIRM);
+    } catch {
+      /* ignore */
+    }
+    window.location.hash = buildRedeemCheckoutPath(eventId, ticketCount);
   };
 
   const handlePayNow = () => {
     const totalCost = totalPrice;
+    try {
+      const payload: RedeemConfirmPayload = {
+        eventId: eventId ?? null,
+        tickets: ticketCount,
+        totalPoints: totalCost,
+      };
+      sessionStorage.setItem(REDEEM_SESSION_CONFIRM, JSON.stringify(payload));
+    } catch {
+      /* ignore */
+    }
     if (eventData) {
       deductPoints(totalCost);
       addOrder(eventData, totalCost);
     }
-    setConfirmedTotal(totalCost);
-    setConfirmedTickets(ticketCount);
-    setShowRecap(false);
-    setShowConfirmation(true);
-    setShowSuccessBanner(true);
+    window.location.hash = buildRedeemConfirmationPath(eventId, ticketCount);
   };
 
   const handleBackToEvent = () => {
@@ -238,7 +279,6 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
   };
 
   const handleViewOrders = () => {
-    setShowConfirmation(false);
     setShowSuccessBanner(false);
     setMenuInitialView('orders');
     setMenuOpen(true);
@@ -383,6 +423,8 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
+      {flowStep === 'detail' && (
+      <>
       <nav className="auction-page__breadcrumb" aria-label="Breadcrumb">
         <a
           href={getPreviousPage().href}
@@ -624,8 +666,10 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
           </div>
         </aside>
       </div>
+      </>
+      )}
 
-      {showStickyBar && !showRecap && (
+      {showStickyBar && flowStep === 'detail' && (
         <div className="redeem__sticky-bar">
           <Button
             variant="primary"
@@ -639,7 +683,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      {showRecap && (
+      {flowStep === 'checkout' && (
         <div className="recap-page">
           <MarketplaceHeader
             theme="light"
@@ -656,7 +700,9 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
             <button
               type="button"
               className="recap-page__back"
-              onClick={() => setShowRecap(false)}
+              onClick={() => {
+                window.location.hash = buildRedeemDetailPath(eventId);
+              }}
               aria-label="Go back"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -754,13 +800,13 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      {showConfirmation && (
+      {flowStep === 'confirmation' && confirmationData && (
         <div className="recap-page">
           <MarketplaceHeader
             theme="light"
             isLoggedIn
             avatarSrc="/avatar.png"
-            points={USER_POINTS - confirmedTotal}
+            points={USER_POINTS - confirmationData.total}
             loyaltyTier={userLoyaltyTier}
             onLogoClick={() => { window.location.href = window.location.pathname; }}
             onMenu={() => {}}
@@ -792,7 +838,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
 
             <div className="confirmation__header">
               <h1 className="recap-page__title">Purchase confirmed</h1>
-              <span className="confirmation__order-id">Order ID: R{Math.floor(1000000 + Math.random() * 9000000)}</span>
+              <span className="confirmation__order-id">Order ID: R{orderIdRef.current}</span>
             </div>
 
             <div className="recap-page__event-card">
@@ -804,7 +850,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
               <div className="recap-page__event-info">
                 <span className="recap-page__redeem-badge redeem__recap-badge">Instant purchase</span>
                 <p className="recap-page__event-name">
-                  {EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
+                  {EVENT_TITLE} – {confirmationData.tickets} ticket{confirmationData.tickets > 1 ? 's' : ''}
                 </p>
                 <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
@@ -845,9 +891,9 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
                 </div>
                 <div className="recap-page__detail-row">
                   <span className="recap-page__detail-row-label">
-                    {confirmedTickets}x Suite Package
+                    {confirmationData.tickets}x Suite Package
                   </span>
-                  <span className="recap-page__detail-row-value">{formatPoints(confirmedTotal)} Points</span>
+                  <span className="recap-page__detail-row-value">{formatPoints(confirmationData.total)} Points</span>
                 </div>
               </div>
             </div>
@@ -857,7 +903,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
             <div className="recap-page__pricing">
               <div className="recap-page__pricing-row">
                 <span>Subtotal</span>
-                <span>{formatPoints(confirmedTotal)} Points</span>
+                <span>{formatPoints(confirmationData.total)} Points</span>
               </div>
               <div className="recap-page__pricing-row">
                 <span>Fees</span>
@@ -865,7 +911,7 @@ export default function RedeemPage({ eventId }: { eventId?: string }) {
               </div>
               <div className="recap-page__pricing-total">
                 <span>Total</span>
-                <span>{formatPoints(confirmedTotal)} Points</span>
+                <span>{formatPoints(confirmationData.total)} Points</span>
               </div>
             </div>
 

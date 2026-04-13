@@ -49,6 +49,12 @@ interface CityConfig {
   subtitle: string;
 }
 
+interface Category {
+  label: string;
+  image: string;
+  hash: string;
+}
+
 export interface CityPageProps {
   cityName: string;
   country: string;
@@ -298,14 +304,15 @@ const MAP_PINS = [
 
 /* Event arrays are now derived from the registry inside the component */
 
-const CATEGORIES = [
-  { label: 'Shows & culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=350&h=200&fit=crop', hash: '#category/shows-and-culture' },
-  { label: 'Food & drinks', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=350&h=200&fit=crop', hash: '#category/food-and-drinks' },
-  { label: 'Sports & leisure', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=350&h=200&fit=crop', hash: '#category/sport-and-leisure' },
+/** Same taxonomy and assets as `HomePage` experiences strip. */
+const CATEGORIES: Category[] = [
+  { label: 'Arts and culture', image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=350&h=200&fit=crop', hash: '#category/arts-and-culture' },
+  { label: 'Food and drink', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=350&h=200&fit=crop', hash: '#category/food-and-drink' },
+  { label: 'Sports and activities', image: '/psg-stadium.jpg', hash: '#category/sports-and-activities' },
   { label: 'Wellness', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=350&h=200&fit=crop', hash: '#category/wellness' },
-  { label: 'Concerts & festivals', image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=350&h=200&fit=crop', hash: '#category/concerts-and-festivals' },
+  { label: 'Concerts & festivals', image: 'https://limitlessexperiences.accor.com/media/wysiwyg/Accor-Arena-760x524.jpg', hash: '#category/concerts-and-festivals' },
   { label: 'Visits', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=350&h=200&fit=crop', hash: '#category/visits' },
-  { label: 'Hotel experiences', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=350&h=200&fit=crop', hash: '#category/hotel-experiences' },
+  { label: 'Hotel experiences', image: 'https://limitlessexperiences.accor.com/media/.renditions/wysiwyg/2025/ALL/December2025/EmblemsDreamStays/EDS-HeroBanner_510x510.jpg', hash: '#category/hotel-experiences' },
 ];
 
 /* ── Icons ──────────────────────────────────────────────────────────── */
@@ -837,13 +844,13 @@ export default function CityPage({ cityName, country, dateFrom, dateTo }: CityPa
         />
       ) : null}
 
-      {/* ── Categories ─────────────────────────────────────────────── */}
-      <section className="city-page__section city-page__categories">
+      {/* ── Experiences (mobile / device preview — same strip as HomePage) ─ */}
+      <section className="city-page__section city-page__categories-section">
         <div className="city-page__section-header">
-          <h2 className="city-page__section-title">Categories</h2>
+          <h2 className="city-page__section-title">Experiences</h2>
           <button type="button" className="city-page__section-link" onClick={() => navigateTo('#categories')}>See all</button>
         </div>
-        <div className="city-page__scroll city-page__categories-scroll">
+        <div className="city-page__scroll">
           {CATEGORIES.map((cat) => (
             <a
               key={cat.label}

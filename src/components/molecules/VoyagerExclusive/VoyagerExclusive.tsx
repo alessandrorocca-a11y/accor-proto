@@ -6,14 +6,6 @@ import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayP
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import './VoyagerExclusive.css';
 
-function IconClose() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export type VoyagerExclusiveVariant = 'explorer' | 'signature';
 
 const CARD_BY_VARIANT: Record<VoyagerExclusiveVariant, string> = {
@@ -68,7 +60,8 @@ export interface VoyagerDialogProps {
   variant?: VoyagerExclusiveVariant;
 }
 
-export function VoyagerDialog({ open, onClose, variant = 'explorer' }: VoyagerDialogProps) {
+/** Non-dismissible overlay: `onClose` is kept for API compatibility; no in-UI path invokes it. */
+export function VoyagerDialog({ open, onClose: _onClose, variant = 'explorer' }: VoyagerDialogProps) {
   const overlayPortalTarget = usePrototypeShellOverlayPortal();
   const deviceScrollContainer = useDevicePreviewScrollContainer();
   const copy = DIALOG_COPY[variant];
@@ -76,18 +69,15 @@ export function VoyagerDialog({ open, onClose, variant = 'explorer' }: VoyagerDi
 
   useEffect(() => {
     if (!open) return;
-    const onEscape = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    document.addEventListener('keydown', onEscape);
 
     const scrollTarget = deviceScrollContainer ?? document.body;
     const prevOverflow = scrollTarget.style.overflow;
     scrollTarget.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener('keydown', onEscape);
       scrollTarget.style.overflow = prevOverflow;
     };
-  }, [open, onClose, deviceScrollContainer]);
+  }, [open, deviceScrollContainer]);
 
   if (!open) return null;
 
@@ -104,50 +94,32 @@ export function VoyagerDialog({ open, onClose, variant = 'explorer' }: VoyagerDi
       </>
     );
 
-  const cta = copy.ctaExternal ? (
-    <a
-      href={copy.ctaHref}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="voyager-dialog__cta"
-    >
-      {copy.ctaLabel}
-    </a>
-  ) : (
-    <a href={copy.ctaHref} className="voyager-dialog__cta" onClick={onClose}>
-      {copy.ctaLabel}
-    </a>
-  );
-
   const dialogTree = (
-    <div
-      className={`voyager-dialog__backdrop${overlayPortalTarget ? ' voyager-dialog__backdrop--portaled' : ''}`}
-      onClick={onClose}
-    >
+    <div className={`voyager-dialog__backdrop${overlayPortalTarget ? ' voyager-dialog__backdrop--portaled' : ''}`}>
       <div
         className="voyager-dialog"
-        role="dialog"
-        aria-modal
+        role="alertdialog"
+        aria-modal="true"
         aria-label={copy.ariaLabel}
-        onClick={(e) => e.stopPropagation()}
+        aria-describedby="voyager-dialog-desc"
       >
         <div className="voyager-dialog__header">
-          <span className="voyager-dialog__spacer" />
           <h2 className="voyager-dialog__title">Exclusive Event</h2>
-          <button type="button" className="voyager-dialog__close" onClick={onClose} aria-label="Close">
-            <IconClose />
-          </button>
         </div>
 
-        <div className="voyager-dialog__body">
-          <img src={cardSrc} alt={copy.cardAlt} className="voyager-dialog__card" />
+        <div className="voyager-dialog__body" id="voyager-dialog-desc">
+          <img src={cardSrc} alt="" className="voyager-dialog__card" aria-hidden />
 
           <div className="voyager-dialog__content">
             <p className="voyager-dialog__heading">You found an exclusive experience!</p>
             <p className="voyager-dialog__text">{bodyText}</p>
           </div>
 
-          <div className="voyager-dialog__actions">{cta}</div>
+          <div className="voyager-dialog__actions">
+            <span className="voyager-dialog__cta voyager-dialog__cta--static" aria-hidden>
+              {copy.ctaLabel}
+            </span>
+          </div>
         </div>
       </div>
     </div>

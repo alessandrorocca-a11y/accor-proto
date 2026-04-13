@@ -562,11 +562,7 @@ button.city-page__numbered-card {
   font-weight: 500;
 }
 
-/* ── Categories ───────────────────────────────────────────────────── */
-
-.city-page__categories-scroll {
-  gap: 12px;
-}
+/* ── Categories (experiences strip — matches HomePage) ────────────── */
 
 .city-page__category-card {
   flex: 0 0 173px;
@@ -819,7 +815,7 @@ button.city-page__numbered-card {
     letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px);
   }  html:not(.device-preview-frame-active) .city-page__near-cities-chips{
     gap: 12px;
-  }/* ── Categories hidden on desktop ──────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__categories{
+  }/* ── Categories hidden on desktop ──────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__categories-section{
     display: none;
   }/* ── Pagination on desktop ─────────────────────────────────────── */  html:not(.device-preview-frame-active) .city-page__pagination{
     display: flex;
@@ -1152,6 +1148,10 @@ html.device-preview-frame-active .city-page__section {
   padding: 32px 0 0 !important;
 }
 
+html.device-preview-frame-active .city-page__categories-section {
+  display: block !important;
+}
+
 html.device-preview-frame-active .city-page__section-header {
   padding: 0 24px !important;
   margin-bottom: 16px !important;
@@ -1221,11 +1221,6 @@ html.device-preview-frame-active .city-page__top10-scroll > *:nth-child(n+5) {
 
 html.device-preview-frame-active button.city-page__numbered-card {
   width: 154px !important;
-}
-
-/* ── Categories: show on mobile ──────────────────────────────────────────── */
-html.device-preview-frame-active .city-page__categories {
-  display: flex !important;
 }
 
 html.device-preview-frame-active .city-page__category-card {

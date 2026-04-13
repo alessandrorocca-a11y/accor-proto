@@ -28,7 +28,7 @@ import PrizeDrawLoserEmail from './pages/emails/PrizeDrawLoserEmail';
 import PrizeDrawPurchaseEmail from './pages/emails/PrizeDrawPurchaseEmail';
 import { FavouritesProvider } from './context/FavouritesContext';
 import { UserProvider } from './context/UserContext';
-import { extractEventId, parseHashParams } from './utils/hashRoute';
+import { extractEventId, parseHashParams, parsePrizeDrawRoute, parseRedeemRoute, parseStandardRoute } from './utils/hashRoute';
 
 interface BreadcrumbItem {
   label: string;
@@ -156,23 +156,43 @@ export default function App() {
   let page: React.ReactNode;
 
   const auctionEventId = extractEventId(hash, '#auction');
-  const drawEventId = extractEventId(hash, '#draw');
-  const redeemEventId = extractEventId(hash, '#redeem');
-  const standardEventId = extractEventId(hash, '#standard');
   const waitlistEventId = extractEventId(hash, '#waitlist');
   const linkoutEventId = extractEventId(hash, '#linkout');
 
   if (auctionEventId) page = <AuctionPage eventId={auctionEventId} />;
-  else if (drawEventId) page = <PrizeDrawPage eventId={drawEventId} />;
-  else if (redeemEventId) page = <RedeemPage eventId={redeemEventId} />;
-  else if (standardEventId) page = <StandardPage eventId={standardEventId} />;
-  else if (waitlistEventId) page = <WaitlistPage eventId={waitlistEventId} />;
-  else if (hashBase === '#draw') page = <PrizeDrawPage />;
+  else if (hashBase.startsWith('#draw')) {
+    const pd = parsePrizeDrawRoute(hash);
+    page = (
+      <PrizeDrawPage
+        key={hash}
+        eventId={pd.eventId}
+        flowStep={pd.step}
+        checkoutTickets={pd.tickets}
+      />
+    );
+  } else if (hashBase.startsWith('#redeem')) {
+    const r = parseRedeemRoute(hash);
+    page = (
+      <RedeemPage
+        key={hash}
+        eventId={r.eventId}
+        flowStep={r.step}
+        checkoutTickets={r.tickets}
+      />
+    );
+  } else if (hashBase.startsWith('#standard')) {
+    const s = parseStandardRoute(hash);
+    page = (
+      <StandardPage
+        key={hash}
+        eventId={s.eventId}
+        flowStep={s.step}
+      />
+    );
+  } else if (waitlistEventId) page = <WaitlistPage eventId={waitlistEventId} />;
   else if (linkoutEventId) page = <LinkoutPage eventId={linkoutEventId} />;
   else if (hashBase === '#linkout') page = <LinkoutPage />;
-  else if (hashBase === '#redeem') page = <RedeemPage />;
   else if (hashBase === '#waitlist') page = <WaitlistPage />;
-  else if (hashBase === '#standard') page = <StandardPage />;
   else if (hashBase === '#categories') page = <AllCategoriesPage />;
   else if (hashBase === '#category/next-trip') {
     const cityName = hashParams.get('city')?.trim() || 'Paris';

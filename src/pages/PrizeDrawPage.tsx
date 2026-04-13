@@ -15,9 +15,16 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
+import type { CheckoutFlowStep } from '@/utils/hashRoute';
+import {
+  PRIZE_DRAW_SESSION_CONFIRM,
+  buildPrizeDrawCheckoutPath,
+  buildPrizeDrawConfirmationPath,
+  buildPrizeDrawDetailPath,
+  type PrizeDrawConfirmPayload,
+} from '@/utils/hashRoute';
 import { getEventById, isSignatureExclusiveMarketingTag, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
-import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
@@ -130,10 +137,17 @@ function formatPoints(n: number) {
   return n.toLocaleString('de-DE');
 }
 
-export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
+export default function PrizeDrawPage({
+  eventId,
+  flowStep = 'detail',
+  checkoutTickets = 1,
+}: {
+  eventId?: string;
+  flowStep?: CheckoutFlowStep;
+  checkoutTickets?: number;
+}) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
-  const deviceScrollContainer = useDevicePreviewScrollContainer();
   const overlayPortalTarget = usePrototypeShellOverlayPortal();
   useFavourites();
 
@@ -157,7 +171,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
     return new Date(Date.now() + DRAW_MS_LEFT);
   }, [eventData?.drawEndDate, DRAW_MS_LEFT]);
 
-  const [ticketCount, setTicketCount] = useState(1);
+  const [ticketCount, setTicketCount] = useState(() => (flowStep === 'detail' ? 1 : checkoutTickets));
   const [isFavourite, setFavourite] = useState(false);
   const [showFavSnack, setShowFavSnack] = useState(false);
   const [isNotifyOn, setNotifyOn] = useState(false);
@@ -167,11 +181,9 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
   const [drawEnded, setDrawEnded] = useState(false);
   const [showInsufficientError, setShowInsufficientError] = useState(false);
-  const [showRecap, setShowRecap] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
-  const [confirmedTotal, setConfirmedTotal] = useState(0);
-  const [confirmedTickets, setConfirmedTickets] = useState(1);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(() => flowStep === 'confirmation');
+  const [confirmationData, setConfirmationData] = useState<{ tickets: number; total: number } | null>(null);
+  const orderIdRef = useRef(Math.floor(1000000 + Math.random() * 9000000));
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -213,14 +225,32 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   }, [drawEnded]);
 
   useEffect(() => {
-    if (!showRecap && !showConfirmation) return;
-    const scrollTarget = deviceScrollContainer ?? document.body;
-    const prev = scrollTarget.style.overflow;
-    scrollTarget.style.overflow = 'hidden';
-    return () => {
-      scrollTarget.style.overflow = prev;
-    };
-  }, [showRecap, showConfirmation, deviceScrollContainer]);
+    if (flowStep !== 'detail') {
+      setTicketCount(checkoutTickets);
+    }
+  }, [flowStep, checkoutTickets]);
+
+  useEffect(() => {
+    if (flowStep !== 'confirmation') {
+      setConfirmationData(null);
+      return;
+    }
+    const raw = sessionStorage.getItem(PRIZE_DRAW_SESSION_CONFIRM);
+    if (!raw) {
+      window.location.hash = buildPrizeDrawDetailPath(eventId);
+      return;
+    }
+    try {
+      const p = JSON.parse(raw) as PrizeDrawConfirmPayload;
+      if ((p.eventId ?? null) !== (eventId ?? null) || p.tickets !== checkoutTickets) {
+        window.location.hash = buildPrizeDrawDetailPath(eventId);
+        return;
+      }
+      setConfirmationData({ tickets: p.tickets, total: p.totalPoints });
+    } catch {
+      window.location.hash = buildPrizeDrawDetailPath(eventId);
+    }
+  }, [flowStep, eventId, checkoutTickets]);
 
   const handleScroll = useCallback(() => {
     const track = trackRef.current;
@@ -270,22 +300,33 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
       return;
     }
 
-    setShowRecap(true);
+    try {
+      sessionStorage.removeItem(PRIZE_DRAW_SESSION_CONFIRM);
+    } catch {
+      /* ignore */
+    }
+    window.location.hash = buildPrizeDrawCheckoutPath(eventId, ticketCount);
   };
 
   const handleBuyTicket = () => voyagerGate(handleBuyTicketInner);
 
   const handlePayNow = () => {
     const totalCost = totalPrice;
+    try {
+      const payload: PrizeDrawConfirmPayload = {
+        eventId: eventId ?? null,
+        tickets: ticketCount,
+        totalPoints: totalCost,
+      };
+      sessionStorage.setItem(PRIZE_DRAW_SESSION_CONFIRM, JSON.stringify(payload));
+    } catch {
+      /* ignore */
+    }
     if (eventData) {
       deductPoints(totalCost);
       addOrder(eventData, totalCost);
     }
-    setConfirmedTotal(totalPrice);
-    setConfirmedTickets(ticketCount);
-    setShowRecap(false);
-    setShowConfirmation(true);
-    setShowSuccessBanner(true);
+    window.location.hash = buildPrizeDrawConfirmationPath(eventId, ticketCount);
   };
 
   const handleBackToEvent = () => {
@@ -294,7 +335,6 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   };
 
   const handleViewOrders = () => {
-    setShowConfirmation(false);
     setShowSuccessBanner(false);
     setMenuInitialView('orders');
     setMenuOpen(true);
@@ -452,6 +492,8 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
     );
   };
 
+  const recapPortalMod = overlayPortalTarget ? ' recap-page--prototype-device' : '';
+
   return (
     <div className="auction-page prize-draw">
       <MarketplaceHeader
@@ -541,6 +583,8 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
+      {flowStep === 'detail' && (
+      <>
       <nav className="auction-page__breadcrumb" aria-label="Breadcrumb">
         <a
           href={getPreviousPage().href}
@@ -729,8 +773,10 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
           </div>
         </aside>
       </div>
+      </>
+      )}
 
-      {showStickyBar && !drawEnded && !showRecap && (
+      {showStickyBar && !drawEnded && flowStep === 'detail' && (
         <div className="prize-draw__sticky-bar">
           <Button
             variant="primary"
@@ -744,26 +790,30 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
-      {showRecap && (
-        <div className="recap-page">
-          <MarketplaceHeader
-            theme="light"
-            isLoggedIn
-            avatarSrc="/avatar.png"
-            points={USER_POINTS}
-            loyaltyTier={userLoyaltyTier}
-            onLogoClick={() => { window.location.href = window.location.pathname; }}
-            onMenu={() => {}}
-            onPointsClick={() => {}}
-          />
+      {flowStep === 'checkout' &&
+        (() => {
+          const recapBody = (
+            <>
+              <MarketplaceHeader
+                theme="light"
+                isLoggedIn
+                avatarSrc="/avatar.png"
+                points={USER_POINTS}
+                loyaltyTier={userLoyaltyTier}
+                onLogoClick={() => { window.location.href = window.location.pathname; }}
+                onMenu={() => {}}
+                onPointsClick={() => {}}
+              />
 
-          <div className="recap-page__content">
-            <button
-              type="button"
-              className="recap-page__back"
-              onClick={() => setShowRecap(false)}
-              aria-label="Go back"
-            >
+              <div className="recap-page__content">
+                <button
+                  type="button"
+                  className="recap-page__back"
+                  onClick={() => {
+                    window.location.hash = buildPrizeDrawDetailPath(eventId);
+                  }}
+                  aria-label="Go back"
+                >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -843,29 +893,41 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                 <span>{formatPoints(totalPrice)} Points</span>
               </div>
             </div>
-          </div>
+              </div>
 
-          <div className="recap-page__footer">
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              className="prize-draw__buy-btn"
-              onClick={handlePayNow}
-            >
-              Pay now
-            </Button>
-          </div>
-        </div>
-      )}
+              <div className="recap-page__footer">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  className="prize-draw__buy-btn"
+                  onClick={handlePayNow}
+                >
+                  Pay now
+                </Button>
+              </div>
+            </>
+          );
+          return overlayPortalTarget
+            ? createPortal(
+                <div className={`recap-page${recapPortalMod}`}>{recapBody}</div>,
+                overlayPortalTarget,
+              )
+            : (
+                <div className="recap-page">{recapBody}</div>
+              );
+        })()}
 
-      {showConfirmation && (
-        <div className="recap-page">
-          <MarketplaceHeader
+      {flowStep === 'confirmation' &&
+        confirmationData &&
+        (() => {
+          const confirmationBody = (
+            <>
+              <MarketplaceHeader
             theme="light"
             isLoggedIn
             avatarSrc="/avatar.png"
-            points={USER_POINTS - confirmedTotal}
+            points={USER_POINTS - confirmationData.total}
             loyaltyTier={userLoyaltyTier}
             onLogoClick={() => { window.location.href = window.location.pathname; }}
             onMenu={() => {}}
@@ -897,7 +959,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
 
             <div className="confirmation__header">
               <h1 className="recap-page__title">Purchase confirmed</h1>
-              <span className="confirmation__order-id">Order ID: R{Math.floor(1000000 + Math.random() * 9000000)}</span>
+              <span className="confirmation__order-id">Order ID: R{orderIdRef.current}</span>
             </div>
 
             <div className="recap-page__event-card">
@@ -909,7 +971,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               <div className="recap-page__event-info">
                 <span className="recap-page__redeem-badge">Prize draw</span>
                 <p className="recap-page__event-name">
-                  {EVENT_TITLE} – {confirmedTickets} ticket{confirmedTickets > 1 ? 's' : ''}
+                  {EVENT_TITLE} – {confirmationData.tickets} ticket{confirmationData.tickets > 1 ? 's' : ''}
                 </p>
                 <span className="recap-page__event-label">{eventData?.eventTag ?? 'Limitless experience'}</span>
               </div>
@@ -950,9 +1012,9 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
                 </div>
                 <div className="recap-page__detail-row">
                   <span className="recap-page__detail-row-label">
-                    {confirmedTickets}x Prize draw tickets
+                    {confirmationData.tickets}x Prize draw tickets
                   </span>
-                  <span className="recap-page__detail-row-value">{formatPoints(confirmedTotal)} Points</span>
+                  <span className="recap-page__detail-row-value">{formatPoints(confirmationData.total)} Points</span>
                 </div>
               </div>
             </div>
@@ -962,7 +1024,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
             <div className="recap-page__pricing">
               <div className="recap-page__pricing-row">
                 <span>Subtotal</span>
-                <span>{formatPoints(confirmedTotal)} Points</span>
+                <span>{formatPoints(confirmationData.total)} Points</span>
               </div>
               <div className="recap-page__pricing-row">
                 <span>Fees</span>
@@ -970,7 +1032,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               </div>
               <div className="recap-page__pricing-total">
                 <span>Total</span>
-                <span>{formatPoints(confirmedTotal)} Points</span>
+                <span>{formatPoints(confirmationData.total)} Points</span>
               </div>
             </div>
 
@@ -1008,10 +1070,20 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               </button>
             </div>
           </div>
-        </div>
-      )}
+            </>
+          );
+          return overlayPortalTarget
+            ? createPortal(
+                <div className={`recap-page${recapPortalMod}`}>{confirmationBody}</div>,
+                overlayPortalTarget,
+              )
+            : (
+                <div className="recap-page">{confirmationBody}</div>
+              );
+        })()}
 
       {overlayPortalTarget &&
+        flowStep === 'detail' &&
         (showNotifySnack || showFavSnack || showInsufficientError) &&
         createPortal(renderPrizeDrawSnacks(true), overlayPortalTarget)}
 

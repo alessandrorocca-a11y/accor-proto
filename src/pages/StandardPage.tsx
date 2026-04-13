@@ -8,13 +8,22 @@ import {
   MarketplaceHeader,
   Menu,
   TermsDialog,
+  useVoyagerGate,
+  VoyagerBadge,
+  VoyagerDialog,
   YouMayAlsoLike,
 } from '@/components';
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import './StandardPage.css';
-import { getEventById, getStandardEventFromPriceEur, STANDARD_POINTS_PER_EUR } from '@/data/events/eventRegistry';
+import {
+  getEventById,
+  getStandardEventFromPriceEur,
+  isSignatureExclusiveMarketingTag,
+  isVoyagerExclusiveEvent,
+  STANDARD_POINTS_PER_EUR,
+} from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
@@ -244,7 +253,7 @@ function getCalendarDays(year: number, month: number) {
 
 export default function StandardPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
-  const { points: userPoints, loyaltyTier: userLoyaltyTier, deductPoints, addOrder } = useUser();
+  const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
   const deviceScrollContainer = useDevicePreviewScrollContainer();
   const overlayPortalTarget = usePrototypeShellOverlayPortal();
 
@@ -259,6 +268,13 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const venueInfo = getVenueInfo(EVENT_LOCATION, EVENT_CITY);
   const isEventSoldOut = eventData?.marketingTag === 'sold-out';
   const hasEventDiscount = eventData?.marketingTag === 'discount';
+  const isVoyagerExclusive = isVoyagerExclusiveEvent(eventData);
+  const voyagerVariant =
+    eventData && isSignatureExclusiveMarketingTag(eventData.marketingTag) ? 'signature' : 'explorer';
+  const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(
+    isVoyagerExclusive,
+    isVoyagerSubscriber,
+  );
 
   const [selectedDate, setSelectedDate] = useState(16);
   const [selectedTimeIdx, setSelectedTimeIdx] = useState<number | null>(null);
@@ -424,9 +440,11 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   }, [zoneQty, zoneTickets, flexCancelQty]);
 
   const handleBuyTicket = () => {
-    if (totalTickets === 0) return;
-    setShowRecap(true);
-    window.scrollTo(0, 0);
+    voyagerGate(() => {
+      if (totalTickets === 0) return;
+      setShowRecap(true);
+      window.scrollTo(0, 0);
+    });
   };
 
   const handlePayNow = () => {
@@ -1766,6 +1784,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               <span className="auction-page__tag">Sustainable experience</span>
               <span className="auction-page__tag">Limitless experience</span>
             </div>
+            {isVoyagerExclusive ? <VoyagerBadge variant={voyagerVariant} /> : null}
             {eventData?.pageType === 'standard' ? (
               <p className="standard__listing-from">Tickets from {formatEur(standardFromWholeEur)}</p>
             ) : null}
@@ -1848,6 +1867,8 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         createPortal(renderStandardSnacks(true), overlayPortalTarget)}
 
       <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} variant="standard" />
+
+      <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} variant={voyagerVariant} />
     </div>
   );
 }
