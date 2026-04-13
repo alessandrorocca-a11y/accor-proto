@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { BottomTabBar } from './components/BottomTabBar/BottomTabBar';
 import Demo from './Demo';
 import HomePage from './pages/HomePage';
 import AuctionPage from './pages/AuctionPage';
@@ -221,7 +222,10 @@ export default function App() {
 
   return (
     <UserProvider>
-      <FavouritesProvider>{page}</FavouritesProvider>
+      <FavouritesProvider>
+        {page}
+        <BottomTabBar />
+      </FavouritesProvider>
     </UserProvider>
   );
 }

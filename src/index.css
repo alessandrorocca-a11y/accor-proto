@@ -22,8 +22,24 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Matches BottomTabBar height; sticky footers use this so they sit above the bar */
+:root {
+  --bottom-browser-bar-height: calc(44px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --bottom-browser-bar-height: 0px;
+  }
+}
+
 #root {
   width: 100%;
   min-height: 100vh;
   padding-top: 56px;
+}
+
+/* Space for fixed bottom browser chrome (see BottomTabBar) */
+#root.has-bottom-tab-bar {
+  padding-bottom: var(--bottom-browser-bar-height);
 }

@@ -16,7 +16,6 @@ import './StandardPage.css';
 import { getEventById, getStandardEventFromPriceEur, STANDARD_POINTS_PER_EUR } from '@/data/events/eventRegistry';
 import { getVenueInfo } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
-
 const DEFAULT_HERO_IMAGES = [
   { src: '/carnival-hero.png', alt: 'Rio de Janeiro Carnival 2026' },
   { src: 'https://english.news.cn/20260219/d885f812d03c40e7aa0e4eb54f317216/20260219d885f812d03c40e7aa0e4eb54f317216_202602198e26df7794f1485eb79cdc333ea4b903.jpg', alt: 'Sambadrome parade with colourful floats' },
