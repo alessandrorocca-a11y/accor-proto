@@ -17,27 +17,6 @@ const INTERACTIVE_DRAG_SKIP =
 const HORIZONTAL_SCROLL_STRIP_SELECTOR =
   '.home-page__scroll, .city-page__scroll, .linkout__recommendations-scroll';
 
-function IosStatusBar() {
-  return (
-    <div className="mobile-prototype-shell__status-bar mobile-prototype-shell__status-bar--ios" aria-hidden>
-      <span className="mobile-prototype-shell__status-time">9:41</span>
-      <div className="mobile-prototype-shell__status-icons">
-        <svg className="mobile-prototype-shell__status-icon" width="19" height="12" viewBox="0 0 19 12" fill="none" aria-hidden>
-          <rect x="0" y="7" width="3" height="5" rx="0.5" fill="currentColor" />
-          <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="currentColor" />
-          <rect x="9" y="3" width="3" height="9" rx="0.5" fill="currentColor" />
-          <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor" />
-        </svg>
-        <svg className="mobile-prototype-shell__status-icon mobile-prototype-shell__status-battery" width="27" height="13" viewBox="0 0 27 13" fill="none" aria-hidden>
-          <rect x="1" y="2.5" width="21" height="8" rx="2" stroke="currentColor" strokeWidth="1.2" fill="none" opacity="0.45" />
-          <rect x="2.5" y="4" width="16" height="5" rx="1" fill="currentColor" />
-          <path d="M24 5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </div>
-    </div>
-  );
-}
-
 function AndroidStatusBar() {
   return (
     <div className="mobile-prototype-shell__status-bar mobile-prototype-shell__status-bar--android" aria-hidden>
@@ -364,7 +343,7 @@ export function MobilePrototypeShell({ children }: { children: ReactNode }) {
               : 'mobile-prototype-shell__device'
           }
         >
-          {mobilePlatform === 'ios' ? <IosStatusBar /> : <AndroidStatusBar />}
+          {mobilePlatform === 'android' ? <AndroidStatusBar /> : null}
           <div ref={setNavChromeRef} className="mobile-prototype-shell__nav-chrome" />
           <div ref={setScreenRef} className="mobile-prototype-shell__screen">
             <PrototypeMobileScrollContainerContext.Provider value={prototypeScrollContainerEl}>

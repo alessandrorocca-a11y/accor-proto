@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { Avatar, IconHeart } from '@/components/atoms';
 import { usePrototypeMobileScrollContainer } from '@/context/PrototypeMobileScrollContainerContext';
 import { usePrototypeNavChromePortal } from '@/context/PrototypeNavChromePortalContext';
-import { usePrototypePreview } from '@/context/PrototypePreviewContext';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
 
@@ -143,7 +142,6 @@ export function MarketplaceHeader({
   const desktopSearchWrapRef = useRef<HTMLDivElement>(null);
   const prototypeScrollContainer = usePrototypeMobileScrollContainer();
   const prototypeNavChrome = usePrototypeNavChromePortal();
-  const { mobilePlatform } = usePrototypePreview();
 
   /** Bind in layout phase so prototype scroll container from ref+state is ready before paint; avoids a frame on `window`. */
   useLayoutEffect(() => {
@@ -153,13 +151,8 @@ export function MarketplaceHeader({
 
     /** Pixels scrolled before hide-on-scroll-down applies; aligns with window scroll (no prototype chrome). */
     const WINDOW_TOP_REVEAL_PX = 8;
-    /**
-     * Prototype scroll view starts below nav chrome; band for transparentOnTop only.
-     */
-    const PROTOTYPE_TOP_REVEAL_PX =
-      mobilePlatform === 'android'
-        ? 40 /* ~28px bar + padding + buffer */
-        : 52; /* ~44px bar + buffer; iOS default when ios */
+    /** Prototype scroll view starts below portaled nav (iOS status bar removed in shell). */
+    const PROTOTYPE_TOP_REVEAL_PX = 40;
     const topRevealPx = prototypeScrollContainer != null ? PROTOTYPE_TOP_REVEAL_PX : WINDOW_TOP_REVEAL_PX;
     /** Ignore small downward jitter when deciding to hide; keep separate from scroll-up reveal. */
     const hideDelta = 8;
@@ -187,7 +180,7 @@ export function MarketplaceHeader({
     target.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => target.removeEventListener('scroll', handleScroll);
-  }, [prototypeScrollContainer, mobilePlatform, prototypeNavChrome]);
+  }, [prototypeScrollContainer, prototypeNavChrome]);
 
   const closeDesktopSearch = () => {
     setDesktopSearchActive(false);
