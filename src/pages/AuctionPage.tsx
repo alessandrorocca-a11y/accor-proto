@@ -16,7 +16,7 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
-import { getEventById, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
+import { getEventById, isSignatureExclusiveMarketingTag, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { RIO_SAMBADROME_MAP_IMAGE } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 import './AuctionPage.css';
@@ -160,6 +160,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   const isVoyagerExclusive = isVoyagerExclusiveEvent(eventData);
+  const voyagerVariant =
+    eventData && isSignatureExclusiveMarketingTag(eventData.marketingTag) ? 'signature' : 'explorer';
   const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(isVoyagerExclusive, isVoyagerSubscriber);
   const [termsOpen, setTermsOpen] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -571,7 +573,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
               ))}
             </div>
 
-            {isVoyagerExclusive && <VoyagerBadge />}
+            {isVoyagerExclusive && <VoyagerBadge variant={voyagerVariant} />}
 
             {isHighestBidder && (
               <div className="auction-page__highest-bidder" role="status">
@@ -917,7 +919,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
       )}
 
       <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} />
-      <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} />
+      <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} variant={voyagerVariant} />
     </div>
   );
 }

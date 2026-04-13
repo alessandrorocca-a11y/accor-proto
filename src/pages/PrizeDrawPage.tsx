@@ -14,7 +14,7 @@ import {
 } from '@/components';
 import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
-import { getEventById, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
+import { getEventById, isSignatureExclusiveMarketingTag, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
@@ -157,6 +157,8 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const [termsOpen, setTermsOpen] = useState(false);
 
   const isVoyagerExclusive = isVoyagerExclusiveEvent(eventData);
+  const voyagerVariant =
+    eventData && isSignatureExclusiveMarketingTag(eventData.marketingTag) ? 'signature' : 'explorer';
   const { dialogOpen: voyagerOpen, setDialogOpen: setVoyagerOpen, gate: voyagerGate } = useVoyagerGate(isVoyagerExclusive, isVoyagerSubscriber);
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -602,7 +604,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
               <span className="auction-page__tag">Limitless experience</span>
             </div>
 
-            {isVoyagerExclusive && <VoyagerBadge />}
+            {isVoyagerExclusive && <VoyagerBadge variant={voyagerVariant} />}
           </section>
 
           <hr className="auction-page__divider auction-page__divider--mobile-only" aria-hidden />
@@ -970,7 +972,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
       )}
 
       <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} variant="prize-draw" />
-      <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} />
+      <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} variant={voyagerVariant} />
     </div>
   );
 }

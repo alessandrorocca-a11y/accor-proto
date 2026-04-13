@@ -1493,13 +1493,28 @@ html.device-preview-frame-active .category-page__breadcrumb {
    Center a bounded card; only the list body scrolls.
    ══════════════════════════════════════════════════════════════════════ */
 
-/* ── Floating "Map view" button ─────────────────────────────────────── */
-.category-page__map-view-btn {
+/* ── Floating "Map view" button (portaled to device overlay or viewport-fixed) ─ */
+.category-page__map-view-btn-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 16px 24px;
+  box-sizing: border-box;
+  z-index: 880;
+}
+
+.category-page__map-view-btn-wrap--viewport-fixed {
   position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 900;
+}
+
+.category-page__map-view-btn-wrap .category-page__map-view-btn {
+  pointer-events: auto;
+}
+
+.category-page__map-view-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1511,7 +1526,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
   font: var(--wel-typography-label-strong-01, 600 16px/24px 'Roboto', sans-serif);
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: background 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
 .category-page__map-view-btn:hover {
@@ -1520,7 +1535,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
 }
 
 .category-page__map-view-btn:active {
-  transform: translateX(-50%) scale(0.97);
+  transform: scale(0.97);
 }
 
 .category-page__map-view-btn svg {

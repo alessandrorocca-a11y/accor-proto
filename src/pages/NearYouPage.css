@@ -14,6 +14,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 0 16px;
   background: var(--wel-sem-color-surface, #fff);
   z-index: 10;
@@ -54,15 +58,21 @@
 
 .near-you__filters {
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .near-you__filters-scroll {
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 4px;
+  min-width: 0;
 }
 
 .near-you__filters-scroll::-webkit-scrollbar {
@@ -359,10 +369,10 @@
   display: flex;
   gap: 8px;
   padding: 12px 0;
-  padding-left: 24px;
+  padding-left: 16px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-left: 24px;
+  scroll-padding-left: 16px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   z-index: 5;
@@ -382,7 +392,7 @@
 
 .near-you__event-card {
   flex: 0 0 auto;
-  width: calc(100vw - 24px);
+  width: calc(100vw - 16px);
   max-width: 377px;
   height: 180px;
   display: flex;
