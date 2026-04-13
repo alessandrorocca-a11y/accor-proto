@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { IconHeart } from '@/components/atoms';
+import { usePrototypePreview } from '@/context/PrototypePreviewContext';
 import { useUser, type OrderItem, type TestProfileId, TEST_PROFILES } from '@/context/UserContext';
 import { searchCities, type City } from '@/data/europeanCities';
 import { formatPoints } from '@/data/events/eventRegistry';
@@ -43,6 +44,7 @@ export type MenuView =
   | 'orders'
   | 'auction-history'
   | 'communications'
+  | 'prototype-preview'
   | 'test-account';
 
 const TIER_LABELS: Record<string, string> = {
@@ -66,6 +68,7 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Orders', icon: 'orders', action: 'orders' },
   { label: 'Auctions history', icon: 'auctions', action: 'auction-history' },
   { label: 'Communications preferences', icon: 'communications', action: 'communications' },
+  { label: 'Prototype preview', icon: 'prototype-preview', action: 'prototype-preview' },
   { label: 'Test account', icon: 'test-account', action: 'test-account' },
   { label: 'Logout', icon: 'logout', href: '#' },
 ];
@@ -229,6 +232,13 @@ function MenuItemIcon({ name }: { name: string }) {
             <path fillRule="evenodd" clipRule="evenodd" d="M5.25 7C5.25 4.92893 6.92893 3.25 9 3.25C11.0711 3.25 12.75 4.92893 12.75 7C12.75 9.07107 11.0711 10.75 9 10.75C6.92893 10.75 5.25 9.07107 5.25 7ZM9 4.75C7.75736 4.75 6.75 5.75736 6.75 7C6.75 8.24264 7.75736 9.25 9 9.25C10.2426 9.25 11.25 8.24264 11.25 7C11.25 5.75736 10.2426 4.75 9 4.75Z" fill="currentColor" />
             <path fillRule="evenodd" clipRule="evenodd" d="M13.9414 15.002L12.3504 13.411C12.0575 13.1181 12.0575 12.6432 12.3504 12.3503C12.6433 12.0574 13.1182 12.0574 13.4111 12.3503L15.002 13.9413L16.593 12.3503C16.8859 12.0574 17.3608 12.0574 17.6537 12.3503C17.9466 12.6432 17.9466 13.1181 17.6537 13.411L16.0627 15.002L17.6537 16.593C17.9466 16.8859 17.9466 17.3607 17.6537 17.6536C17.3608 17.9465 16.8859 17.9465 16.593 17.6536L15.002 16.0626L13.4111 17.6536C13.1182 17.9465 12.6433 17.9465 12.3504 17.6536C12.0575 17.3607 12.0575 16.8859 12.3504 16.593L13.9414 15.002Z" fill="currentColor" />
           </g>
+        </svg>
+      );
+    case 'prototype-preview':
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <rect x="6" y="3" width="12" height="18" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M9 6h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       );
     case 'test-account':
@@ -451,6 +461,8 @@ export function Menu({
   let userCtx: ReturnType<typeof useUser> | null = null;
   try { userCtx = useUser(); } catch { /* Menu might render outside UserProvider */ }
 
+  const { mobilePlatform, setMobilePlatform } = usePrototypePreview();
+
   /** One row per active subscription; section hidden if none (silver/gold or no UserProvider). */
   const visibleSidebarSubscriptions = useMemo((): SidebarSubscription[] => {
     if (!userCtx?.isVoyagerSubscriber) return [];
@@ -612,6 +624,7 @@ export function Menu({
           view === 'orders' ? 'Orders' :
           view === 'auction-history' ? 'Auctions history' :
           view === 'communications' ? 'Communications preferences' :
+          view === 'prototype-preview' ? 'Prototype preview' :
           view === 'test-account' ? 'Test account' : 'Menu'
         }
       >
@@ -686,7 +699,7 @@ export function Menu({
                 </div>
               )}
 
-              {/* Categories accordion */}
+              {/* Experiences accordion (category links) */}
               <div className="menu__sidebar-section">
                 <button
                   type="button"
@@ -694,7 +707,7 @@ export function Menu({
                   onClick={() => setCategoriesExpanded(!categoriesExpanded)}
                   aria-expanded={categoriesExpanded}
                 >
-                  <span className="menu__accordion-label">Categories</span>
+                  <span className="menu__accordion-label">Experiences</span>
                   {categoriesExpanded ? <IconChevronUp /> : <IconChevronDown />}
                 </button>
 
@@ -760,7 +773,7 @@ export function Menu({
                 </div>
               ) : null}
 
-              {/* Payment mechanisms accordion */}
+              {/* Ways to book accordion (payment mechanism links) */}
               <div className="menu__sidebar-section">
                 <button
                   type="button"
@@ -768,7 +781,7 @@ export function Menu({
                   onClick={() => setPaymentsExpanded(!paymentsExpanded)}
                   aria-expanded={paymentsExpanded}
                 >
-                  <span className="menu__accordion-label">Payment methods</span>
+                  <span className="menu__accordion-label">Ways to book</span>
                   {paymentsExpanded ? <IconChevronUp /> : <IconChevronDown />}
                 </button>
 
@@ -1282,6 +1295,70 @@ export function Menu({
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ── Prototype preview: mobile device chrome (Profile) ─────────────── */}
+        {view === 'prototype-preview' && (
+          <>
+            <div className={`menu__nav${navHidden ? ' menu__nav--hidden' : ''}`}>
+              <button
+                type="button"
+                className="menu__back"
+                onClick={() => setView('profile')}
+                aria-label="Back to profile"
+              >
+                <IconChevronLeft />
+              </button>
+              <h2 className="menu__nav-title">Prototype preview</h2>
+              <button
+                type="button"
+                className="menu__close"
+                onClick={onClose}
+                aria-label="Close menu"
+              >
+                <IconClose />
+              </button>
+            </div>
+
+            <div className="menu__content" onScroll={handleContentScroll}>
+              <div className="menu__account">
+                <p className="menu__test-account-desc">
+                  Wrap the app in a phone frame with a system-style bottom bar for stakeholder demos. Choice is saved in this browser.
+                </p>
+                <ul className="menu__list" role="radiogroup" aria-label="Prototype device chrome">
+                  {(
+                    [
+                      { id: 'off' as const, label: 'Off — full browser (default)' },
+                      { id: 'ios' as const, label: 'iOS — Safari-style toolbar' },
+                      { id: 'android' as const, label: 'Android — 3-button navigation' },
+                    ] as const
+                  ).map(({ id, label }) => {
+                    const isSelected = mobilePlatform === id;
+                    return (
+                      <li key={id} className="menu__item menu__item--bordered">
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={isSelected}
+                          className={`menu__link menu__link--selectable${isSelected ? ' menu__link--selected' : ''}`}
+                          onClick={() => setMobilePlatform(id)}
+                        >
+                          <span className="menu__link-label">{label}</span>
+                          {isSelected && (
+                            <span className="menu__link-check" aria-hidden>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                                <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             </div>
           </>

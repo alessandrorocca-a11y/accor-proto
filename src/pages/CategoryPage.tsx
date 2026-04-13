@@ -215,7 +215,7 @@ function IconSearch() {
 const FILTER_CHIPS = [
   { label: 'Date', icon: 'calendar' },
   { label: 'Experience type', icon: 'grid' },
-  { label: 'Payment method', icon: 'payment' },
+  { label: 'Ways to book', icon: 'payment' },
   { label: 'Subscription', icon: 'subscription' },
   { label: 'Price range', icon: 'price-range' },
   { label: 'City', icon: 'location' },
@@ -734,7 +734,7 @@ export default function CategoryPage({
     const map: Record<string, FilterType> = {
       'Date': 'date',
       'Experience type': 'category',
-      'Payment method': 'payment',
+      'Ways to book': 'payment',
       'Subscription': 'subscription',
       'Price range': 'price-range',
       'City': 'location',
@@ -755,7 +755,7 @@ export default function CategoryPage({
       setStayDateTo(null);
     }
     if (label === 'Experience type') setFilterCategories(new Set());
-    if (label === 'Payment method') setFilterPayments(new Set());
+    if (label === 'Ways to book') setFilterPayments(new Set());
     if (label === 'Subscription') setFilterSubscriptions(new Set());
     if (label === 'Price range') {
       setPriceMin('');
@@ -778,7 +778,7 @@ export default function CategoryPage({
       if (filterCategories.size === 1) return [...filterCategories][0];
       return `${label} (${filterCategories.size})`;
     }
-    if (label === 'Payment method' && filterPayments.size > 0) {
+    if (label === 'Ways to book' && filterPayments.size > 0) {
       if (filterPayments.size === 1) return [...filterPayments][0];
       return `${label} (${filterPayments.size})`;
     }
@@ -1018,7 +1018,7 @@ export default function CategoryPage({
               const isActive =
                 (chip.label === 'Date' && ((stayDateFrom && stayDateTo) || selectedDate !== null)) ||
                 (chip.label === 'Experience type' && filterCategories.size > 0) ||
-                (chip.label === 'Payment method' && filterPayments.size > 0) ||
+                (chip.label === 'Ways to book' && filterPayments.size > 0) ||
                 (chip.label === 'Subscription' && filterSubscriptions.size > 0) ||
                 (chip.label === 'Price range' && (priceMin.trim() !== '' || priceMax.trim() !== '' || pointsMin.trim() !== '' || pointsMax.trim() !== '')) ||
                 (chip.label === 'City' && selectedCity !== null) ||
@@ -1247,7 +1247,7 @@ export default function CategoryPage({
               <span className="filter-sheet__title">
                 {activeFilter === 'date' && 'Date'}
                 {activeFilter === 'category' && 'Experience type'}
-                {activeFilter === 'payment' && 'Payment method'}
+                {activeFilter === 'payment' && 'Ways to book'}
                 {activeFilter === 'subscription' && 'Subscription'}
                 {activeFilter === 'price-range' && 'Price range'}
                 {activeFilter === 'location' && 'City'}

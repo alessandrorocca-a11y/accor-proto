@@ -3,6 +3,7 @@ import { ExclusiveFlatStrip, IconHeart, MarketplaceHeader, Menu, MarketingTag } 
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
+import homeHeroBg from '@/assets/home-hero-bg.png';
 import {
   EVENT_REGISTRY,
   getEventRoute,
@@ -85,7 +86,7 @@ const PLANNED_TRIP: PlannedTrip | null = {
 
 /* ── Constants ────────────────────────────────────────────────────────── */
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200&h=800&fit=crop';
+const HERO_IMAGE = homeHeroBg;
 
 function formatDateDdMmYyyy(d: Date): string {
   const dd = String(d.getDate()).padStart(2, '0');
@@ -1138,13 +1139,9 @@ export default function HomePage() {
         />
 
         <div className="home-page__hero-content">
-          <h1 className="home-page__hero-title">
-            Unforgettable
-            <br />
-            experiences
-          </h1>
+          <h1 className="home-page__hero-title">Experience more...</h1>
           <p className="home-page__hero-subtitle">
-            Cinema, music, sports, culture &amp; more
+            And get rewarded with ALL Accor
           </p>
           <div className="home-page__hero-search-wrap" ref={heroSearchWrapRef}>
             <div
@@ -1236,10 +1233,10 @@ export default function HomePage() {
       {/* ── Top experiences worldwide ────────────────────────────────── */}
       <TopExperiencesCarousel experiences={TOP_EXPERIENCES} />
 
-      {/* ── Categories (mobile only) ─────────────────────────────────── */}
+      {/* ── Experiences (mobile only) ─────────────────────────────────── */}
       <section className="home-page__section home-page__categories-section">
         <div className="home-page__section-header">
-          <h2 className="home-page__section-title">Categories</h2>
+          <h2 className="home-page__section-title">Experiences</h2>
           <button type="button" className="home-page__section-link" onClick={() => { window.location.hash = '#categories'; }}>See all</button>
         </div>
         <div className="home-page__scroll">

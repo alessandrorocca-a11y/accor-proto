@@ -1,0 +1,149 @@
+/* Prototype: device chrome + system-style bottom bar (Profile → Prototype preview) */
+
+body.prototype-mobile-frame {
+  overflow: hidden;
+}
+
+body.prototype-mobile-frame #root {
+  padding-top: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.mobile-prototype-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Inset for `position: fixed; bottom: 0` UI inside the device screen (inherits into scroll content) */
+.mobile-prototype-shell--ios {
+  /* 44px tools + 21px home row (padding included: global border-box) */
+  --prototype-chrome-bottom: 65px;
+}
+
+.mobile-prototype-shell--android {
+  --prototype-chrome-bottom: 52px; /* 48px bar + border / padding */
+}
+
+.mobile-prototype-shell__device {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 390px;
+  height: 100%;
+  max-height: 100dvh;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.mobile-prototype-shell__device--full-bleed {
+  max-width: 100%;
+  max-height: 100dvh;
+}
+
+.mobile-prototype-shell__screen {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--wel-sem-color-surface, #fff);
+}
+
+/* ── iOS Safari-style toolbar ─────────────────────────────────────────── */
+.mobile-prototype-shell__ios-bar {
+  flex-shrink: 0;
+  background: rgba(250, 250, 250, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 0.5px solid rgba(60, 60, 67, 0.18);
+}
+
+.mobile-prototype-shell__ios-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 44px;
+  padding: 0 8px;
+}
+
+.mobile-prototype-shell__ios-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #007aff;
+  cursor: pointer;
+}
+
+.mobile-prototype-shell__ios-tool:active {
+  opacity: 0.55;
+}
+
+.mobile-prototype-shell__ios-tool:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.mobile-prototype-shell__ios-home-indicator {
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+.mobile-prototype-shell__ios-home-indicator::after {
+  content: '';
+  width: 134px;
+  height: 5px;
+  border-radius: 100px;
+  background: #000;
+  opacity: 0.2;
+}
+
+/* ── Android 3-button nav ───────────────────────────────────────────── */
+.mobile-prototype-shell__android-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 48px;
+  padding: 0 24px 4px;
+  background: #f3f3f3;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.mobile-prototype-shell__android-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 24px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+}
+
+.mobile-prototype-shell__android-btn:active {
+  background: rgba(0, 0, 0, 0.06);
+}

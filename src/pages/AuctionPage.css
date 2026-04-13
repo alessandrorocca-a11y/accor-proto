@@ -1469,6 +1469,11 @@
   animation: auction-sticky-slide-up 0.2s ease-out;
 }
 
+/* Sit above prototype iOS/Android bottom bar (Profile → Prototype preview) */
+body.prototype-mobile-frame .auction-page__sticky-bar {
+  bottom: var(--prototype-chrome-bottom, 0px);
+}
+
 @keyframes auction-sticky-slide-up {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
