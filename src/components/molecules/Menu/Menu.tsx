@@ -343,7 +343,6 @@ interface OrderEvent {
   eventTag: string;
   paymentLabel: string;
   points: string;
-  countdown: string;
 }
 
 const STATIC_PAST_ORDERS: OrderEvent[] = [];
@@ -480,7 +479,6 @@ export function Menu({
       eventTag: o.eventTag,
       paymentLabel: o.paymentLabel,
       points: o.points,
-      countdown: o.countdown,
     }));
   }, [userCtx?.orders]);
 
@@ -1104,10 +1102,6 @@ export function Menu({
                             <span className="menu__order-card-points-value">{event.points}</span>
                           </div>
                         </div>
-                        <span className="menu__order-card-countdown">
-                          <span className="menu__order-card-countdown-label">Time left:</span>
-                          <span className="menu__order-card-countdown-value">{event.countdown}</span>
-                        </span>
                       </div>
                     </button>
                   ))}

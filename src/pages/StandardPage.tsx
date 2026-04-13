@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Button,
@@ -16,6 +16,16 @@ import {
 import type { MenuView } from '@/components';
 import { useFavourites } from '@/context/FavouritesContext';
 import { getPreviousPage } from '@/utils/navigationHistory';
+import type { CheckoutFlowStep } from '@/utils/hashRoute';
+import {
+  STANDARD_CHECKOUT_DRAFT_KEY,
+  STANDARD_CONFIRMATION_KEY,
+  buildStandardCheckoutPath,
+  buildStandardConfirmationPath,
+  buildStandardDetailPath,
+  type StandardCheckoutDraftV1,
+  type StandardConfirmationSnapshotV1,
+} from '@/utils/hashRoute';
 import './StandardPage.css';
 import {
   getEventById,
@@ -251,7 +261,13 @@ function getCalendarDays(year: number, month: number) {
   return cells;
 }
 
-export default function StandardPage({ eventId }: { eventId?: string }) {
+export default function StandardPage({
+  eventId,
+  flowStep = 'detail',
+}: {
+  eventId?: string;
+  flowStep?: CheckoutFlowStep;
+}) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
   const deviceScrollContainer = useDevicePreviewScrollContainer();
@@ -288,9 +304,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuInitialView, setMenuInitialView] = useState<MenuView>('navigation');
   const [loyaltyOpen, setLoyaltyOpen] = useState(false);
-  const [showRecap, setShowRecap] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
+  const [showSuccessBanner, setShowSuccessBanner] = useState(() => flowStep === 'confirmation');
   const [confirmedTotal, setConfirmedTotal] = useState(0);
   const [confirmedTickets, setConfirmedTickets] = useState(1);
   const [confirmedTicketName, setConfirmedTicketName] = useState('');
@@ -386,14 +400,68 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   }, []);
 
   useEffect(() => {
-    if (!showRecap && !showConfirmation) return;
+    if (flowStep === 'detail') return;
     const scrollTarget = deviceScrollContainer ?? document.body;
     const prev = scrollTarget.style.overflow;
     scrollTarget.style.overflow = 'hidden';
     return () => {
       scrollTarget.style.overflow = prev;
     };
-  }, [showRecap, showConfirmation, deviceScrollContainer]);
+  }, [flowStep, deviceScrollContainer]);
+
+  useLayoutEffect(() => {
+    if (flowStep !== 'checkout') return;
+    try {
+      const raw = sessionStorage.getItem(STANDARD_CHECKOUT_DRAFT_KEY);
+      if (!raw) {
+        window.location.hash = buildStandardDetailPath(eventId);
+        return;
+      }
+      const d = JSON.parse(raw) as StandardCheckoutDraftV1;
+      if (d.v !== 1 || d.eventId !== (eventId ?? null)) {
+        window.location.hash = buildStandardDetailPath(eventId);
+        return;
+      }
+      setSelectedDate(d.selectedDate);
+      setSelectedTimeIdx(d.selectedTimeIdx);
+      setZoneQty(d.zoneQty);
+      setFlexCancelQty(d.flexCancelQty);
+      setVoucherApplied(d.voucherApplied);
+      setVoucherCode(d.voucherCode);
+      setRewardsPointsUsed(d.rewardsPointsUsed);
+      setPaymentMethod(d.paymentMethod);
+    } catch {
+      window.location.hash = buildStandardDetailPath(eventId);
+    }
+  }, [flowStep, eventId]);
+
+  useLayoutEffect(() => {
+    if (flowStep !== 'confirmation') return;
+    try {
+      const raw = sessionStorage.getItem(STANDARD_CONFIRMATION_KEY);
+      if (!raw) {
+        window.location.hash = buildStandardDetailPath(eventId);
+        return;
+      }
+      const s = JSON.parse(raw) as StandardConfirmationSnapshotV1;
+      if (s.v !== 1 || s.eventId !== (eventId ?? null)) {
+        window.location.hash = buildStandardDetailPath(eventId);
+        return;
+      }
+      setSelectedDate(s.selectedDate);
+      setSelectedTimeIdx(s.selectedTimeIdx);
+      setZoneQty(s.zoneQty);
+      setFlexCancelQty(s.flexCancelQty);
+      setVoucherApplied(s.voucherApplied);
+      setRewardsPointsUsed(s.rewardsPointsUsed);
+      setConfirmedTickets(s.confirmedTickets);
+      setConfirmedTicketName(s.confirmedTicketName);
+      setConfirmedTotal(s.finalTotalEur);
+      setShowSuccessBanner(true);
+    } catch {
+      window.location.hash = buildStandardDetailPath(eventId);
+    }
+  }, [flowStep, eventId]);
 
   const handleScroll = useCallback(() => {
     const track = trackRef.current;
@@ -442,24 +510,57 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const handleBuyTicket = () => {
     voyagerGate(() => {
       if (totalTickets === 0) return;
-      setShowRecap(true);
-      window.scrollTo(0, 0);
+      const draft: StandardCheckoutDraftV1 = {
+        v: 1,
+        eventId: eventId ?? null,
+        selectedDate,
+        selectedTimeIdx,
+        zoneQty,
+        flexCancelQty,
+        voucherApplied,
+        voucherCode,
+        rewardsPointsUsed,
+        paymentMethod,
+      };
+      try {
+        sessionStorage.setItem(STANDARD_CHECKOUT_DRAFT_KEY, JSON.stringify(draft));
+      } catch {
+        /* ignore */
+      }
+      window.location.hash = buildStandardCheckoutPath(eventId);
     });
   };
 
   const handlePayNow = () => {
-    setConfirmedTotal(totalPriceEur);
-    setConfirmedTickets(totalTickets);
-    setConfirmedTicketName('Standard');
-    setShowRecap(false);
-    setShowConfirmation(true);
-    setShowSuccessBanner(true);
-    window.scrollTo(0, 0);
+    const finalTotalEur = Math.max(
+      0,
+      totalPriceEur - (voucherApplied ? VOUCHER_DISCOUNT : 0) - rewardsPointsUsed / POINTS_PER_EUR,
+    );
+    const snap: StandardConfirmationSnapshotV1 = {
+      v: 1,
+      eventId: eventId ?? null,
+      selectedDate,
+      selectedTimeIdx,
+      zoneQty,
+      flexCancelQty,
+      voucherApplied,
+      rewardsPointsUsed,
+      finalTotalEur,
+      confirmedTickets: totalTickets,
+      confirmedTicketName: 'Standard',
+    };
+    try {
+      sessionStorage.setItem(STANDARD_CONFIRMATION_KEY, JSON.stringify(snap));
+      sessionStorage.removeItem(STANDARD_CHECKOUT_DRAFT_KEY);
+    } catch {
+      /* ignore */
+    }
     if (eventData) {
       const cost = eventData.points;
       deductPoints(cost);
       addOrder(eventData, cost);
     }
+    window.location.hash = buildStandardConfirmationPath(eventId);
   };
 
   const handleBackToEvent = () => {
@@ -468,7 +569,6 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   };
 
   const handleViewOrders = () => {
-    setShowConfirmation(false);
     setShowSuccessBanner(false);
     setMenuInitialView('orders');
     setMenuOpen(true);
@@ -739,7 +839,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
   const recapPortalMod = overlayPortalTarget ? ' recap-page--prototype-device' : '';
 
   const standardPayRecapOverlay =
-    showRecap &&
+    flowStep === 'checkout' &&
     (overlayPortalTarget
       ? createPortal(
           <div className={`recap-page${recapPortalMod}`}>
@@ -757,7 +857,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               </div>
             )}
             <div className="recap-page__content">
-              <button type="button" className="recap-page__back" onClick={() => { setShowRecap(false); window.scrollTo(0, 0); }} aria-label="Go back">
+              <button type="button" className="recap-page__back" onClick={() => { window.location.hash = buildStandardDetailPath(eventId); }} aria-label="Go back">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> Back
               </button>
               <h1 className="recap-page__title">Confirm and pay</h1>
@@ -1155,7 +1255,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
               </div>
             )}
             <div className="recap-page__content">
-              <button type="button" className="recap-page__back" onClick={() => { setShowRecap(false); window.scrollTo(0, 0); }} aria-label="Go back">
+              <button type="button" className="recap-page__back" onClick={() => { window.location.hash = buildStandardDetailPath(eventId); }} aria-label="Go back">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> Back
               </button>
               <h1 className="recap-page__title">Confirm and pay</h1>
@@ -1538,7 +1638,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         ));
 
   const standardConfirmationOverlay =
-    showConfirmation &&
+    flowStep === 'confirmation' &&
     (overlayPortalTarget
       ? createPortal(
           <div className={`recap-page${recapPortalMod}`}>
@@ -1737,6 +1837,8 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
         </div>
       )}
 
+      {flowStep === 'detail' && (
+      <>
       <nav className="auction-page__breadcrumb" aria-label="Breadcrumb">
         <a
           href={getPreviousPage().href}
@@ -1749,7 +1851,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
       </nav>
 
       <section className="auction-page__hero-full">
-        {!overlayPortalTarget && renderStandardSnacks(false)}
+        {flowStep === 'detail' && !overlayPortalTarget && renderStandardSnacks(false)}
 
         <div className="auction-page__hero-image">
           {eventData?.marketingTag && (
@@ -1846,8 +1948,10 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
           </div>
         </aside>
       </div>
+      </>
+      )}
 
-      {showStickyBar && !showRecap && !showConfirmation && !isEventSoldOut && totalTickets > 0 && (
+      {showStickyBar && flowStep === 'detail' && !isEventSoldOut && totalTickets > 0 && (
         <div className="standard__sticky-bar">
           <Button variant="primary" size="lg" fullWidth className="standard__buy-btn" onClick={handleBuyTicket}>
             Book now - {formatEur(totalPriceEur)}
@@ -1863,6 +1967,7 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
       {standardConfirmationOverlay}
 
       {overlayPortalTarget &&
+        flowStep === 'detail' &&
         (showNotifySnack || showFavSnack) &&
         createPortal(renderStandardSnacks(true), overlayPortalTarget)}
 
