@@ -1,4 +1,5 @@
 .category-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
   background: var(--wel-sem-color-surface, #fff);
@@ -1362,7 +1363,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
 
 /* ── Favourite snackbar ──────────────────────────────────────────────── */
 .category-page__fav-snack {
-  position: fixed;
+  position: absolute;
   top: 80px;
   left: 14px;
   right: 14px;
@@ -1422,6 +1423,11 @@ html.device-preview-frame-active .category-page__breadcrumb {
   background: transparent;
   cursor: pointer;
   color: #00513f;
+}
+
+.category-page__fav-snack.category-page__fav-snack--prototype-device {
+  position: absolute;
+  pointer-events: auto;
 }
 
 @media (min-width: 1024px) {  html:not(.device-preview-frame-active) .category-page__fav-snack{
@@ -1504,6 +1510,13 @@ html.device-preview-frame-active .category-page__filters {
 
 html.device-preview-frame-active .category-page__list {
   padding: 16px 8px !important;
+}
+
+html.device-preview-frame-active .category-page__fav-snack:not(.category-page__fav-snack--prototype-device) {
+  top: 8px !important;
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
 }
 
 html.device-preview-frame-active .filter-sheet__backdrop {

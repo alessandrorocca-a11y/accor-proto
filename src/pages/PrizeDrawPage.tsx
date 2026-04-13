@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Button,
   IconHeart,
@@ -17,6 +18,7 @@ import { getPreviousPage } from '@/utils/navigationHistory';
 import { getEventById, isSignatureExclusiveMarketingTag, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './PrizeDrawPage.css';
@@ -44,6 +46,21 @@ const DEFAULT_INCLUDED_ITEMS = [
   'Semi-private space in the frisa, allowing you to watch the parades even closer, with maximum comfort (new)',
   'Open Food and Premium Open Bar, live shows, beauty services and much more',
 ];
+
+/** When exactly two tags are shown and one is Limitless, show Limitless first (left). */
+function orderEventTagsForDisplay(tags: readonly string[]): string[] {
+  if (tags.length !== 2) return [...tags];
+  const [a, b] = tags;
+  const bLimitless = /limitless/i.test(b);
+  const aLimitless = /limitless/i.test(a);
+  if (bLimitless && !aLimitless) return [b, a];
+  return [...tags];
+}
+
+const PRIZE_DRAW_EVENT_TAGS = orderEventTagsForDisplay([
+  'Sustainable experience',
+  'Limitless experience',
+]);
 
 function IconChevronLeft() {
   return (
@@ -117,6 +134,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
   const deviceScrollContainer = useDevicePreviewScrollContainer();
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
   useFavourites();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
@@ -358,6 +376,82 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
     </section>
   );
 
+  const renderPrizeDrawSnacks = (forDeviceShell: boolean) => {
+    const s = forDeviceShell ? ' auction-page__notify-snack--prototype-device' : '';
+    return (
+      <>
+        {showNotifySnack && (
+          <div className={`auction-page__notify-snack${s}`} role="status">
+            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <circle cx="12" cy="12" r="10" fill="#00513f" />
+              <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div className="auction-page__notify-snack-content">
+              <p className="auction-page__notify-snack-title">Notifications enabled for this prize draw</p>
+              <p className="auction-page__notify-snack-body">You can review your preferences in communication settings.</p>
+            </div>
+            <button
+              type="button"
+              className="auction-page__notify-snack-close"
+              onClick={() => setShowNotifySnack(false)}
+              aria-label="Close notification"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {showFavSnack && (
+          <div className={`auction-page__notify-snack auction-page__notify-snack--fav${s}`} role="status">
+            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <circle cx="12" cy="12" r="10" fill="#00513f" />
+              <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div className="auction-page__notify-snack-content">
+              <p className="auction-page__notify-snack-title">Added to your favourites</p>
+              <p className="auction-page__notify-snack-body">You can review your favourites in your profile menu.</p>
+            </div>
+            <button
+              type="button"
+              className="auction-page__notify-snack-close"
+              onClick={() => setShowFavSnack(false)}
+              aria-label="Close notification"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {showInsufficientError && (
+          <div className={`auction-page__notify-snack auction-page__notify-snack--error${s}`} role="alert">
+            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
+              <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div className="auction-page__notify-snack-content">
+              <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Insufficient Points balance</p>
+              <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">You do not have enough points to purchase this ticket. Review your point balance before trying again.</p>
+            </div>
+            <button
+              type="button"
+              className="auction-page__notify-snack-close"
+              onClick={() => setShowInsufficientError(false)}
+              aria-label="Close notification"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className="auction-page prize-draw">
       <MarketplaceHeader
@@ -459,74 +553,7 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
       </nav>
 
       <section className="auction-page__hero-full">
-        {showNotifySnack && (
-          <div className="auction-page__notify-snack" role="status">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <circle cx="12" cy="12" r="10" fill="#00513f" />
-              <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title">Notifications enabled for this prize draw</p>
-              <p className="auction-page__notify-snack-body">You can review your preferences in communication settings.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowNotifySnack(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {showFavSnack && (
-          <div className="auction-page__notify-snack auction-page__notify-snack--fav" role="status">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <circle cx="12" cy="12" r="10" fill="#00513f" />
-              <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title">Added to your favourites</p>
-              <p className="auction-page__notify-snack-body">You can review your favourites in your profile menu.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowFavSnack(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
-
-        {showInsufficientError && (
-          <div className="auction-page__notify-snack auction-page__notify-snack--error" role="alert">
-            <svg className="auction-page__notify-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" fill="#9e0031" />
-              <path d="M12 9v4M12 17h.01" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <div className="auction-page__notify-snack-content">
-              <p className="auction-page__notify-snack-title auction-page__notify-snack-title--error">Insufficient Points balance</p>
-              <p className="auction-page__notify-snack-body auction-page__notify-snack-body--error">You do not have enough points to purchase this ticket. Review your point balance before trying again.</p>
-            </div>
-            <button
-              type="button"
-              className="auction-page__notify-snack-close"
-              onClick={() => setShowInsufficientError(false)}
-              aria-label="Close notification"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        )}
+        {!overlayPortalTarget && renderPrizeDrawSnacks(false)}
 
         <div className="auction-page__hero-image">
           {eventData?.marketingTag && (
@@ -612,8 +639,9 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
             </p>
 
             <div className="auction-page__tags">
-              <span className="auction-page__tag">Sustainable experience</span>
-              <span className="auction-page__tag">Limitless experience</span>
+              {PRIZE_DRAW_EVENT_TAGS.map((label) => (
+                <span key={label} className="auction-page__tag">{label}</span>
+              ))}
             </div>
 
             {isVoyagerExclusive && <VoyagerBadge variant={voyagerVariant} />}
@@ -982,6 +1010,10 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
           </div>
         </div>
       )}
+
+      {overlayPortalTarget &&
+        (showNotifySnack || showFavSnack || showInsufficientError) &&
+        createPortal(renderPrizeDrawSnacks(true), overlayPortalTarget)}
 
       <TermsDialog open={termsOpen} onClose={() => setTermsOpen(false)} variant="prize-draw" />
       <VoyagerDialog open={voyagerOpen} onClose={() => setVoyagerOpen(false)} variant={voyagerVariant} />

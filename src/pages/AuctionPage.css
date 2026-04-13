@@ -4,6 +4,7 @@
  */
 
 .auction-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
   background: var(--wel-sem-color-surface);
@@ -242,10 +243,9 @@
   color: var(--wel-sem-color-primary);
 }
 
-/* ── Sticky anchor for notification snack bars ──────────────────────── */
+/* ── Anchor for notification snack bars (in flow so absolute snacks scroll with the page) ─ */
 .auction-page__snack-anchor {
-  position: sticky;
-  top: 0;
+  position: static;
   z-index: 1000;
   height: 0;
   overflow: visible;
@@ -254,7 +254,7 @@
 
 /* ── Notification snack bar (Figma: success container) ───────────────── */
 .auction-page__notify-snack {
-  position: fixed;
+  position: absolute;
   top: 80px;
   left: 14px;
   right: 14px;
@@ -1612,12 +1612,26 @@ html.device-preview-frame-active .auction-page__section--description {
   gap: 24px !important;
 }
 
-/* Snackbars: fixed below status strip + MarketplaceHeader inside the phone shell */
+/* Snackbars: below status strip + MarketplaceHeader (in scroll content or portaled to overlay) */
 html.device-preview-frame-active .auction-page__notify-snack {
   left: 14px !important;
   right: 14px !important;
   max-width: none !important;
   top: calc(56px + var(--device-preview-status-bar-height, 54px) + 8px) !important;
+}
+
+/* Portaled into overlay slot: position is relative to device glass, not the scrolling viewport */
+.device-preview-frame__overlay-slot .auction-page__notify-snack--prototype-device,
+.device-preview-frame__overlay-slot .home-page__fav-snack--prototype-device,
+.device-preview-frame__overlay-slot .category-page__fav-snack--prototype-device {
+  position: absolute !important;
+  pointer-events: auto !important;
+  left: 14px !important;
+  right: 14px !important;
+  top: calc(56px + var(--device-preview-status-bar-height, 54px) + 8px) !important;
+  max-width: none !important;
+  width: auto !important;
+  z-index: 2;
 }
 
 /* ── Same viewport vs “glass” issue on other product templates (import AuctionPage.css) ── */

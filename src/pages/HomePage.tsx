@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { ExclusiveFlatStrip, IconHeart, MarketplaceHeader, Menu, MarketingTag } from '@/components';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import type { MenuFavouriteEvent, MenuView } from '@/components';
@@ -16,6 +17,7 @@ import {
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useUser, type LoyaltyTier } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
@@ -861,6 +863,7 @@ export default function HomePage() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [favourites, setFavourites] = useState<Set<string>>(new Set());
   const [showFavSnack, setShowFavSnack] = useState(false);
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
 
   const [citySelectorOpen, setCitySelectorOpen] = useState(false);
   const [cityQuery, setCityQuery] = useState('');
@@ -1068,30 +1071,36 @@ export default function HomePage() {
     [allEvents, favourites],
   );
 
+  const favSnackNode = (forDeviceShell: boolean) => (
+    <div
+      className={`home-page__fav-snack${forDeviceShell ? ' home-page__fav-snack--prototype-device' : ''}`}
+      role="status"
+    >
+      <svg className="home-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+        <circle cx="12" cy="12" r="10" fill="#00513f" />
+        <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <div className="home-page__fav-snack-content">
+        <p className="home-page__fav-snack-title">Added to your favourites</p>
+        <p className="home-page__fav-snack-body">You can review your favourites in your profile menu.</p>
+      </div>
+      <button
+        type="button"
+        className="home-page__fav-snack-close"
+        onClick={() => setShowFavSnack(false)}
+        aria-label="Close notification"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    </div>
+  );
+
   return (
     <div className="home-page">
-      {showFavSnack && (
-        <div className="home-page__fav-snack" role="status">
-          <svg className="home-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <circle cx="12" cy="12" r="10" fill="#00513f" />
-            <path d="M8 12l3 3 5-5" stroke="#caffea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <div className="home-page__fav-snack-content">
-            <p className="home-page__fav-snack-title">Added to your favourites</p>
-            <p className="home-page__fav-snack-body">You can review your favourites in your profile menu.</p>
-          </div>
-          <button
-            type="button"
-            className="home-page__fav-snack-close"
-            onClick={() => setShowFavSnack(false)}
-            aria-label="Close notification"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
-      )}
+      {showFavSnack && !overlayPortalTarget && favSnackNode(false)}
+      {showFavSnack && overlayPortalTarget && createPortal(favSnackNode(true), overlayPortalTarget)}
 
       {/* ── Desktop Navbar (desktop only) ─────────────────────────────── */}
       <nav className="home-page__desktop-nav">

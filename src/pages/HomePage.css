@@ -1,6 +1,7 @@
 @import './AuctionPage.css';
 
 .home-page {
+  position: relative;
   width: 100%;
   min-height: 100vh;
   background: var(--wel-sem-color-surface);
@@ -293,8 +294,9 @@ html.device-preview-frame-active .home-page__signature .home-page__event-card {
   flex: 0 0 220px !important;
 }
 
-/* ── Fav snackbar: full-width mobile ─────────────────────────────────────── */
-html.device-preview-frame-active .home-page__fav-snack {
+/* Fav snack in scroll content (not portaled): below padded content top */
+html.device-preview-frame-active .home-page__fav-snack:not(.home-page__fav-snack--prototype-device) {
+  top: 8px !important;
   left: 14px !important;
   right: 14px !important;
   width: auto !important;
@@ -1948,7 +1950,7 @@ html:not(.device-preview-frame-active) .home-page__near-cities-section .home-pag
 
 /* ── Favourite snackbar ──────────────────────────────────────────────── */
 .home-page__fav-snack {
-  position: fixed;
+  position: absolute;
   top: 80px;
   left: 14px;
   right: 14px;
