@@ -21,6 +21,43 @@
   transform: translateY(-100%);
 }
 
+/* Rendered inside `mobile-prototype-shell__nav-chrome` (sibling of scroll frame, not in overflow) */
+.marketplace-header--prototype-nav-chrome {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  z-index: 1;
+  width: 100%;
+  transform: none;
+  transition: none;
+}
+
+.marketplace-header--prototype-nav-chrome .marketplace-header__bar {
+  box-shadow: none;
+  max-height: 120px;
+  transition:
+    max-height 0.3s ease,
+    min-height 0.3s ease,
+    padding 0.3s ease,
+    opacity 0.25s ease;
+}
+
+/* Collapse main bar on scroll-down inside mobile prototype shell (portaled nav chrome). */
+.marketplace-header--prototype-nav-chrome.marketplace-header--prototype-bar-hidden .marketplace-header__bar {
+  max-height: 0;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.marketplace-header--prototype-nav-chrome.marketplace-header--hidden {
+  transform: none;
+}
+
 .marketplace-header--transparent .marketplace-header__bar {
   background: transparent;
   box-shadow: none;

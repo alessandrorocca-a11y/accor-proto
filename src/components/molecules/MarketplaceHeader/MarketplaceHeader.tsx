@@ -1,5 +1,9 @@
-import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Avatar, IconHeart } from '@/components/atoms';
+import { usePrototypeMobileScrollContainer } from '@/context/PrototypeMobileScrollContainerContext';
+import { usePrototypeNavChromePortal } from '@/context/PrototypeNavChromePortalContext';
+import { usePrototypePreview } from '@/context/PrototypePreviewContext';
 import { Search, SearchResultsPanel } from '@/components/molecules/Search/Search';
 import allAccorLogo from '@/assets/all-accor-logo.svg';
 
@@ -137,24 +141,53 @@ export function MarketplaceHeader({
   const lastScrollY = useRef(0);
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const desktopSearchWrapRef = useRef<HTMLDivElement>(null);
+  const prototypeScrollContainer = usePrototypeMobileScrollContainer();
+  const prototypeNavChrome = usePrototypeNavChromePortal();
+  const { mobilePlatform } = usePrototypePreview();
 
-  useEffect(() => {
-    const THRESHOLD = 8;
+  /** Bind in layout phase so prototype scroll container from ref+state is ready before paint; avoids a frame on `window`. */
+  useLayoutEffect(() => {
+    if (prototypeNavChrome) {
+      setHidden(false);
+    }
+
+    /** Pixels scrolled before hide-on-scroll-down applies; aligns with window scroll (no prototype chrome). */
+    const WINDOW_TOP_REVEAL_PX = 8;
+    /**
+     * Prototype scroll view starts below nav chrome; band for transparentOnTop only.
+     */
+    const PROTOTYPE_TOP_REVEAL_PX =
+      mobilePlatform === 'android'
+        ? 40 /* ~28px bar + padding + buffer */
+        : 52; /* ~44px bar + buffer; iOS default when ios */
+    const topRevealPx = prototypeScrollContainer != null ? PROTOTYPE_TOP_REVEAL_PX : WINDOW_TOP_REVEAL_PX;
+    /** Ignore small downward jitter when deciding to hide; keep separate from scroll-up reveal. */
+    const hideDelta = 8;
+
+    const scrollRoot = prototypeScrollContainer;
+    const getScrollY = () => (scrollRoot ? scrollRoot.scrollTop : window.scrollY);
+
+    lastScrollY.current = getScrollY();
+
     const handleScroll = () => {
-      const currentY = window.scrollY;
-      setAtTop(currentY < THRESHOLD);
-      if (currentY < THRESHOLD) {
+      const currentY = getScrollY();
+      const prevY = lastScrollY.current;
+      setAtTop(currentY < topRevealPx);
+      if (currentY < topRevealPx) {
         setHidden(false);
-      } else if (currentY > lastScrollY.current + THRESHOLD) {
+      } else if (currentY > prevY + hideDelta) {
         setHidden(true);
-      } else if (currentY < lastScrollY.current - THRESHOLD) {
+      } else if (currentY < prevY) {
         setHidden(false);
       }
       lastScrollY.current = currentY;
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
+    const target: Window | HTMLElement = scrollRoot ?? window;
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => target.removeEventListener('scroll', handleScroll);
+  }, [prototypeScrollContainer, mobilePlatform, prototypeNavChrome]);
 
   const closeDesktopSearch = () => {
     setDesktopSearchActive(false);
@@ -201,9 +234,15 @@ export function MarketplaceHeader({
     />
   );
 
-  return (
+  const headerChromeClass = prototypeNavChrome ? ' marketplace-header--prototype-nav-chrome' : '';
+  const headerHiddenClass = !prototypeNavChrome && hidden ? ' marketplace-header--hidden' : '';
+  const prototypeBarHiddenClass =
+    prototypeNavChrome && hidden ? ' marketplace-header--prototype-bar-hidden' : '';
+  const headerTransparentClass = transparentOnTop && atTop ? ' marketplace-header--transparent' : '';
+
+  const headerEl = (
     <header
-      className={`marketplace-header marketplace-header--${theme}${hidden ? ' marketplace-header--hidden' : ''}${transparentOnTop && atTop ? ' marketplace-header--transparent' : ''} ${className}`.trim()}
+      className={`marketplace-header marketplace-header--${theme}${headerHiddenClass}${prototypeBarHiddenClass}${headerTransparentClass}${headerChromeClass} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
       <div className="marketplace-header__bar">
@@ -288,10 +327,24 @@ export function MarketplaceHeader({
             {isLoggedIn && (
               <Avatar
                 src={avatarSrc ?? undefined}
+                alt=""
                 initials={avatarSrc ? undefined : '?'}
                 size="md"
                 className="marketplace-header__avatar"
                 onClick={onAvatarClick ?? onMenu}
+                onKeyDown={
+                  (onAvatarClick ?? onMenu)
+                    ? (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          (onAvatarClick ?? onMenu)?.();
+                        }
+                      }
+                    : undefined
+                }
+                role={(onAvatarClick ?? onMenu) ? 'button' : undefined}
+                tabIndex={(onAvatarClick ?? onMenu) ? 0 : undefined}
+                aria-label={(onAvatarClick ?? onMenu) ? 'Open profile menu' : undefined}
                 style={{ cursor: (onAvatarClick ?? onMenu) ? 'pointer' : undefined }}
               />
             )}
@@ -353,8 +406,14 @@ export function MarketplaceHeader({
           )}
         </div>
       )}
-      <Search open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
+  );
+
+  return (
+    <>
+      {prototypeNavChrome ? createPortal(headerEl, prototypeNavChrome) : headerEl}
+      <Search open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }
 

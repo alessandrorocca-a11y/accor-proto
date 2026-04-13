@@ -18,7 +18,14 @@
   align-items: center;
   justify-content: flex-end;
   overflow: clip;
+  /* Pull under fixed `MarketplaceHeader` when the page scrolls the window */
   margin-top: -56px;
+}
+
+/* Prototype: bleed hero under portaled nav (must beat `body… .home-page__hero` if reintroduced; shell screen uses matching offset) */
+body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
+  margin-top: calc(-1 * var(--prototype-nav-bar-offset, 56px));
+  padding-top: var(--prototype-nav-bar-offset, 56px);
 }
 
 .home-page__hero-bg {
@@ -173,7 +180,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 24px;
   margin-bottom: 16px;
 }
 
@@ -211,7 +218,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--wel-sem-spacingstatic-stack-2xs, 4px);
-  padding: 0 16px;
+  padding: 0 24px;
 }
 
 .home-page__next-trip-detail-row {
@@ -239,6 +246,14 @@
   line-height: var(--wel-sem-line-height-caption, 16px);
 }
 
+/*
+ * Section carousels: align first card with `.home-page__section-header` (padding 0 24px).
+ * Margin on the strip is reliable in the prototype shell; padding/::before on overflow-x flex often fail.
+ */
+.home-page__section > .home-page__scroll {
+  margin-left: 24px;
+}
+
 /* ── Horizontal scroll container ──────────────────────────────────────── */
 .home-page__scroll {
   display: flex;
@@ -247,9 +262,12 @@
   overflow-x: auto;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
+  /* Allow horizontal pans inside the prototype shell screen (`touch-action: pan-y` on parent). */
+  touch-action: pan-x pan-y;
   scrollbar-width: none;
-  margin-left: 16px;
-  margin-right: 16px;
+  padding-left: 0;
+  /* Padding-right keeps a scrollable gutter past the last card (margin would not extend scrollWidth). */
+  padding-right: 24px;
   margin-bottom: 8px;
   padding-bottom: 4px;
 }
@@ -1234,8 +1252,7 @@
 
   .home-page__scroll {
     gap: 12px;
-    margin-left: 24px;
-    margin-right: 24px;
+    padding-right: 24px;
   }
 
   .home-page__near-cities-card {
@@ -1259,8 +1276,15 @@
 
   .home-page__scroll {
     gap: 16px;
+    padding-right: 40px;
+  }
+
+  .home-page__section > .home-page__scroll {
     margin-left: 40px;
-    margin-right: 40px;
+  }
+
+  .home-page__next-trip-details {
+    padding: 0 40px;
   }
 
   .home-page__near-cities-card {
@@ -1668,8 +1692,14 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     overflow: visible;
-    margin: 0 64px;
+    margin: 0;
+    padding-left: 64px;
+    padding-right: 64px;
     padding-bottom: 0;
+  }
+
+  .home-page__section > .home-page__scroll {
+    margin-left: 0;
   }
 
   .home-page__scroll > *:nth-child(n+5) {
@@ -1750,7 +1780,9 @@
   }
 
   .home-page__suggested .home-page__scroll {
-    margin: 0 64px;
+    margin: 0;
+    padding-left: 64px;
+    padding-right: 64px;
   }
 
   .home-page__suggested .home-page__section-header {

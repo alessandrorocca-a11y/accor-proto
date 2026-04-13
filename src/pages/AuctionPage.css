@@ -1472,6 +1472,7 @@
 /* Sit above prototype iOS/Android bottom bar (Profile → Prototype preview) */
 body.prototype-mobile-frame .auction-page__sticky-bar {
   bottom: var(--prototype-chrome-bottom, 0px);
+  transition: bottom 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes auction-sticky-slide-up {

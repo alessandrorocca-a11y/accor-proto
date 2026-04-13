@@ -104,6 +104,14 @@
   opacity: 0.7;
 }
 
+/*
+ * Section carousels: align first card with `.city-page__section-header` (padding 0 24px).
+ * Same pattern as home — margin on the strip + padding-right for scroll gutter (not margin-right).
+ */
+.city-page__section > .city-page__scroll {
+  margin-left: 24px;
+}
+
 /* ── Horizontal scroll ────────────────────────────────────────────── */
 
 .city-page__scroll {
@@ -113,10 +121,11 @@
   overflow-x: auto;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
-  margin-left: 24px;
-  margin-right: 24px;
+  touch-action: pan-x pan-y;
   margin-bottom: 8px;
   padding-bottom: 4px;
+  padding-left: 0;
+  padding-right: 24px;
   scrollbar-width: none;
 }
 
@@ -129,7 +138,6 @@
 .city-page__top10-scroll {
   gap: 16px;
   align-items: flex-start;
-  padding-left: 24px;
 }
 
 button.city-page__numbered-card {
@@ -704,9 +712,12 @@ button.city-page__numbered-card {
     padding-right: 64px;
   }
 
-  .city-page__scroll {
+  .city-page__section > .city-page__scroll {
     margin-left: 64px;
-    margin-right: 64px;
+  }
+
+  .city-page__scroll {
+    padding-right: 64px;
   }
 
   .city-page__near-map {
@@ -810,8 +821,15 @@ button.city-page__numbered-card {
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     overflow: visible;
-    margin: 0 64px;
+    margin: 0;
+    padding-left: 64px;
+    padding-right: 64px;
     padding-bottom: 0;
+  }
+
+  .city-page__section > .city-page__scroll {
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .city-page__scroll > *:nth-child(n+5) {

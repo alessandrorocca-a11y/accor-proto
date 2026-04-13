@@ -359,10 +359,10 @@
   display: flex;
   gap: 8px;
   padding: 12px 0;
-  padding-left: 16px;
+  padding-left: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-left: 16px;
+  scroll-padding-left: 24px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   z-index: 5;

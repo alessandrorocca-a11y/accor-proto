@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { IconHeart } from '@/components/atoms';
 import { usePrototypePreview } from '@/context/PrototypePreviewContext';
 import { useUser, type OrderItem, type TestProfileId, TEST_PROFILES } from '@/context/UserContext';
@@ -462,6 +464,7 @@ export function Menu({
   try { userCtx = useUser(); } catch { /* Menu might render outside UserProvider */ }
 
   const { mobilePlatform, setMobilePlatform } = usePrototypePreview();
+  const shellOverlayPortal = usePrototypeShellOverlayPortal();
 
   /** One row per active subscription; section hidden if none (silver/gold or no UserProvider). */
   const visibleSidebarSubscriptions = useMemo((): SidebarSubscription[] => {
@@ -608,8 +611,11 @@ export function Menu({
     }
   };
 
-  return (
-    <div className="menu-overlay" onClick={onClose}>
+  const overlayClassName =
+    `menu-overlay${shellOverlayPortal ? ' menu-overlay--prototype-device' : ''}`;
+
+  const menuTree = (
+    <div className={overlayClassName} onClick={onClose}>
       <div
         ref={menuRef}
         className="menu"
@@ -1436,4 +1442,6 @@ export function Menu({
       </div>
     </div>
   );
+
+  return shellOverlayPortal ? createPortal(menuTree, shellOverlayPortal) : menuTree;
 }

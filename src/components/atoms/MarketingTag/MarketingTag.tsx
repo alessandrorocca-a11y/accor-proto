@@ -3,8 +3,8 @@ import './MarketingTag.css';
 
 const LABEL: Record<MarketingTagType, string> = {
   presale: 'Pre-sale',
-  exclusivity: 'Exclusive',
-  signature: 'Exclusive',
+  exclusivity: 'Exclusivity',
+  signature: 'Exclusivity',
   'sold-out': 'Sold out',
   discount: 'Discount',
 };

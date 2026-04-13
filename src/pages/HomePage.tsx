@@ -15,6 +15,7 @@ import {
   type EventData,
   type MarketingTagType,
 } from '@/data/events/eventRegistry';
+import { usePrototypePreview } from '@/context/PrototypePreviewContext';
 import { useUser, type LoyaltyTier } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
@@ -696,6 +697,8 @@ function Pagination({ current, total, onPrev, onNext }: { current: number; total
 /* ── Main component ───────────────────────────────────────────────────── */
 
 export default function HomePage() {
+  const { mobilePlatform } = usePrototypePreview();
+  const inMobilePrototypeShell = mobilePlatform !== 'off';
   const { points: USER_POINTS, loyaltyTier: userLoyaltyTier, testProfileId, isVoyagerSubscriber } = useUser();
 
   const NEXT_TRIP_EVENTS = useMemo(() => {
@@ -1061,7 +1064,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className="home-page">
+    <div className={`home-page${inMobilePrototypeShell ? ' home-page--prototype-shell' : ''}`}>
       {showFavSnack && (
         <div className="home-page__fav-snack" role="status">
           <svg className="home-page__fav-snack-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
