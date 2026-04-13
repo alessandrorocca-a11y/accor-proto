@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import { DevicePreviewBottomChromeTargetContext } from '@/context/DevicePreviewBottomChromeContext';
 import { DevicePreviewScrollContainerContext } from '@/context/DevicePreviewScrollContainerContext';
+import { PrototypeShellOverlayPortalContext } from '@/context/PrototypeShellOverlayPortalContext';
 import { parseHashParams } from '@/utils/hashRoute';
 import { DevicePreviewIOSChrome } from './DevicePreviewIOSChrome';
 import './DevicePreviewFrame.css';
@@ -40,6 +41,7 @@ export function DevicePreviewFrame({ children }: DevicePreviewFrameProps) {
   const [scale, setScale] = useState(1);
   const [deviceScrollEl, setDeviceScrollEl] = useState<HTMLDivElement | null>(null);
   const [bottomChromeTarget, setBottomChromeTarget] = useState<HTMLDivElement | null>(null);
+  const [overlayTarget, setOverlayTarget] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const onHashChange = () => setHash(window.location.hash);
@@ -80,6 +82,7 @@ export function DevicePreviewFrame({ children }: DevicePreviewFrameProps) {
   return (
     <DevicePreviewScrollContainerContext.Provider value={deviceScrollEl}>
       <DevicePreviewBottomChromeTargetContext.Provider value={bottomChromeTarget}>
+        <PrototypeShellOverlayPortalContext.Provider value={overlayTarget}>
         <div
           className="device-preview-frame"
           data-device-preview="iphone-16"
@@ -114,11 +117,13 @@ export function DevicePreviewFrame({ children }: DevicePreviewFrameProps) {
                     <div className="device-preview-frame__content">{children}</div>
                   </div>
                   <div ref={setBottomChromeTarget} className="device-preview-frame__bottom-chrome-slot" />
+                  <div ref={setOverlayTarget} className="device-preview-frame__overlay-slot" />
                 </div>
               </div>
             </div>
           </div>
         </div>
+        </PrototypeShellOverlayPortalContext.Provider>
       </DevicePreviewBottomChromeTargetContext.Provider>
     </DevicePreviewScrollContainerContext.Provider>
   );

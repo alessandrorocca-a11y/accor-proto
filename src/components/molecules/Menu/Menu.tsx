@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { IconHeart } from '@/components/atoms';
 import { useUser, type OrderItem, type TestProfileId, TEST_PROFILES } from '@/context/UserContext';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
+import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { searchCities, type City } from '@/data/europeanCities';
 import { formatPoints } from '@/data/events/eventRegistry';
 
@@ -437,6 +440,8 @@ export function Menu({
 }: MenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
+  const overlayPortalTarget = usePrototypeShellOverlayPortal();
+  const deviceScrollContainer = useDevicePreviewScrollContainer();
   const [view, setView] = useState<MenuView>(initialView);
   const [navHidden, setNavHidden] = useState(false);
   const [ordersTab, setOrdersTab] = useState<'upcoming' | 'past'>('upcoming');
@@ -551,17 +556,21 @@ export function Menu({
     if (!open) return;
     const onEscape = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onEscape);
-    document.body.style.overflow = 'hidden';
+
+    const scrollTarget = deviceScrollContainer ?? document.body;
+    const prev = scrollTarget.style.overflow;
+    scrollTarget.style.overflow = 'hidden';
+
     return () => {
       document.removeEventListener('keydown', onEscape);
-      document.body.style.overflow = '';
+      scrollTarget.style.overflow = prev;
     };
-  }, [open, onClose]);
+  }, [open, onClose, deviceScrollContainer]);
 
   useEffect(() => {
     if (open && menuRef.current) {
       const close = menuRef.current.querySelector<HTMLElement>('.menu__close');
-      close?.focus();
+      close?.focus({ preventScroll: true });
     }
   }, [open]);
 
@@ -1360,5 +1369,5 @@ export function Menu({
     </div>
   );
 
-  return menuTree;
+  return overlayPortalTarget ? createPortal(menuTree, overlayPortalTarget) : menuTree;
 }

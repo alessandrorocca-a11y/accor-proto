@@ -231,8 +231,26 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
 
   const bidNumeric = parseBidValue(bid);
 
-  const handlePlaceBidInner = () => {
-    if (!bidNumeric || bidNumeric <= currentBid) return;
+  const scrollToBidInput = useCallback(() => {
+    const el = placeBidRef.current;
+    if (!el) return;
+    const viewport = el.closest('.device-preview-frame__viewport') as Element | null;
+    if (viewport) {
+      const inputEl = el.closest('.auction-page__bid-section')?.querySelector<HTMLInputElement>('.auction-page__bid-input input');
+      if (inputEl) {
+        inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => inputEl.focus(), 400);
+      }
+    } else {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
+
+  const handlePlaceBidInner = (fromStickyBar = false) => {
+    if (!bidNumeric || bidNumeric <= currentBid) {
+      if (fromStickyBar) scrollToBidInput();
+      return;
+    }
 
     if (bidNumeric > USER_POINTS) {
       if (bidErrorTimerRef.current) clearTimeout(bidErrorTimerRef.current);
@@ -244,7 +262,8 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
     setConfirmBidOpen(true);
   };
 
-  const handlePlaceBid = () => voyagerGate(handlePlaceBidInner);
+  const handlePlaceBid = () => voyagerGate(() => handlePlaceBidInner(false));
+  const handleStickyPlaceBid = () => voyagerGate(() => handlePlaceBidInner(true));
 
   const handleConfirmBid = () => {
     if (eventData) {
@@ -783,7 +802,7 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
             size="lg"
             fullWidth
             className="auction-page__place-bid-btn"
-            onClick={handlePlaceBid}
+            onClick={handleStickyPlaceBid}
           >
             Place bid
           </Button>

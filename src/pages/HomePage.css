@@ -26,6 +26,280 @@ html.device-preview-frame-active .home-page__hero {
   margin-top: calc(-1 * (56px + var(--device-preview-status-bar-height, 0px)));
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   Device preview: force mobile layout regardless of browser viewport width.
+   Reset all min-width media query changes back to base (mobile) values.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+html.device-preview-frame-active .home-page__hero {
+  min-height: 520px !important;
+  align-items: center !important;
+}
+
+html.device-preview-frame-active .home-page__hero-content {
+  padding: 32px 16px !important;
+  gap: 6px !important;
+  max-width: none !important;
+  text-align: left !important;
+  justify-content: flex-end !important;
+  flex: unset !important;
+}
+
+html.device-preview-frame-active .home-page__hero-title {
+  font: var(--wel-typography-display-04) !important;
+  letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px) !important;
+}
+
+html.device-preview-frame-active .home-page__hero-search-wrap {
+  max-width: 400px !important;
+}
+
+html.device-preview-frame-active .home-page__hero-header {
+  display: block !important;
+}
+
+/* ── Desktop-only: hide in device preview ────────────────────────────────── */
+html.device-preview-frame-active .home-page__desktop-nav,
+html.device-preview-frame-active .home-page__promo-card,
+html.device-preview-frame-active .home-page__selling-points,
+html.device-preview-frame-active .home-page__yml-section,
+html.device-preview-frame-active .home-page__pagination {
+  display: none !important;
+}
+
+/* ── Mobile-only: show in device preview ─────────────────────────────────── */
+html.device-preview-frame-active .home-page__mobile-header {
+  display: block !important;
+}
+
+html.device-preview-frame-active .home-page__categories-section,
+html.device-preview-frame-active .home-page__signature {
+  display: block !important;
+}
+
+/* ── Sections: mobile padding / spacing ──────────────────────────────────── */
+html.device-preview-frame-active .home-page__section {
+  padding: 32px 0 0 !important;
+}
+
+html.device-preview-frame-active .home-page__section-header {
+  padding: 0 24px !important;
+  margin-bottom: 16px !important;
+  justify-content: space-between !important;
+  align-items: flex-end !important;
+}
+
+html.device-preview-frame-active .home-page__section-title {
+  font: var(--wel-typography-display-06) !important;
+  letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px) !important;
+}
+
+html.device-preview-frame-active .home-page__section .home-page__section-header::after {
+  display: none !important;
+}
+
+/* ── Scroll strips: flex carousel, not grid ──────────────────────────────── */
+html.device-preview-frame-active .home-page .home-page__scroll {
+  display: flex !important;
+  grid-template-columns: unset !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  overflow: visible !important;
+  overflow-x: auto !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 24px !important;
+  padding-bottom: 4px !important;
+}
+
+html.device-preview-frame-active .home-page .home-page__section > .home-page__scroll {
+  margin-left: 24px !important;
+}
+
+html.device-preview-frame-active .home-page .home-page__scroll > *:nth-child(n+5) {
+  display: flex !important;
+}
+
+/* ── Event cards: mobile sizing ──────────────────────────────────────────── */
+html.device-preview-frame-active .home-page__event-card {
+  flex: 0 0 173px !important;
+  width: auto !important;
+}
+
+html.device-preview-frame-active .home-page__event-card-img {
+  width: 100% !important;
+  height: 173px !important;
+  aspect-ratio: unset !important;
+}
+
+html.device-preview-frame-active .home-page__event-card-title {
+  font-family: var(--wel-sem-fontfamilies-title, 'Roboto', sans-serif) !important;
+  font-size: var(--wel-sem-fontsizes-title-sm, 18px) !important;
+  font-weight: 500 !important;
+  line-height: var(--wel-sem-lineheights-title-sm, 24px) !important;
+}
+
+/* ── Banner: vertical mobile layout ──────────────────────────────────────── */
+html.device-preview-frame-active .home-page__banner {
+  flex-direction: column !important;
+  height: auto !important;
+  margin: 20px 0 0 !important;
+  background: var(--ads-colors-loyalty-container-low, #f3efff) !important;
+  overflow: hidden !important;
+}
+
+html.device-preview-frame-active .home-page__banner-visual {
+  order: unset !important;
+  width: 100% !important;
+  height: 160px !important;
+  flex: unset !important;
+  min-width: unset !important;
+}
+
+html.device-preview-frame-active .home-page__banner-visual > img {
+  border-bottom-left-radius: 0 !important;
+}
+
+html.device-preview-frame-active .home-page__banner-loyalty-card {
+  left: 24px !important;
+  bottom: -22px !important;
+  top: auto !important;
+  transform: none !important;
+  width: 107px !important;
+  height: 71px !important;
+}
+
+html.device-preview-frame-active .home-page__banner-loyalty-card-bg.loyalty-sheet__card {
+  transform: scale(calc(107 / 270), calc(71 / 130)) !important;
+}
+
+html.device-preview-frame-active .home-page__banner-loyalty-card-front {
+  transform: scale(calc(107 / 270)) !important;
+}
+
+html.device-preview-frame-active .home-page__banner-content {
+  order: unset !important;
+  flex: unset !important;
+  max-width: none !important;
+  padding: 56px 24px 32px !important;
+  gap: 16px !important;
+  justify-content: unset !important;
+  border-bottom-right-radius: 48px !important;
+}
+
+html.device-preview-frame-active .home-page__banner-cta {
+  display: none !important;
+}
+
+/* ── Top experiences: mobile sizing ──────────────────────────────────────── */
+html.device-preview-frame-active .home-page__top-section {
+  padding: 36px 0 !important;
+  gap: 28px !important;
+}
+
+html.device-preview-frame-active .home-page__top-section .home-page__section-header {
+  margin-bottom: 4px !important;
+}
+
+html.device-preview-frame-active .home-page__top-carousel {
+  gap: 8px !important;
+  padding: 0 16px !important;
+}
+
+html.device-preview-frame-active .home-page__top-card {
+  width: 168px !important;
+  height: 299px !important;
+  margin-top: 0 !important;
+  border-radius: var(--wel-sem-borderradius-surface, 6px) !important;
+  box-shadow: 0 2px 8px rgba(7, 5, 24, 0.04) !important;
+}
+
+html.device-preview-frame-active .home-page__top-card--active {
+  width: 200px !important;
+  height: 356px !important;
+}
+
+html.device-preview-frame-active .home-page__top-card-media,
+html.device-preview-frame-active .home-page__top-card-gradient {
+  border-radius: var(--wel-sem-borderradius-surface, 6px) !important;
+}
+
+html.device-preview-frame-active .home-page__top-card-play {
+  top: 8px !important;
+  right: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+html.device-preview-frame-active .home-page__top-card-play svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+html.device-preview-frame-active .home-page__top-card-title {
+  font: var(--wel-typography-label-strong-02) !important;
+}
+
+/* ── City cards: mobile sizing ───────────────────────────────────────────── */
+html.device-preview-frame-active .home-page__city-card {
+  flex: 0 0 154px !important;
+}
+
+html.device-preview-frame-active .home-page__city-card-ratio {
+  aspect-ratio: 9 / 16 !important;
+}
+
+html.device-preview-frame-active .home-page__city-card-name {
+  font: var(--wel-typography-display-04) !important;
+  letter-spacing: var(--wel-sem-letterspacing-display-condensed, 0.5px) !important;
+}
+
+html.device-preview-frame-active .home-page__cities-scroll {
+  grid-template-columns: unset !important;
+}
+
+/* ── Near cities / next trip: mobile padding ─────────────────────────────── */
+html.device-preview-frame-active .home-page__near-cities-card {
+  margin: 0 16px !important;
+}
+
+html.device-preview-frame-active .home-page__next-trip-details {
+  padding: 0 24px !important;
+}
+
+/* ── Suggested section: mobile layout ────────────────────────────────────── */
+html.device-preview-frame-active .home-page__suggested {
+  padding: 20px 0 16px 18px !important;
+}
+
+html.device-preview-frame-active .home-page__suggested .home-page__scroll {
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 24px !important;
+}
+
+html.device-preview-frame-active .home-page__suggested .home-page__section-header {
+  padding: 0 24px !important;
+}
+
+/* ── Signature cards: mobile sizing ──────────────────────────────────────── */
+html.device-preview-frame-active .home-page__signature .home-page__event-card-img {
+  width: 220px !important;
+  height: 146px !important;
+}
+
+html.device-preview-frame-active .home-page__signature .home-page__event-card {
+  flex: 0 0 220px !important;
+}
+
+/* ── Fav snackbar: full-width mobile ─────────────────────────────────────── */
+html.device-preview-frame-active .home-page__fav-snack {
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+}
+
 /* Prototype: bleed hero under portaled nav (must beat `body… .home-page__hero` if reintroduced; shell screen uses matching offset) */
 body.prototype-mobile-frame .home-page--prototype-shell .home-page__hero {
   margin-top: calc(-1 * var(--prototype-nav-bar-offset, 56px));

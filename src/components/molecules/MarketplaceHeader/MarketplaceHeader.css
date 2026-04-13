@@ -530,3 +530,55 @@ html.device-preview-frame-active .marketplace-header:not(.marketplace-header--pr
 html.device-preview-frame-active .marketplace-header--hidden:not(.marketplace-header--prototype-nav-chrome) {
   transform: translateY(calc(-100% - var(--device-preview-status-bar-height, 54px)));
 }
+
+/* Force mobile grid layout inside device preview (undo @media min-width:1024px flex row) */
+html.device-preview-frame-active .marketplace-header__bar {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  flex-direction: unset !important;
+  flex-wrap: unset !important;
+  column-gap: var(--wel-sem-spacingstatic-inline-sm, 12px) !important;
+}
+
+html.device-preview-frame-active .marketplace-header__left-cluster {
+  display: flex !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+}
+
+html.device-preview-frame-active .marketplace-header__left-cluster .marketplace-header__menu-btn {
+  order: unset !important;
+  margin-left: 0 !important;
+}
+
+html.device-preview-frame-active .marketplace-header__left-cluster .marketplace-header__icon-btn {
+  order: unset !important;
+}
+
+html.device-preview-frame-active .marketplace-header__logo-slot {
+  order: unset !important;
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  justify-content: center !important;
+}
+
+html.device-preview-frame-active .marketplace-header__mobile-trailing {
+  display: flex !important;
+}
+
+html.device-preview-frame-active .marketplace-header__points {
+  order: unset !important;
+  margin-left: 0 !important;
+}
+
+html.device-preview-frame-active .marketplace-header__center-wrap {
+  display: none !important;
+}
+
+html.device-preview-frame-active .marketplace-header__icon-group {
+  display: none !important;
+}
+
+html.device-preview-frame-active .marketplace-header {
+  --header-shadow: 0 1px 3px rgba(7, 5, 24, 0.06) !important;
+}
