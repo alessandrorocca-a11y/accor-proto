@@ -1318,24 +1318,29 @@
   color: var(--wel-sem-color-on-surface-mid, #38364d);
 }
 
-/* ── Desktop: centred dialog ─────────────────────────────────────────── */
+/* ── Desktop: bottom-sheet with constrained width ────────────────────── */
 @media (min-width: 1024px) {
   .menu-overlay {
-    align-items: center;
+    align-items: flex-end;
     background: rgba(6, 35, 44, 0.88);
   }
 
   .menu {
     max-width: 480px;
-    border-radius: 16px;
-    height: auto;
-    max-height: 80vh;
+    border-radius: 16px 16px 0 0;
     box-shadow: 0 24px 24px rgba(0, 70, 121, 0.2);
-    animation: menu-scale-in 0.2s ease-out;
+    animation: menu-slide-up 0.25s ease-out;
   }
+}
 
-  @keyframes menu-scale-in {
-    from { transform: scale(0.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
+/* ── Device preview: force mobile bottom-sheet layout ────────────────── */
+html.device-preview-frame-active .menu-overlay {
+  align-items: flex-end !important;
+}
+
+html.device-preview-frame-active .menu {
+  max-width: none !important;
+  height: min(90vh, 100%) !important;
+  border-radius: 16px 16px 0 0 !important;
+  animation: menu-slide-up 0.25s ease-out !important;
 }
