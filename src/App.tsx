@@ -26,7 +26,6 @@ import PrizeDrawLoserEmail from './pages/emails/PrizeDrawLoserEmail';
 import PrizeDrawPurchaseEmail from './pages/emails/PrizeDrawPurchaseEmail';
 import { FavouritesProvider } from './context/FavouritesContext';
 import { UserProvider } from './context/UserContext';
-import { MobilePrototypeShell } from './components/MobilePrototypeShell/MobilePrototypeShell';
 import { extractEventId, parseHashParams } from './utils/hashRoute';
 
 interface BreadcrumbItem {
@@ -222,9 +221,7 @@ export default function App() {
 
   return (
     <UserProvider>
-      <MobilePrototypeShell>
-        <FavouritesProvider>{page}</FavouritesProvider>
-      </MobilePrototypeShell>
+      <FavouritesProvider>{page}</FavouritesProvider>
     </UserProvider>
   );
 }
