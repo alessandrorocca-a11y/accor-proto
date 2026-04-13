@@ -1634,6 +1634,11 @@ html.device-preview-frame-active .auction-page__notify-snack {
   z-index: 2;
 }
 
+/* Home fav: slightly higher under the nav than product-page toasts */
+.device-preview-frame__overlay-slot .home-page__fav-snack--prototype-device {
+  top: calc(56px + var(--device-preview-status-bar-height, 54px)) !important;
+}
+
 /* ── Same viewport vs “glass” issue on other product templates (import AuctionPage.css) ── */
 
 html.device-preview-frame-active .prize-draw__ticket-section--mobile {
