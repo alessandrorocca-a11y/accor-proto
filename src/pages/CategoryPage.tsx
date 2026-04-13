@@ -28,7 +28,8 @@ import {
 import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
-import { sortEventsForProfile } from '@/utils/profileSort';
+import { NON_SUBSCRIBER_EXCLUSIVE_CATEGORY_MAX_EVENTS, sortEventsForProfile } from '@/utils/profileSort';
+import { useScrollLock } from '@/utils/useScrollLock';
 import './CategoryPage.css';
 
 type PaymentType = 'prize-draw' | 'redeem' | 'auction' | 'cash' | 'flex' | 'linkout' | 'waitlist';
@@ -538,6 +539,10 @@ export default function CategoryPage({
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [orderOpen, setOrderOpen] = useState(false);
 
+  useScrollLock(
+    Boolean(orderOpen || categoriesOpen || activeFilter || loyaltyOpen),
+  );
+
   useEffect(() => {
     setSelectedCategory(defaultCategory);
     setCategoriesOpen(false);
@@ -647,10 +652,20 @@ export default function CategoryPage({
       }
       return true;
     });
-    if (sortBy === 'price-desc') return [...base].sort((a, b) => parsePrice(b) - parsePrice(a));
-    if (sortBy === 'price-asc') return [...base].sort((a, b) => parsePrice(a) - parsePrice(b));
-    if (sortBy === 'date') return [...base].sort((a, b) => parseEventDate(a.date) - parseEventDate(b.date));
-    return sortEventsForProfile(base, testProfileId);
+    let sorted = base;
+    if (sortBy === 'price-desc') sorted = [...base].sort((a, b) => parsePrice(b) - parsePrice(a));
+    else if (sortBy === 'price-asc') sorted = [...base].sort((a, b) => parsePrice(a) - parsePrice(b));
+    else if (sortBy === 'date') sorted = [...base].sort((a, b) => parseEventDate(a.date) - parseEventDate(b.date));
+    else sorted = sortEventsForProfile(base, testProfileId);
+
+    if (
+      !isVoyagerSubscriber &&
+      !showAllCategories &&
+      (selectedCategory === ACCOR_PLUS_EXCLUSIVES_CATEGORY || selectedCategory === ALL_SIGNATURE_EXCLUSIVES_CATEGORY)
+    ) {
+      return sorted.slice(0, NON_SUBSCRIBER_EXCLUSIVE_CATEGORY_MAX_EVENTS);
+    }
+    return sorted;
   })();
 
   const onPriceSliderChange = (lo: number, hi: number) => {

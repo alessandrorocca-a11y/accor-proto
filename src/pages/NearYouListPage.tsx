@@ -17,6 +17,7 @@ import {
   isExplorerExclusiveMarketingTag,
   isSignatureExclusiveMarketingTag,
 } from '@/data/events/eventRegistry';
+import { useScrollLock } from '@/utils/useScrollLock';
 import './NearYouListPage.css';
 import './CategoryPage.css';
 
@@ -544,6 +545,8 @@ export default function NearYouListPage({ cityName = 'Paris' }: NearYouListPageP
   const [pointsMax, setPointsMax] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [orderOpen, setOrderOpen] = useState(false);
+
+  useScrollLock(Boolean(orderOpen || activeFilter || loyaltyOpen));
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 

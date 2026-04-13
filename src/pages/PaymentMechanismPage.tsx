@@ -26,6 +26,7 @@ import {
 } from '@/data/events/eventRegistry';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
+import { useScrollLock } from '@/utils/useScrollLock';
 import './CategoryPage.css';
 
 type PaymentType = 'prize-draw' | 'redeem' | 'auction' | 'cash' | 'flex' | 'linkout' | 'waitlist';
@@ -457,6 +458,10 @@ export default function PaymentMechanismPage({ defaultMechanism = 'auction' }: {
   const [pointsMax, setPointsMax] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [orderOpen, setOrderOpen] = useState(false);
+
+  useScrollLock(
+    Boolean(orderOpen || mechanismsOpen || activeFilter || loyaltyOpen),
+  );
 
   const onPriceSliderChange = (lo: number, hi: number) => {
     const { min, max } = CATEGORY_PRICE_BOUNDS;

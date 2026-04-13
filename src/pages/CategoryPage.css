@@ -1542,9 +1542,7 @@ html.device-preview-frame-active .category-page__breadcrumb {
   flex-shrink: 0;
 }
 
-html.device-preview-frame-active .category-page__content {
-  padding-top: calc(var(--device-preview-status-bar-height, 54px) + 56px) !important;
-}
+/* No padding-top on `category-page__content` in device preview: `.device-preview-frame__content` already insets for status bar + fixed header. */
 
 html.device-preview-frame-active .category-page__filters-order-row {
   display: block !important;

@@ -366,16 +366,21 @@
   bottom: 0;
   left: 0;
   right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   display: flex;
+  align-items: stretch;
   gap: 8px;
-  padding: 12px 0;
+  padding: 12px 0 max(12px, env(safe-area-inset-bottom, 0px));
   padding-left: 16px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-padding-left: 16px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  z-index: 5;
+  z-index: 20;
+  pointer-events: auto;
 }
 
 .near-you__event-carousel::after {
@@ -392,9 +397,12 @@
 
 .near-you__event-card {
   flex: 0 0 auto;
-  width: calc(100vw - 16px);
-  max-width: 377px;
-  height: 180px;
+  /* Size to carousel (map width) — not 100vw (too wide in device preview) */
+  width: min(377px, calc(100% - 32px));
+  max-width: 100%;
+  min-height: 164px;
+  height: auto;
+  max-height: 200px;
   display: flex;
   gap: 8px;
   padding: 8px;
@@ -423,9 +431,13 @@
 
 .near-you__event-card-img {
   position: relative;
-  width: 164px;
-  height: 164px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  width: min(164px, 42%);
+  height: auto;
+  aspect-ratio: 1;
+  max-width: 164px;
+  max-height: 164px;
+  align-self: center;
   border-radius: var(--wel-sem-borderradius-surface, 6px);
   overflow: hidden;
 }
@@ -699,7 +711,7 @@
   }
 
   .near-you__event-card {
-    max-width: 400px;
+    width: min(400px, calc(100% - 32px));
   }
 }
 

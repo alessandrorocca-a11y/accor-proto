@@ -18,6 +18,10 @@ import {
 import { useUser, type LoyaltyTier } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import {
+  NON_SUBSCRIBER_HOME_EXPLORER_TEASER_MAX,
+  NON_SUBSCRIBER_HOME_NEXT_TRIP_MAX_EXCLUSIVE,
+  NON_SUBSCRIBER_HOME_SIGNATURE_TEASER_MAX,
+  NON_SUBSCRIBER_HOME_SUGGESTED_MAX_EXCLUSIVE,
   sortEventsForProfileAndPointsBalance,
   sortEventsForProfileAndPointsBalancePreferredCityFirst,
   takeSortedWithVoyagerExclusiveCap,
@@ -711,8 +715,7 @@ export default function HomePage() {
       sortEventsForProfileAndPointsBalance(pool, testProfileId, USER_POINTS, 'home-next-trip'),
       isVoyagerSubscriber,
       8,
-      /* Up to 3 Explorer-only (presale/exclusivity) cards per page so the strip is visible without a subscriber profile */
-      isVoyagerSubscriber ? 8 : 3,
+      isVoyagerSubscriber ? 8 : NON_SUBSCRIBER_HOME_NEXT_TRIP_MAX_EXCLUSIVE,
     ).map(registryToCard);
   }, [testProfileId, USER_POINTS, isVoyagerSubscriber]);
 
@@ -794,7 +797,7 @@ export default function HomePage() {
         ),
         isVoyagerSubscriber,
         8,
-        2,
+        isVoyagerSubscriber ? 8 : NON_SUBSCRIBER_HOME_SUGGESTED_MAX_EXCLUSIVE,
       ).map(registryToCard),
     [testProfileId, USER_POINTS, isVoyagerSubscriber, suggestedHomeCity],
   );
@@ -821,7 +824,8 @@ export default function HomePage() {
   /** Discovery: non-subscribers — same strip as subscribers, placed before Popular cities (cards still show Explorer footer / gates) */
   const EXPLORER_EXCLUSIVE_EVENTS_TEASER = useMemo(() => {
     if (isVoyagerSubscriber) return [];
-    return takeSortedWithVoyagerExclusiveCap(explorerExclusiveSortedHome, false, 6, 6).map(registryToCard);
+    const n = NON_SUBSCRIBER_HOME_EXPLORER_TEASER_MAX;
+    return takeSortedWithVoyagerExclusiveCap(explorerExclusiveSortedHome, false, n, n).map(registryToCard);
   }, [isVoyagerSubscriber, explorerExclusiveSortedHome]);
 
   const signatureExclusiveSortedHome = useMemo(
@@ -844,7 +848,8 @@ export default function HomePage() {
 
   const SIGNATURE_EXCLUSIVE_EVENTS_TEASER = useMemo(() => {
     if (isVoyagerSubscriber) return [];
-    return takeSortedWithVoyagerExclusiveCap(signatureExclusiveSortedHome, false, 12, 12).map(registryToCard);
+    const n = NON_SUBSCRIBER_HOME_SIGNATURE_TEASER_MAX;
+    return takeSortedWithVoyagerExclusiveCap(signatureExclusiveSortedHome, false, n, n).map(registryToCard);
   }, [isVoyagerSubscriber, signatureExclusiveSortedHome]);
 
   const { toggleFavourite: toggleFavCtx } = useFavourites();

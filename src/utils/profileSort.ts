@@ -6,6 +6,17 @@ function isVoyagerSubscriberOnlyTag(tag?: MarketingTagType): boolean {
   return tag === 'presale' || tag === 'exclusivity' || tag === 'signature';
 }
 
+/** Non-subscribers (prototype: silver + gold without ALL+ / ALL Signature) — Home Explorer teaser strip */
+export const NON_SUBSCRIBER_HOME_EXPLORER_TEASER_MAX = 2;
+/** Non-subscribers — Home Signature teaser strip */
+export const NON_SUBSCRIBER_HOME_SIGNATURE_TEASER_MAX = 2;
+/** Non-subscribers — “Next trip” row: max presale / exclusivity / signature tagged cards */
+export const NON_SUBSCRIBER_HOME_NEXT_TRIP_MAX_EXCLUSIVE = 1;
+/** Non-subscribers — “Suggested for you”: max subscription-only tagged cards */
+export const NON_SUBSCRIBER_HOME_SUGGESTED_MAX_EXCLUSIVE = 1;
+/** Non-subscribers — dedicated Explorer / Signature category listings: max experiences */
+export const NON_SUBSCRIBER_EXCLUSIVE_CATEGORY_MAX_EVENTS = 4;
+
 /** Deterministic seed → RNG (stable shuffle across re-renders for same inputs). */
 function mulberry32(seed: number): () => number {
   return () => {
