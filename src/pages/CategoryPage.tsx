@@ -574,6 +574,7 @@ export default function CategoryPage({
   const displayTitle = pageTitle ?? selectedCategory;
   const showAllCategories = !!pageTitle;
   const isNextTripPage = Boolean(pageTitle?.startsWith('Next trip'));
+  const showMapViewFab = isNextTripPage || defaultLocation != null;
 
   useEffect(() => {
     if (showAllCategories) return;
@@ -863,33 +864,35 @@ export default function CategoryPage({
     setSelectedDate(null);
   };
 
-  const mapViewButton = (
-    <button
-      type="button"
-      className="category-page__map-view-btn"
-      onClick={() => {
-        const city = (defaultLocation ?? 'Paris').toLowerCase().replace(/\s+/g, '-');
-        window.location.hash = `#near-you/${city}`;
-      }}
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M8 2v16M16 6v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      Map view
-    </button>
-  );
-
-  const mapViewFloating = overlayPortalTarget
-    ? createPortal(
-        <div className="category-page__map-view-btn-wrap">{mapViewButton}</div>,
-        overlayPortalTarget,
-      )
-    : (
-        <div className="category-page__map-view-btn-wrap category-page__map-view-btn-wrap--viewport-fixed">
-          {mapViewButton}
-        </div>
-      );
+  const mapViewFloating = (() => {
+    if (!showMapViewFab) return null;
+    const citySlug = (defaultLocation ?? 'Paris').toLowerCase().replace(/\s+/g, '-');
+    const mapViewButton = (
+      <button
+        type="button"
+        className="category-page__map-view-btn"
+        onClick={() => {
+          window.location.hash = `#near-you/${citySlug}`;
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8 2v16M16 6v16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Map view
+      </button>
+    );
+    return overlayPortalTarget
+      ? createPortal(
+          <div className="category-page__map-view-btn-wrap">{mapViewButton}</div>,
+          overlayPortalTarget,
+        )
+      : (
+          <div className="category-page__map-view-btn-wrap category-page__map-view-btn-wrap--viewport-fixed">
+            {mapViewButton}
+          </div>
+        );
+  })();
 
   return (
     <div className="category-page">

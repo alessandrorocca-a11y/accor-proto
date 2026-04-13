@@ -15,6 +15,7 @@ import { getPreviousPage } from '@/utils/navigationHistory';
 import './StandardPage.css';
 import { getEventById, getStandardEventFromPriceEur, STANDARD_POINTS_PER_EUR } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { useUser } from '@/context/UserContext';
 const DEFAULT_HERO_IMAGES = [
   { src: '/carnival-hero.png', alt: 'Rio de Janeiro Carnival 2026' },
@@ -242,6 +243,7 @@ function getCalendarDays(year: number, month: number) {
 export default function StandardPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, deductPoints, addOrder } = useUser();
+  const deviceScrollContainer = useDevicePreviewScrollContainer();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
   const USER_POINTS = userPoints;
@@ -363,6 +365,16 @@ export default function StandardPage({ eventId }: { eventId?: string }) {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!showRecap && !showConfirmation) return;
+    const scrollTarget = deviceScrollContainer ?? document.body;
+    const prev = scrollTarget.style.overflow;
+    scrollTarget.style.overflow = 'hidden';
+    return () => {
+      scrollTarget.style.overflow = prev;
+    };
+  }, [showRecap, showConfirmation, deviceScrollContainer]);
 
   const handleScroll = useCallback(() => {
     const track = trackRef.current;

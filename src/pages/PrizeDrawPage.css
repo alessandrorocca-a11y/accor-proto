@@ -217,6 +217,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Let the middle flex child shrink so overflow-y is not forced when content is short */
+  min-height: 0;
 }
 
 .recap-page .marketplace-header,
@@ -229,16 +231,20 @@ html.device-preview-frame-active .recap-page .marketplace-header {
 }
 
 .recap-page__content {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 16px;
   padding-bottom: 24px;
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .recap-page__back {

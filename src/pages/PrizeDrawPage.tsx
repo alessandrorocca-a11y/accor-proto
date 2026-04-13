@@ -16,6 +16,7 @@ import type { MenuView } from '@/components';
 import { getPreviousPage } from '@/utils/navigationHistory';
 import { getEventById, isSignatureExclusiveMarketingTag, isVoyagerExclusiveEvent } from '@/data/events/eventRegistry';
 import { getVenueInfo, getMapEmbedUrl } from '@/data/events/venueData';
+import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { useUser } from '@/context/UserContext';
 import { useFavourites } from '@/context/FavouritesContext';
 import './PrizeDrawPage.css';
@@ -115,6 +116,7 @@ function formatPoints(n: number) {
 export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
   const eventData = eventId ? getEventById(eventId) : undefined;
   const { points: userPoints, loyaltyTier: userLoyaltyTier, isVoyagerSubscriber, deductPoints, addOrder } = useUser();
+  const deviceScrollContainer = useDevicePreviewScrollContainer();
   useFavourites();
 
   const HERO_IMAGES = eventData?.heroImages ?? DEFAULT_HERO_IMAGES;
@@ -191,6 +193,16 @@ export default function PrizeDrawPage({ eventId }: { eventId?: string }) {
     observer.observe(el);
     return () => observer.disconnect();
   }, [drawEnded]);
+
+  useEffect(() => {
+    if (!showRecap && !showConfirmation) return;
+    const scrollTarget = deviceScrollContainer ?? document.body;
+    const prev = scrollTarget.style.overflow;
+    scrollTarget.style.overflow = 'hidden';
+    return () => {
+      scrollTarget.style.overflow = prev;
+    };
+  }, [showRecap, showConfirmation, deviceScrollContainer]);
 
   const handleScroll = useCallback(() => {
     const track = trackRef.current;

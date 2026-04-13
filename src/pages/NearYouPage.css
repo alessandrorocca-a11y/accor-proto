@@ -728,3 +728,20 @@
     right: 24px;
   }
 }
+
+/*
+ * Device preview: BottomTabBar lives in a flex slot under the scroll viewport, but
+ * map controls use position:absolute bottom:0 inside the scroll area — they align
+ * with the viewport bottom while the chrome row still occupies space below the glass,
+ * so cards/buttons read as sitting under the browser row. Offset by the same height
+ * token used for sticky bars (see index.css --bottom-browser-bar-height).
+ */
+html.device-preview-frame-active .near-you__event-carousel {
+  bottom: var(--bottom-browser-bar-height);
+}
+
+html.device-preview-frame-active .near-you__list-view-btn,
+html.device-preview-frame-active .near-you__compass-btn {
+  bottom: calc(216px + var(--bottom-browser-bar-height));
+  z-index: 21;
+}

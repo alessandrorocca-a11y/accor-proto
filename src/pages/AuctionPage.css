@@ -254,7 +254,7 @@
 
 /* ── Notification snack bar (Figma: success container) ───────────────── */
 .auction-page__notify-snack {
-  position: absolute;
+  position: fixed;
   top: 80px;
   left: 14px;
   right: 14px;
@@ -1710,11 +1710,12 @@ html.device-preview-frame-active .auction-page__section--description {
   gap: 24px !important;
 }
 
-/* Snackbars: stay full-bleed within the device screen */
+/* Snackbars: fixed below status strip + MarketplaceHeader inside the phone shell */
 html.device-preview-frame-active .auction-page__notify-snack {
   left: 14px !important;
   right: 14px !important;
   max-width: none !important;
+  top: calc(56px + var(--device-preview-status-bar-height, 54px) + 8px) !important;
 }
 
 /* ── Same viewport vs “glass” issue on other product templates (import AuctionPage.css) ── */
