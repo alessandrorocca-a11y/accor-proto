@@ -122,8 +122,9 @@ function readInitialWalletSlice(profileId: TestProfileId): {
       auctionWon: [],
     };
   }
+  /* Prototype: always start at profile cap on refresh; orders / auction lists still persist. */
   return {
-    points: stored.points,
+    points: profile.points,
     orders: stored.orders,
     auctionOngoing: stored.auctionOngoing,
     auctionWon: stored.auctionWon,
