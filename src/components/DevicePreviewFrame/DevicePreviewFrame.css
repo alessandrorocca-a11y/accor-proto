@@ -5,6 +5,13 @@
 
 .device-preview-frame {
   box-sizing: border-box;
+  /* BottomTabBar row inside shell (44px row + vertical padding); not overlaying the scroll viewport */
+  --device-preview-bottom-chrome-approx: 58px;
+  /* Usable in-flow height below fixed header + status (matches .device-preview-frame__content padding-top) */
+  --device-preview-viewport-body-height: calc(
+    var(--device-screen-h, 852px) - var(--device-preview-bottom-chrome-approx) - 56px -
+      var(--device-preview-status-bar-height, 54px)
+  );
   min-height: 100dvh;
   min-height: 100vh;
   display: flex;
@@ -225,4 +232,16 @@
 .device-preview-frame__content {
   min-height: 100%;
   padding-top: calc(56px + var(--device-preview-status-bar-height, 54px));
+}
+
+/*
+ * 100vh / 100dvh measure the outer browser, not the phone glass — pages then overflow
+ * the device scroll viewport. Tie “full page” min-heights to the mockup body instead.
+ */
+html.device-preview-frame-active .category-page,
+html.device-preview-frame-active .city-page,
+html.device-preview-frame-active .auction-page,
+html.device-preview-frame-active .all-categories-page,
+html.device-preview-frame-active .home-page {
+  min-height: var(--device-preview-viewport-body-height);
 }

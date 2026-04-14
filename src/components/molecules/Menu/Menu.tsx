@@ -114,7 +114,6 @@ const SIDEBAR_PAYMENTS: SidebarPayment[] = [
   { label: 'Instant purchase', hash: '#payment/flex' },
   { label: 'Auction', hash: '#payment/auctions' },
   { label: 'Prize draw', hash: '#payment/prize-draws' },
-  { label: 'Waitlist', hash: '#payment/waitlist' },
 ];
 
 /* ── Icons ────────────────────────────────────────────────────────────── */
@@ -290,6 +289,7 @@ interface FavouriteEvent {
   paymentLabel: string;
   points: string;
   countdown: string;
+  hideRewardsIcon?: boolean;
 }
 
 const FAVOURITE_EVENTS: FavouriteEvent[] = [

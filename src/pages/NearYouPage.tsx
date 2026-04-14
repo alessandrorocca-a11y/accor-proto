@@ -24,6 +24,7 @@ interface MapEventCard {
   title: string;
   date: string;
   image: string;
+  imagePosition?: string;
   paymentType: PaymentType;
   points?: string;
   cashPrice?: string;

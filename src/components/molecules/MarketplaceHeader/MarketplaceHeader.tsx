@@ -117,7 +117,7 @@ export function MarketplaceHeader({
   theme = 'light',
   isLoggedIn = false,
   points,
-  loyaltyTier = 'gold',
+  loyaltyTier: _loyaltyTier = 'gold',
   avatarSrc,
   paymentLabel,
   eventLabel,

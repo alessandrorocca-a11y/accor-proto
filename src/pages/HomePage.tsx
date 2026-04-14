@@ -40,6 +40,8 @@ interface EventCard {
   title: string;
   date: string;
   image: string;
+  /** CSS object-position for card image crop */
+  imagePosition?: string;
   paymentType: PaymentType;
   points?: string;
   cashPrice?: string;

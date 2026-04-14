@@ -30,6 +30,7 @@ interface NearYouEvent {
   title: string;
   date: string;
   image: string;
+  imagePosition?: string;
   categories: string[];
   eventTag?: string;
   paymentType: PaymentType;

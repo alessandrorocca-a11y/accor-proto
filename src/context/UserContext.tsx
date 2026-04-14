@@ -149,7 +149,7 @@ interface UserContextValue {
 const UserContext = createContext<UserContextValue | null>(null);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [testProfileId, setTestProfileIdState] = useState<TestProfileId>(getStoredTestProfile);
+  const [testProfileId] = useState<TestProfileId>(getStoredTestProfile);
   const profile = TEST_PROFILES[testProfileId];
   const initialWallet = useMemo(() => readInitialWalletSlice(testProfileId), [testProfileId]);
   const [points, setPoints] = useState(initialWallet.points);

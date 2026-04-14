@@ -564,3 +564,7 @@ html.device-preview-frame-active .marketplace-header__icon-group {
 html.device-preview-frame-active .marketplace-header {
   --header-shadow: 0 1px 3px rgba(7, 5, 24, 0.06) !important;
 }
+
+html.device-preview-frame-active .marketplace-header__search-dropdown {
+  max-height: calc(var(--device-screen-h, 852px) - 180px);
+}

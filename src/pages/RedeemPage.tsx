@@ -806,7 +806,7 @@ export default function RedeemPage({
             theme="light"
             isLoggedIn
             avatarSrc="/avatar.png"
-            points={USER_POINTS - confirmationData.total}
+            points={USER_POINTS}
             loyaltyTier={userLoyaltyTier}
             onLogoClick={() => { window.location.href = window.location.pathname; }}
             onMenu={() => {}}

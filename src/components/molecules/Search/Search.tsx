@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
@@ -23,11 +23,6 @@ const SUGGESTION_CHIPS = [
   'Sports and activities',
   'Concerts and festivals',
 ];
-
-interface CategoryResult {
-  name: string;
-  count: number;
-}
 
 function IconArrowLeft() {
   return (

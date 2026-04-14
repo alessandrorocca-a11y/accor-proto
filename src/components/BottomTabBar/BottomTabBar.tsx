@@ -75,3 +75,16 @@ export function BottomTabBar() {
 
   return devicePreviewBottomTarget != null ? createPortal(bar, devicePreviewBottomTarget) : bar;
 }
+
+/** Reserves the same bottom slot height as {@link BottomTabBar} on home (device preview only) without visible chrome. */
+export function DevicePreviewBottomSpacer() {
+  const target = useDevicePreviewBottomChromeTarget();
+  if (target === undefined || target === null) return null;
+  const node = (
+    <div
+      className="bottom-tab-bar bottom-tab-bar--device-preview bottom-tab-bar--spacer-only"
+      aria-hidden
+    />
+  );
+  return createPortal(node, target);
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useDevicePreviewBottomChromeTarget } from '@/context/DevicePreviewBottomChromeContext';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
-import { BottomTabBar } from './components/BottomTabBar/BottomTabBar';
+import { BottomTabBar, DevicePreviewBottomSpacer } from './components/BottomTabBar/BottomTabBar';
 import Demo from './Demo';
 import HomePage from './pages/HomePage';
 import AuctionPage from './pages/AuctionPage';
@@ -123,6 +124,8 @@ const PAYMENT_ROUTES: Record<string, PaymentType> = {
 export default function App() {
   const [hash, setHash] = useState(window.location.hash);
   const deviceScrollContainer = useDevicePreviewScrollContainer();
+  /** `undefined` = not wrapped by DevicePreviewFrame; reserve bottom chrome on home so scroll viewport height matches other routes */
+  const inDevicePreviewFrame = useDevicePreviewBottomChromeTarget() !== undefined;
 
   const onHashChange = useCallback(() => {
     setHash(window.location.hash);
@@ -251,6 +254,7 @@ export default function App() {
     <UserProvider>
       <FavouritesProvider>
         {page}
+        {isHomeRoot && inDevicePreviewFrame ? <DevicePreviewBottomSpacer /> : null}
         {!isHomeRoot ? <BottomTabBar /> : null}
       </FavouritesProvider>
     </UserProvider>
