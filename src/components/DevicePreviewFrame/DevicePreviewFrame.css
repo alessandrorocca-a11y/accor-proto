@@ -135,6 +135,25 @@
   width: 100%;
 }
 
+/* Reserve height before React portals BottomTabBar (ref starts null — avoids viewport jump). */
+html.device-preview-frame-active .device-preview-frame__bottom-chrome-slot {
+  min-height: var(--bottom-browser-bar-height, calc(44px + 14px + env(safe-area-inset-bottom, 0px)));
+  box-sizing: border-box;
+}
+
+/* Home: no in-shell browser bar — collapse slot so the hero can use the full glass (class toggled from App). */
+html.device-preview-frame-active.device-preview-no-bottom-chrome .device-preview-frame__bottom-chrome-slot {
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+  flex-basis: 0;
+  flex-shrink: 0;
+}
+
+html.device-preview-no-bottom-chrome .device-preview-frame {
+  --device-preview-bottom-chrome-approx: 0px;
+}
+
 /* Slot itself ignores hits so empty areas fall through to the scroll viewport.
  * Do NOT set `> * { pointer-events: auto }` — it overrides pass-through wrappers
  * (e.g. .category-page__map-view-btn-wrap uses none + button auto). */

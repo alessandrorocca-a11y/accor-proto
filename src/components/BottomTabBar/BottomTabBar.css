@@ -25,18 +25,6 @@
   border-top: none;
 }
 
-/* Same outer box as the real bar so flex viewport height stays stable; home has no back/forward row */
-.bottom-tab-bar.bottom-tab-bar--device-preview.bottom-tab-bar--spacer-only {
-  min-height: var(--bottom-browser-bar-height, calc(44px + 14px + env(safe-area-inset-bottom, 0px)));
-  padding: 0 12px calc(var(--bottom-browser-bar-extra-padding, 14px) + env(safe-area-inset-bottom, 0px));
-  box-sizing: border-box;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: none;
-  pointer-events: none;
-}
-
 .bottom-tab-bar__browser-row {
   display: flex;
   align-items: center;
