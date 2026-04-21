@@ -228,6 +228,9 @@ const ALL_CITIES = [
 
 const BANNER_IMAGE = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=320&fit=crop&q=80';
 
+/** Prototype: hide home strips (auction, concerts, sport, prize draw, Signature/Explorer exclusives). */
+const HIDE_HOME_EVENT_LIST_SECTIONS = true;
+
 const LOYALTY_CARD_LOGO_PATHS = (
   <>
     <path d="M37.9997 31.8653L36.3392 29.8751C37.2136 29.6723 37.7471 29.1668 37.7471 28.2871C37.7471 27.2932 36.9111 26.7953 35.8521 26.7953H32.5333V31.8653H33.4133V29.947H35.3871L36.9077 31.8653H37.9997ZM33.4133 27.5822H35.8764C36.4831 27.5822 36.8453 27.8689 36.8453 28.3489C36.8453 28.8418 36.465 29.1602 35.8764 29.1602H33.4133V27.5822Z" fill="white" />
@@ -1313,7 +1316,7 @@ export default function HomePage() {
       ) : null}
 
       {/* ── Signature exclusive events (subscribers) ─ */}
-      {SIGNATURE_EXCLUSIVE_EVENTS.length > 0 ? (
+      {!HIDE_HOME_EVENT_LIST_SECTIONS && SIGNATURE_EXCLUSIVE_EVENTS.length > 0 ? (
         <section className="home-page__section" aria-labelledby="home-signature-exclusive-heading">
           <div className="home-page__section-header">
             <h2 id="home-signature-exclusive-heading" className="home-page__section-title">
@@ -1347,7 +1350,7 @@ export default function HomePage() {
       ) : null}
 
       {/* ── Explorer exclusive events (subscribers — upper placement) ─ */}
-      {EXPLORER_EXCLUSIVE_EVENTS.length > 0 ? (
+      {!HIDE_HOME_EVENT_LIST_SECTIONS && EXPLORER_EXCLUSIVE_EVENTS.length > 0 ? (
         <section className="home-page__section" aria-labelledby="home-explorer-exclusive-heading">
           <div className="home-page__section-header">
             <h2 id="home-explorer-exclusive-heading" className="home-page__section-title">
@@ -1381,7 +1384,7 @@ export default function HomePage() {
       ) : null}
 
       {/* ── Event sections (order varies by profile) ─────────────────── */}
-      {(() => {
+      {!HIDE_HOME_EVENT_LIST_SECTIONS ? (() => {
         const makeSection = (key: string, title: string, hash: string, visible: EventCard[], page: number, totalPages: number, onPrev: () => void, onNext: () => void) => (
           <section key={key} className="home-page__section">
             <div className="home-page__section-header">
@@ -1411,10 +1414,10 @@ export default function HomePage() {
           return [prizeDrawSection, concertsSection, sportSection, auctionsSection];
         }
         return [auctionsSection, concertsSection, sportSection, prizeDrawSection];
-      })()}
+      })() : null}
 
       {/* ── Signature exclusive events (non-subscribers — teaser) ─ */}
-      {SIGNATURE_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (
+      {!HIDE_HOME_EVENT_LIST_SECTIONS && SIGNATURE_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (
         <section className="home-page__section" aria-labelledby="home-signature-exclusive-teaser-heading">
           <div className="home-page__section-header">
             <h2 id="home-signature-exclusive-teaser-heading" className="home-page__section-title">
@@ -1448,7 +1451,7 @@ export default function HomePage() {
       ) : null}
 
       {/* ── Explorer exclusive events (non-subscribers — before cities) ─ */}
-      {EXPLORER_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (
+      {!HIDE_HOME_EVENT_LIST_SECTIONS && EXPLORER_EXCLUSIVE_EVENTS_TEASER.length > 0 ? (
         <section className="home-page__section" aria-labelledby="home-explorer-exclusive-teaser-heading">
           <div className="home-page__section-header">
             <h2 id="home-explorer-exclusive-teaser-heading" className="home-page__section-title">
