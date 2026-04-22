@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { TEST_ACCOUNT_GATE_SESSION_KEY } from '@/constants/testAccountGate';
 import type { EventData } from '@/data/events/eventRegistry';
 import { formatPoints, getPaymentLabel } from '@/data/events/eventRegistry';
 
@@ -163,6 +164,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
       if (id === testProfileId) return;
       try {
         localStorage.setItem(STORAGE_KEY, id);
+      } catch {
+        /* ignore */
+      }
+      try {
+        sessionStorage.setItem(TEST_ACCOUNT_GATE_SESSION_KEY, '1');
       } catch {
         /* ignore */
       }

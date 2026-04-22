@@ -27,6 +27,7 @@ import Auction24hLeftEmail from './pages/emails/Auction24hLeftEmail';
 import PrizeDraw24hLeftEmail from './pages/emails/PrizeDraw24hLeftEmail';
 import PrizeDrawLoserEmail from './pages/emails/PrizeDrawLoserEmail';
 import PrizeDrawPurchaseEmail from './pages/emails/PrizeDrawPurchaseEmail';
+import { TestAccountWelcomeMenu } from './components/TestAccountWelcomeMenu';
 import { FavouritesProvider } from './context/FavouritesContext';
 import { UserProvider } from './context/UserContext';
 import { extractEventId, parseHashParams, parsePrizeDrawRoute, parseRedeemRoute, parseStandardRoute } from './utils/hashRoute';
@@ -265,6 +266,7 @@ export default function App() {
       <FavouritesProvider>
         {page}
         {!isHomeRoot ? <BottomTabBar /> : null}
+        <TestAccountWelcomeMenu />
       </FavouritesProvider>
     </UserProvider>
   );
