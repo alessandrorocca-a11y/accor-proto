@@ -384,6 +384,50 @@
   margin-left: 0;
 }
 
+.menu__link--test-profile {
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.menu__link-text-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-right: 4px;
+}
+
+/* Dedicated class: do not reuse .menu__link-label (it has flex:1 + nowrap, which breaks the two-line test-profile layout). */
+.menu__link-mockup-title {
+  flex: 0 0 auto;
+  margin: 0;
+  max-width: 100%;
+  font: var(--wel-typography-input-02);
+  color: var(--wel-sem-color-on-surface-mid, #38364d);
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.menu__link-subtitle {
+  display: block;
+  flex: 0 0 auto;
+  margin: 0;
+  max-width: 100%;
+  font: 400 10px/1.35 var(--wel-sem-font-families-caption, Roboto, sans-serif);
+  color: var(--wel-sem-color-on-surface-low, #6b6985);
+  white-space: normal;
+}
+
+.menu__link--test-profile.menu__link--selected .menu__link-mockup-title {
+  font-weight: 600;
+}
+
+.menu__link--test-profile.menu__link--selected .menu__link-subtitle {
+  font-weight: 400;
+}
+
 .menu__link--selected {
   font-weight: 600;
 }

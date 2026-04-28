@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { IconHeart } from '@/components/atoms';
-import { useUser, type OrderItem, type TestProfileId, TEST_PROFILES } from '@/context/UserContext';
+import { useUser, type OrderItem, TEST_PROFILES } from '@/context/UserContext';
 import { useDevicePreviewScrollContainer } from '@/context/DevicePreviewScrollContainerContext';
 import { usePrototypeShellOverlayPortal } from '@/context/PrototypeShellOverlayPortalContext';
 import { searchCities, type City } from '@/data/europeanCities';
@@ -1333,11 +1333,11 @@ export function Menu({
                   Switch user type for prototype testing. Selection is saved for this session.
                 </p>
                 <ul className="menu__list" role="radiogroup" aria-label="Test account type">
-                  {(['silver', 'gold', 'goldVoyager', 'goldSignature'] as TestProfileId[]).map((id) => {
+                  {(['silver', 'gold', 'goldVoyager', 'goldSignature'] as const).map((id, index) => {
                     const p = TEST_PROFILES[id];
                     const isSelected = userCtx?.testProfileId === id;
                     const pts = p.points.toLocaleString('de-DE');
-                    const label =
+                    const subtitle =
                       id === 'silver'
                         ? `Silver — ${pts} points, no subscription`
                         : id === 'gold'
@@ -1345,18 +1345,23 @@ export function Menu({
                           : id === 'goldVoyager'
                             ? `Gold + Explorer — ${pts} points, Explorer subscriber`
                             : `Gold + ALL Signature — ${pts} points, ALL Signature subscriber`;
+                    const title = `Mockup ${index + 1}`;
                     return (
                       <li key={id} className="menu__item menu__item--bordered">
                         <button
                           type="button"
                           role="radio"
                           aria-checked={isSelected}
-                          className={`menu__link menu__link--selectable${isSelected ? ' menu__link--selected' : ''}`}
+                          aria-label={`${title}, ${subtitle}`}
+                          className={`menu__link menu__link--selectable menu__link--test-profile${isSelected ? ' menu__link--selected' : ''}`}
                           onClick={() => {
                             userCtx?.setTestProfile(id);
                           }}
                         >
-                          <span className="menu__link-label">{label}</span>
+                          <span className="menu__link-text-col">
+                            <span className="menu__link-mockup-title">{title}</span>
+                            <span className="menu__link-subtitle">{subtitle}</span>
+                          </span>
                           {isSelected && (
                             <span className="menu__link-check" aria-hidden>
                               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
