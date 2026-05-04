@@ -921,19 +921,36 @@ export default function AuctionPage({ eventId }: { eventId?: string }) {
         </aside>
       </div>
 
-      {showStickyBar && !auctionEnded && (
-        <div className="auction-page__sticky-bar">
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            className="auction-page__place-bid-btn"
-            onClick={handleStickyPlaceBid}
-          >
-            Place bid
-          </Button>
-        </div>
-      )}
+      {showStickyBar &&
+        !auctionEnded &&
+        (overlayPortalTarget ? (
+          createPortal(
+            <div className="auction-page__sticky-bar auction-page__sticky-bar--prototype-device">
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                className="auction-page__place-bid-btn"
+                onClick={handleStickyPlaceBid}
+              >
+                Place bid
+              </Button>
+            </div>,
+            overlayPortalTarget,
+          )
+        ) : (
+          <div className="auction-page__sticky-bar">
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              className="auction-page__place-bid-btn"
+              onClick={handleStickyPlaceBid}
+            >
+              Place bid
+            </Button>
+          </div>
+        ))}
 
       {overlayPortalTarget &&
         (showNotifySnack || showFavSnack || showBidError || showBidTooLow) &&

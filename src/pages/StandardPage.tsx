@@ -1887,13 +1887,7 @@ export default function StandardPage({
               <span className="auction-page__tag">Limitless experience</span>
             </div>
             {isVoyagerExclusive ? <VoyagerBadge variant={voyagerVariant} /> : null}
-            {eventData?.pageType === 'standard' ? (
-              <p className="standard__listing-from">Tickets from {formatEur(standardFromWholeEur)}</p>
-            ) : null}
           </section>
-
-          <hr className="auction-page__divider auction-page__divider--mobile-only" aria-hidden />
-          {purchaseSection('mobile')}
 
           <hr className="auction-page__divider" aria-hidden />
 
@@ -1903,6 +1897,9 @@ export default function StandardPage({
             <p className="auction-page__body">On {_EVENT_DATE}, ALL Accor invites you to a unique experience at the exclusive ALL Accor lounge inside the Alma Rio Box, one of the most sophisticated and sought-after spaces at the Marquês de Sapucaí Sambadrome. An unmissable opportunity for ALL members to complete an instant purchase with Reward points and enjoy the Special Group parades up close.</p>
             <img src={HERO_IMAGES[1]?.src ?? HERO_IMAGES[0]?.src} alt={EVENT_TITLE} className="auction-page__section-img" />
           </section>
+
+          <hr className="auction-page__divider auction-page__divider--mobile-only" aria-hidden />
+          {purchaseSection('mobile')}
 
           <hr className="auction-page__divider" aria-hidden />
           <section className="auction-page__section">

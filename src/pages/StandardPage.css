@@ -2,13 +2,6 @@
 @import './LinkoutPage.css';
 @import './PrizeDrawPage.css';
 
-.standard__listing-from {
-  margin: 12px 0 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--wel-sem-color-text-primary, #050033);
-}
-
 .standard__purchase {
   display: flex;
   flex-direction: column;

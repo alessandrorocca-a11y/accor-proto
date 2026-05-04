@@ -26,9 +26,14 @@ export type EventLabelType =
 /** Loyalty tier for points badge styling */
 export type LoyaltyTier = 'classic' | 'silver' | 'gold' | 'platinum' | 'diamond';
 
+/** `iris` = inner pages (Figma IrisNavbar); `marketplace` = homepage legacy bar (MENU + optional search left, points + avatar). */
+export type MarketplaceHeaderVariant = 'marketplace' | 'iris';
+
 export interface MarketplaceHeaderProps {
   /** Light or dark theme */
   theme?: 'light' | 'dark';
+  /** Bar layout (default `iris` per Figma inner nav; use `marketplace` on Home only) */
+  variant?: MarketplaceHeaderVariant;
   /** Logged-in state: show points badge, avatar, menu */
   isLoggedIn?: boolean;
   /** Points to show in badge when logged in */
@@ -115,6 +120,7 @@ function IconStar({ className }: { className?: string }) {
 
 export function MarketplaceHeader({
   theme = 'light',
+  variant = 'iris',
   isLoggedIn = false,
   points,
   loyaltyTier: _loyaltyTier = 'gold',
@@ -133,6 +139,7 @@ export function MarketplaceHeader({
   transparentOnTop = false,
   className = '',
 }: MarketplaceHeaderProps) {
+  const isIris = variant === 'iris';
   const [searchOpen, setSearchOpen] = useState(false);
   const [desktopSearchActive, setDesktopSearchActive] = useState(false);
   const [desktopQuery, setDesktopQuery] = useState('');
@@ -257,11 +264,11 @@ export function MarketplaceHeader({
   const headerEl = (
     <header
       ref={headerRef}
-      className={`marketplace-header marketplace-header--${theme}${headerHiddenClass}${prototypeBarHiddenClass}${headerTransparentClass}${headerChromeClass} ${className}`.trim()}
+      className={`marketplace-header marketplace-header--${theme}${isIris ? ' marketplace-header--iris' : ''}${headerHiddenClass}${prototypeBarHiddenClass}${headerTransparentClass}${headerChromeClass} ${className}`.trim()}
       data-logged-in={isLoggedIn}
     >
       <div className="marketplace-header__bar">
-        {(onMenu || !hideSearch) && (
+        {(onMenu || (!isIris && !hideSearch)) && (
           <div className="marketplace-header__left-cluster">
             {onMenu && (
               <button
@@ -274,7 +281,7 @@ export function MarketplaceHeader({
                 <span className="marketplace-header__menu-label">MENU</span>
               </button>
             )}
-            {!hideSearch && (
+            {!isIris && !hideSearch && (
               <button
                 type="button"
                 className="marketplace-header__icon-btn"
@@ -303,7 +310,17 @@ export function MarketplaceHeader({
         </div>
 
         <div className="marketplace-header__mobile-trailing">
-          {isLoggedIn && points != null && (
+          {isIris && !hideSearch && (
+            <button
+              type="button"
+              className="marketplace-header__icon-btn marketplace-header__icon-btn--iris-trailing"
+              onClick={handleSearchClick}
+              aria-label="Search"
+            >
+              <IconSearch className="marketplace-header__search-icon--iris" />
+            </button>
+          )}
+          {isLoggedIn && points != null && !isIris && (
             onPointsClick ? (
               <button
                 type="button"
@@ -340,28 +357,30 @@ export function MarketplaceHeader({
               </button>
             )}
             {isLoggedIn && (
-              <Avatar
-                src={avatarSrc ?? undefined}
-                alt=""
-                initials={avatarSrc ? undefined : '?'}
-                size="md"
-                className="marketplace-header__avatar"
-                onClick={onAvatarClick ?? onMenu}
-                onKeyDown={
-                  (onAvatarClick ?? onMenu)
-                    ? (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          (onAvatarClick ?? onMenu)?.();
+              <span className="marketplace-header__avatar-wrap">
+                <Avatar
+                  src={avatarSrc ?? undefined}
+                  alt=""
+                  initials={avatarSrc ? undefined : '?'}
+                  size="md"
+                  className="marketplace-header__avatar"
+                  onClick={onAvatarClick ?? onMenu}
+                  onKeyDown={
+                    (onAvatarClick ?? onMenu)
+                      ? (e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            (onAvatarClick ?? onMenu)?.();
+                          }
                         }
-                      }
-                    : undefined
-                }
-                role={(onAvatarClick ?? onMenu) ? 'button' : undefined}
-                tabIndex={(onAvatarClick ?? onMenu) ? 0 : undefined}
-                aria-label={(onAvatarClick ?? onMenu) ? 'Open profile menu' : undefined}
-                style={{ cursor: (onAvatarClick ?? onMenu) ? 'pointer' : undefined }}
-              />
+                      : undefined
+                  }
+                  role={(onAvatarClick ?? onMenu) ? 'button' : undefined}
+                  tabIndex={(onAvatarClick ?? onMenu) ? 0 : undefined}
+                  aria-label={(onAvatarClick ?? onMenu) ? 'Open profile menu' : undefined}
+                  style={{ cursor: (onAvatarClick ?? onMenu) ? 'pointer' : undefined }}
+                />
+              </span>
             )}
           </div>
         </div>

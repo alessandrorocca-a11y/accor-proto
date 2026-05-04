@@ -1296,18 +1296,34 @@ export default function CategoryPage({
       {/* Filter dialogs */}
       {activeFilter && (
         <div className="filter-sheet__backdrop" onClick={closeFilter}>
-          <div className="filter-sheet" role="dialog" aria-modal onClick={(e) => e.stopPropagation()}>
+          <div
+            className="filter-sheet"
+            role="dialog"
+            aria-modal
+            aria-label={
+              activeFilter === 'date'
+                ? 'Date, choose a date or a date range'
+                : undefined
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="filter-sheet__nav">
               <span className="filter-sheet__spacer" />
-              <span className="filter-sheet__title">
-                {activeFilter === 'date' && 'Date'}
-                {activeFilter === 'category' && 'Experience type'}
-                {activeFilter === 'payment' && 'Ways to book'}
-                {activeFilter === 'subscription' && 'Subscription'}
-                {activeFilter === 'price-range' && 'Price range'}
-                {activeFilter === 'location' && 'City'}
-                {activeFilter === 'hotel' && 'Hotel brand'}
-              </span>
+              {activeFilter === 'date' ? (
+                <div className="filter-sheet__title-group">
+                  <span className="filter-sheet__title">Date</span>
+                  <span className="filter-sheet__subtitle">Choose a date or a date range</span>
+                </div>
+              ) : (
+                <span className="filter-sheet__title">
+                  {activeFilter === 'category' && 'Experience type'}
+                  {activeFilter === 'payment' && 'Ways to book'}
+                  {activeFilter === 'subscription' && 'Subscription'}
+                  {activeFilter === 'price-range' && 'Price range'}
+                  {activeFilter === 'location' && 'City'}
+                  {activeFilter === 'hotel' && 'Hotel brand'}
+                </span>
+              )}
               <button type="button" className="filter-sheet__close" onClick={closeFilter} aria-label="Close"><IconClose /></button>
             </div>
 

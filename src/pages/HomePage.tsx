@@ -1147,6 +1147,7 @@ export default function HomePage() {
 
         <MarketplaceHeader
           theme="light"
+          variant="marketplace"
           isLoggedIn
           avatarSrc="/avatar.png"
           points={USER_POINTS}
